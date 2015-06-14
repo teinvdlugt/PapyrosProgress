@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Papyros Progress</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="appwidget_contentDescription">Progress to next milestone</string>
+    <string name="add_widget">Add widget</string>
+    <string name="text_size">Text size: </string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="open_issues">Open issues:</string>
+    <string name="closed_issues">Closed issues:</string>
+    <string name="progress">Progress:</string>
+    <string name="unknown_version_name">Unknown version name</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="papyros_milestones">Papyros milestones</string>
+    <string name="no_network">Not connected to a network</string>
+</resources>
