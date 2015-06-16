@@ -3,9 +3,8 @@
     android:initialKeyguardLayout="@layout/progress_widget"
     android:initialLayout="@layout/progress_widget"
     android:minHeight="40dp"
-    android:minWidth="40dp"
+    android:minWidth="110dp"
     android:previewImage="@drawable/preview_image"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="14400000"
-    android:widgetCategory="home_screen|keyguard"
-    android:configure="com.teinproductions.tein.papyrosprogress.ConfigurationActivity" />
+    android:widgetCategory="home_screen|keyguard" />

@@ -10,10 +10,10 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +35,11 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         updateAppWidgets(context, appWidgetIds);
+    }
+
+    @Override
+    public void onEnabled(Context context) {
+        Toast.makeText(context, context.getString(R.string.click_on_the_widget_message), Toast.LENGTH_LONG).show();
     }
 
     static RemoteViews updateAppWidget(Context context,

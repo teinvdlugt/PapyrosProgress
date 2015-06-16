@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,21 +37,26 @@ public class MainActivity extends AppCompatActivity {
     public static final String CLOSED_ISSUES = "closed_issues";
 
     ListView listView;
+    TextView errorTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         listView = (ListView) findViewById(R.id.listView);
+        errorTextView = (TextView) findViewById(R.id.noNetwork_textView);
 
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+
         if (networkInfo != null && networkInfo.isConnected()) {
             new LoadFromTheWebTask().execute();
         } else {
             findViewById(R.id.progress_bar).setVisibility(View.GONE);
-            findViewById(R.id.noNetwork_textView).setVisibility(View.VISIBLE);
+            errorTextView.setText(R.string.no_network);
+            errorTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             View theView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
 
             String name = getString(R.string.unknown_version_name);
-            int openIssues = 0, closedIssues = 0, progress = 0;
+            int openIssues = 0, closedIssues = 0, progress;
             try {
                 name = data[position].getString(MILESTONE_TITLE);
             } catch (JSONException ignored) { /*ignore*/ }
@@ -114,7 +119,11 @@ public class MainActivity extends AppCompatActivity {
                 conn.setDoInput(true);
                 conn.connect();
                 int response = conn.getResponseCode();
-                Log.d("CRAZY PASTA", "Response is " + response);
+                //Log.d("CRAZY PASTA", "Response is " + response);
+
+                if (response == 403) return "403";
+                if (response == 404) return "404";
+
                 InputStream is = conn.getInputStream();
                 return read(is);
             } catch (IOException e) {
@@ -138,6 +147,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String json) {
+            if ("403".equals(json)) {
+                errorTextView.setText(R.string.error403);
+                errorTextView.setVisibility(View.VISIBLE);
+                findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                return;
+            } else if ("404".equals(json)) {
+                errorTextView.setText(R.string.error404);
+                errorTextView.setVisibility(View.VISIBLE);
+                findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                return;
+            }
+
             try {
                 JSONArray jArray = new JSONArray(json);
                 JSONObject[] jObjects = new JSONObject[jArray.length()];

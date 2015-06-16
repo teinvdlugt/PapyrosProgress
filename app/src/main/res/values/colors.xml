@@ -2,4 +2,8 @@
 <resources>
     <color name="progressColor">#448aff</color>
     <color name="progressBackgroundColor">#a9ffffff</color>
+
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#2196F3</color>
 </resources>
