@@ -44,7 +44,7 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
             conn.setDoInput(true);
             conn.connect();
             int response = conn.getResponseCode();
-            //Log.d("CRAZY PASTA", "Response is " + response);
+            //Log.d("COFFEE", "Response is " + response);
 
             if (response == 403) return "403";
             if (response == 404) return "404";

@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -66,8 +65,6 @@ public class ProgressWidget extends AppWidgetProvider {
                 progress = closedIssues * 100 / (openIssues + closedIssues);
                 context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                         .edit().putInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, progress).apply();
-
-                Log.d("COFFEE", "Progress in ProgressWidget: " + progress);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

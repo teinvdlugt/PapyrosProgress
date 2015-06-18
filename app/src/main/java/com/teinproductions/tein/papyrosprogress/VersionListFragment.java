@@ -9,11 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ import org.json.JSONObject;
 
 public class VersionListFragment extends Fragment implements LoadWebPageTask.OnLoadedListener {
 
-    ListView listView;
+    RecyclerView recyclerView;
     TextView errorTextView;
     ProgressBar progressBar;
 
@@ -32,9 +33,10 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View theView = inflater.inflate(R.layout.fragment_version_list, container, false);
 
-        listView = (ListView) theView.findViewById(R.id.listView);
         errorTextView = (TextView) theView.findViewById(R.id.noNetwork_textView);
         progressBar = (ProgressBar) theView.findViewById(R.id.progress_bar);
+        recyclerView = (RecyclerView) theView.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         ConnectivityManager connManager = (ConnectivityManager) getActivity()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -68,11 +70,10 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
             }
 
             // Set list adapter
-            listView.setAdapter(new MilestoneAdapter(getActivity(), jObjects));
+            recyclerView.setAdapter(new MilestoneRecyclerAdapter(jObjects));
 
             // Fade out progress bar and fade in listView, if API >= 14
             int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
             if (Build.VERSION.SDK_INT >= 14) {
                 progressBar.animate().alpha(0f).setDuration(duration)
                         .setListener(new Animator.AnimatorListener() {
@@ -93,12 +94,12 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
                             public void onAnimationRepeat(Animator animation) {
                             }
                         }).start();
-                listView.setAlpha(0f);
-                listView.setVisibility(View.VISIBLE);
-                listView.animate().alpha(1f).setDuration(duration).start();
+                recyclerView.setAlpha(0f);
+                recyclerView.setVisibility(View.VISIBLE);
+                recyclerView.animate().alpha(1f).setDuration(duration).start();
             } else {
                 progressBar.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
             }
 
         } catch (JSONException | NullPointerException e) {
@@ -107,45 +108,57 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
     }
 
 
-    private class MilestoneAdapter extends ArrayAdapter<JSONObject> {
-
+    private class MilestoneRecyclerAdapter extends RecyclerView.Adapter<MileStoneViewHolder> {
         JSONObject[] data;
 
-        public MilestoneAdapter(Context context, JSONObject[] data) {
-            super(context, R.layout.list_item);
+        public MilestoneRecyclerAdapter(JSONObject[] data) {
             this.data = data;
         }
 
         @Override
-        public int getCount() {
-            return data.length;
+        public MileStoneViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View itemView = LayoutInflater.from(getActivity()).inflate(R.layout.list_item, viewGroup, false);
+            return new MileStoneViewHolder(itemView);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View theView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
-
+        public void onBindViewHolder(MileStoneViewHolder viewHolder, int i) {
             String name = getString(R.string.unknown_version_name);
             int openIssues = 0, closedIssues = 0, progress;
-            try { name = data[position].getString(MainActivity.MILESTONE_TITLE);
+            try { name = data[i].getString(MainActivity.MILESTONE_TITLE);
             } catch (JSONException ignored) { /*ignore*/ }
-            try { openIssues = data[position].getInt(MainActivity.OPEN_ISSUES);
+            try { openIssues = data[i].getInt(MainActivity.OPEN_ISSUES);
             } catch (JSONException ignored) { /*ignore*/ }
-            try { closedIssues = data[position].getInt(MainActivity.CLOSED_ISSUES);
+            try { closedIssues = data[i].getInt(MainActivity.CLOSED_ISSUES);
             } catch (JSONException ignored) { /*ignore*/ }
 
             progress = closedIssues * 100 / (openIssues + closedIssues);
 
-            ((TextView) theView.findViewById(R.id.name_textView)).setText(name);
-            ((TextView) theView.findViewById(R.id.open_issues_textView))
-                    .setText(getString(R.string.open_issues) + " " + openIssues);
-            ((TextView) theView.findViewById(R.id.closed_issues_textView))
-                    .setText(getString(R.string.closed_issues) + " " + closedIssues);
-            ((ProgressBar) theView.findViewById(R.id.listItem_progressBar)).setProgress(progress);
-            ((TextView) theView.findViewById(R.id.progress_textView))
-                    .setText(getString(R.string.progress) + " " + progress + "%");
+            viewHolder.title.setText(name);
+            viewHolder.openIssues.setText(getString(R.string.open_issues) + " " + openIssues);
+            viewHolder.closedIssues.setText(getString(R.string.closed_issues) + " " + closedIssues);
+            viewHolder.progressBar.setProgress(progress);
+            viewHolder.progressTV.setText(getString(R.string.progress) + " " + progress + "%");
+        }
 
-            return theView;
+        @Override
+        public int getItemCount() {
+            return data.length;
+        }
+    }
+
+    private class MileStoneViewHolder extends RecyclerView.ViewHolder {
+        TextView title, openIssues, closedIssues, progressTV;
+        ProgressBar progressBar;
+
+        public MileStoneViewHolder(View itemView) {
+            super(itemView);
+
+            title = (TextView) itemView.findViewById(R.id.name_textView);
+            openIssues = (TextView) itemView.findViewById(R.id.open_issues_textView);
+            closedIssues = (TextView) itemView.findViewById(R.id.closed_issues_textView);
+            progressTV = (TextView) itemView.findViewById(R.id.progress_textView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.listItem_progressBar);
         }
     }
 }
