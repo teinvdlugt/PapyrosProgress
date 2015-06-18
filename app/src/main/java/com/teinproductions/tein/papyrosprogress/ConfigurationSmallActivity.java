@@ -32,7 +32,8 @@ public class ConfigurationSmallActivity extends AppCompatActivity implements See
         seekBar = (SeekBar) findViewById(R.id.textSize_SeekBar);
         textSizeTextView = (TextView) findViewById(R.id.textSize_textView);
 
-        int progress = getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE).getInt(ConfigurationActivity.TEXT_SIZE_PREFERENCE + appWidgetId, 24);
+        int progress = getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getInt(ConfigurationActivity.TEXT_SIZE_PREFERENCE + appWidgetId, 24);
         seekBar.setProgress(progress);
         textSizeTextView.setText(getString(R.string.text_size) + " " + progress);
         seekBar.setOnSeekBarChangeListener(this);

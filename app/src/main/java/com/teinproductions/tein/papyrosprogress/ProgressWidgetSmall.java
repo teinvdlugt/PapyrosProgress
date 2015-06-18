@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,18 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 
 public class ProgressWidgetSmall extends AppWidgetProvider {
-
-    static int[] tempAppWidgetIds;
-    static Context tempContext;
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -71,13 +60,14 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
                 JSONArray jArray = new JSONArray(json);
                 JSONObject jObject = jArray.getJSONObject(0);
 
-                //title = jObject.getString(MILESTONE_TITLE);
                 int openIssues = jObject.getInt(MainActivity.OPEN_ISSUES);
                 int closedIssues = jObject.getInt(MainActivity.CLOSED_ISSUES);
 
                 progress = closedIssues * 100 / (openIssues + closedIssues);
                 context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                         .edit().putInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, progress).apply();
+
+                Log.d("COFFEE", "Progress in ProgressWidgetSmall: " + progress);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -87,61 +77,33 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
         return views;
     }
 
-    static void updateAppWidgets(Context context, int[] appWidgetIds) {
-        tempContext = context;
-        tempAppWidgetIds = appWidgetIds;
-
-        new UpdateAppWidgetsTask().onPostExecute(null);
+    static void updateAppWidgets(final Context context, final int[] appWidgetIds) {
+        onLoaded(context, appWidgetIds, null);
 
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            new UpdateAppWidgetsTask().execute();
+            new LoadWebPageTask(new LoadWebPageTask.OnLoadedListener() {
+                @Override
+                public void onLoaded(String json) {
+                    ProgressWidgetSmall.onLoaded(context, appWidgetIds, json);
+                }
+            }).execute();
         }
     }
 
-    static class UpdateAppWidgetsTask extends AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                java.net.URL url = new URL(MainActivity.URL);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(20000);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.connect();
-                int response = conn.getResponseCode();
-                Log.d("CRAZY PASTA", "Response is " + response);
-                InputStream is = conn.getInputStream();
+    static void onLoaded(Context context, int[] appWidgetIds, String json) {
+        if (appWidgetIds == null) return;
 
-                return read(is);
-            } catch (IOException e) {
-                return "Error in doInBackground";
-            }
+        if ("404".equals(json) || "403".equals(json)) {
+            return;
         }
 
-        private String read(InputStream inputStream) throws IOException {
-            InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
-            BufferedReader bufferedReader = new BufferedReader(reader);
-
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-
-            return sb.toString();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            for (int appWidgetId : tempAppWidgetIds) {
-                RemoteViews views = updateAppWidget(tempContext, appWidgetId, s);
-                if (views != null) {
-                    AppWidgetManager.getInstance(tempContext).updateAppWidget(appWidgetId, views);
-                }
+        for (int appWidgetId : appWidgetIds) {
+            RemoteViews views = updateAppWidget(context, appWidgetId, json);
+            if (views != null) {
+                AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
             }
         }
     }
