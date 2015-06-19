@@ -10,10 +10,15 @@
     <string name="open_issues">Open issues:</string>
     <string name="closed_issues">Closed issues:</string>
     <string name="progress">Progress:</string>
-    <string name="unknown_version_name">Unknown version name</string>
+    <string name="state">State:</string>
+    <string name="unknown">Unknown</string>
     <string name="papyros_milestones">Papyros milestones</string>
     <string name="no_network">Not connected to a network</string>
     <string name="click_on_the_widget_message">Click on the widget for settings</string>
     <string name="error403">Error 403. Please check again later.</string>
     <string name="error404">404 Error</string>
+    <string name="created_at">Created at:</string>
+    <string name="updated_at">Updated at:</string>
+    <string name="due_on">Due on:</string>
+    <string name="closed_at">Closed at:</string>
 </resources>

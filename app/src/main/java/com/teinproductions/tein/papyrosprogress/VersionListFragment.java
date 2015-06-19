@@ -14,13 +14,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class VersionListFragment extends Fragment implements LoadWebPageTask.OnLoadedListener {
 
@@ -123,13 +127,43 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
 
         @Override
         public void onBindViewHolder(MileStoneViewHolder viewHolder, int i) {
-            String name = getString(R.string.unknown_version_name);
+            String name = getString(R.string.unknown);
+            String state = getString(R.string.unknown);
+            String createdAt = null, updatedAt = null, dueOn = null, closedAt = null;
             int openIssues = 0, closedIssues = 0, progress;
-            try { name = data[i].getString(MainActivity.MILESTONE_TITLE);
+
+            try {
+                name = data[i].getString(MainActivity.MILESTONE_TITLE);
             } catch (JSONException ignored) { /*ignore*/ }
-            try { openIssues = data[i].getInt(MainActivity.OPEN_ISSUES);
+            try {
+                openIssues = data[i].getInt(MainActivity.OPEN_ISSUES);
             } catch (JSONException ignored) { /*ignore*/ }
-            try { closedIssues = data[i].getInt(MainActivity.CLOSED_ISSUES);
+            try {
+                closedIssues = data[i].getInt(MainActivity.CLOSED_ISSUES);
+            } catch (JSONException ignored) { /*ignore*/ }
+            try {
+                state = data[i].getString(MainActivity.STATE);
+            } catch (JSONException ignored) { /*ignore*/ }
+            if (state == null) state = "null";
+            try {
+                if (!data[i].isNull(MainActivity.CREATED_AT)) {
+                    createdAt = data[i].getString(MainActivity.CREATED_AT);
+                }
+            } catch (JSONException ignored) { /*ignore*/ }
+            try {
+                if (!data[i].isNull(MainActivity.UPDATED_AT)) {
+                    updatedAt = data[i].getString(MainActivity.UPDATED_AT);
+                }
+            } catch (JSONException ignored) { /*ignore*/ }
+            try {
+                if (!data[i].isNull(MainActivity.DUE_ON)) {
+                    dueOn = data[i].getString(MainActivity.DUE_ON);
+                }
+            } catch (JSONException ignored) { /*ignore*/ }
+            try {
+                if (!data[i].isNull(MainActivity.CLOSED_AT)) {
+                    closedAt = data[i].getString(MainActivity.CLOSED_AT);
+                }
             } catch (JSONException ignored) { /*ignore*/ }
 
             progress = closedIssues * 100 / (openIssues + closedIssues);
@@ -139,6 +173,18 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
             viewHolder.closedIssues.setText(getString(R.string.closed_issues) + " " + closedIssues);
             viewHolder.progressBar.setProgress(progress);
             viewHolder.progressTV.setText(getString(R.string.progress) + " " + progress + "%");
+            viewHolder.state.setText(getString(R.string.state) + " " + state);
+
+            DateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            DateFormat newFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
+            if (createdAt == null) createdAt = getString(R.string.unknown);
+            viewHolder.createdAt.setText(getString(R.string.created_at) + " " + reformatDate(oldFormat, newFormat, createdAt));
+            if (updatedAt == null) viewHolder.updatedAt.setVisibility(View.GONE);
+            else viewHolder.updatedAt.setText(getString(R.string.updated_at) + " " + reformatDate(oldFormat, newFormat, updatedAt));
+            if (dueOn == null) viewHolder.dueOn.setVisibility(View.GONE);
+            else viewHolder.dueOn.setText(getString(R.string.due_on) + " " + reformatDate(oldFormat, newFormat, dueOn));
+            if (closedAt == null) viewHolder.closedAt.setVisibility(View.GONE);
+            else viewHolder.closedAt.setText(getString(R.string.closed_at) + " " + reformatDate(oldFormat, newFormat, closedAt));
         }
 
         @Override
@@ -147,8 +193,19 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
         }
     }
 
+    public static String reformatDate(DateFormat oldFormat, DateFormat newFormat, String dateStr) {
+        try {
+            Date date = oldFormat.parse(dateStr);
+            return newFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateStr;
+        }
+    }
+
     private class MileStoneViewHolder extends RecyclerView.ViewHolder {
-        TextView title, openIssues, closedIssues, progressTV;
+        TextView title, openIssues, closedIssues, progressTV, state,
+                createdAt, updatedAt, dueOn, closedAt;
         ProgressBar progressBar;
 
         public MileStoneViewHolder(View itemView) {
@@ -159,6 +216,11 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
             closedIssues = (TextView) itemView.findViewById(R.id.closed_issues_textView);
             progressTV = (TextView) itemView.findViewById(R.id.progress_textView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.listItem_progressBar);
+            state = (TextView) itemView.findViewById(R.id.state_textView);
+            createdAt = (TextView) itemView.findViewById(R.id.createdAt);
+            updatedAt = (TextView) itemView.findViewById(R.id.updatedAt);
+            dueOn = (TextView) itemView.findViewById(R.id.dueOn);
+            closedAt = (TextView) itemView.findViewById(R.id.closedAt);
         }
     }
 }
