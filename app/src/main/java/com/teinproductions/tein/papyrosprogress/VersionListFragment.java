@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,11 +48,12 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            new LoadWebPageTask(getActivity(), this).execute();
+            new LoadWebPageTask(this).execute();
         } else {
             String cache = MainActivity.getCache(getActivity());
             if (cache != null) {
                 onLoaded(cache);
+                showNetworkSnackbar();
             } else {
                 theView.findViewById(R.id.progress_bar).setVisibility(View.GONE);
                 errorTextView.setText(R.string.no_network);
@@ -62,12 +64,22 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
         return theView;
     }
 
+    private void showNetworkSnackbar() {
+        Snackbar.make(recyclerView, getActivity().getString(R.string.offline_snackbar), Snackbar.LENGTH_LONG).show();
+    }
+
     @Override
     public void onLoaded(String json) {
         if ("403".equals(json) || "404".equals(json)) {
-            errorTextView.setText("403".equals(json) ? R.string.error403 : R.string.error404);
-            errorTextView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+            String cache = MainActivity.getCache(getActivity());
+            if (cache != null && !cache.equals(json)) { // To prevent infinite recursion
+                onLoaded(cache);
+                showNetworkSnackbar();
+            } else {
+                errorTextView.setText("403".equals(json) ? R.string.error403 : R.string.error404);
+                errorTextView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
             return;
         }
 
@@ -111,8 +123,21 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
                 recyclerView.setVisibility(View.VISIBLE);
             }
 
+            // Nothing went wrong, so the web page contents are correct and can be cached
+            MainActivity.saveCache(getActivity(), json);
+
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
+            // This means the retrieved web page was not the right one
+            String cache = MainActivity.getCache(getActivity());
+            if (cache != null && !cache.equals(json)) { // To prevent infinite recursion
+                onLoaded(cache);
+                showNetworkSnackbar();
+            } else {
+                errorTextView.setText(R.string.error404);
+                errorTextView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
         }
     }
 

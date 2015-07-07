@@ -18,4 +18,5 @@
     <string name="updated_at">Updated at:</string>
     <string name="due_on">Due on:</string>
     <string name="closed_at">Closed at:</string>
+    <string name="offline_snackbar">Offline, data may be out of date</string>
 </resources>

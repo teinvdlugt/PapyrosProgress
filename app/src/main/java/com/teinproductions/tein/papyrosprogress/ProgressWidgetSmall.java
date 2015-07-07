@@ -69,6 +69,9 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
                 progress = closedIssues * 100 / (openIssues + closedIssues);
                 context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                         .edit().putInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, progress).apply();
+
+                // Nothing went wrong, so the web page contents are correct and can be cached
+                MainActivity.saveCache(context, json);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -85,7 +88,7 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            new LoadWebPageTask(context, new LoadWebPageTask.OnLoadedListener() {
+            new LoadWebPageTask(new LoadWebPageTask.OnLoadedListener() {
                 @Override
                 public void onLoaded(String json) {
                     ProgressWidgetSmall.onLoaded(context, appWidgetIds, json);
