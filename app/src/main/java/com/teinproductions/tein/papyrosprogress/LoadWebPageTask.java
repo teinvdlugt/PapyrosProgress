@@ -1,5 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import java.io.BufferedReader;
@@ -14,13 +15,16 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
 
     private String url = MainActivity.URL;
     private OnLoadedListener listener;
+    private Context context;
 
-    public LoadWebPageTask(String url, OnLoadedListener onLoadedListener) {
+    public LoadWebPageTask(Context context, String url, OnLoadedListener onLoadedListener) {
         this.url = url;
         this.listener = onLoadedListener;
+        this.context = context;
     }
 
-    public LoadWebPageTask(OnLoadedListener onLoadedListener) {
+    public LoadWebPageTask(Context context, OnLoadedListener onLoadedListener) {
+        this.context = context;
         this.listener = onLoadedListener;
     }
 
@@ -50,7 +54,9 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
             if (response == 404) return "404";
 
             InputStream is = conn.getInputStream();
-            return read(is);
+            String result = read(is);
+            MainActivity.saveCache(context, result);
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

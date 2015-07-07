@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Progrès de Papyros</string>
+    <string name="appwidget_contentDescription">Progès jusqu\'à la prochaine étape de Papyros</string>
+    <string name="cancel">Annuler</string>
+    <string name="click_on_the_widget_message">Appuyez sur le widget pour le configurer</string>
+    <string name="closed_at">Fermé le</string>
+    <string name="closed_issues">Problèmes résolus:</string>
+    <string name="created_at">Créé le</string>
+    <string name="due_on">Expecté le</string>
+    <string name="error404">Erreur 404</string>
+    <string name="error403">Erreur 403. Réessayez plus tard.</string>
+    <string name="no_network">Il n\'y a pas de connection au réseau</string>
+    <string name="ok">Valider</string>
+    <string name="open_issues">Problèmes non résolus:</string>
+    <string name="progress">Progrès:</string>
+    <string name="state">État:</string>
+    <string name="text_size">Taille de la police:</string>
+    <string name="unknown">Inconnu à ce jour</string>
+    <string name="updated_at">Mis à jour le</string>
+</resources>

@@ -52,6 +52,10 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
         int progress = 0;
 
         if (json == null) {
+            json = MainActivity.getCache(context);
+        }
+        if (json == null) {
+            // Old method, maybe there is still a progress stored. Otherwise the progress will be 0.
             progress = context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     .getInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, 0);
         } else {
@@ -81,12 +85,17 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            new LoadWebPageTask(new LoadWebPageTask.OnLoadedListener() {
+            new LoadWebPageTask(context, new LoadWebPageTask.OnLoadedListener() {
                 @Override
                 public void onLoaded(String json) {
                     ProgressWidgetSmall.onLoaded(context, appWidgetIds, json);
                 }
             }).execute();
+        } else {
+            String cache = MainActivity.getCache(context);
+            if (cache != null) {
+                onLoaded(context, appWidgetIds, cache);
+            }
         }
     }
 

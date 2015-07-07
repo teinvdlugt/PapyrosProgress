@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">Papyros Progress</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="appwidget_contentDescription">Progress to next milestone</string>
+    <string name="appwidget_contentDescription">Progress to next Papyros release milestone</string>
     <string name="text_size">Text size: </string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
@@ -12,7 +10,6 @@
     <string name="progress">Progress:</string>
     <string name="state">State:</string>
     <string name="unknown">Unknown</string>
-    <string name="papyros_milestones">Papyros milestones</string>
     <string name="no_network">Not connected to a network</string>
     <string name="click_on_the_widget_message">Click on the widget for settings</string>
     <string name="error403">Error 403. Please check again later.</string>

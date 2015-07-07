@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -52,6 +53,16 @@ public class ProgressWidget extends AppWidgetProvider {
         int progress = 0;
 
         if (json == null) {
+            json = MainActivity.getCache(context);
+            if (json == null) {
+                Log.d("cachethedata", "retrieve from cache failed");
+            } else {
+                Log.d("cachethedata", "retrieve from cache succeeded");
+            }
+
+        }
+        if (json == null) {
+            // Old method, maybe there is still a progress stored. Otherwise the progress will be 0.
             progress = context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     .getInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, 0);
         } else {
@@ -70,6 +81,7 @@ public class ProgressWidget extends AppWidgetProvider {
             }
         }
 
+
         CharSequence widgetText = progress + "%";
 
         views.setTextViewText(R.id.appwidget_text, widgetText);
@@ -85,12 +97,17 @@ public class ProgressWidget extends AppWidgetProvider {
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            new LoadWebPageTask(new LoadWebPageTask.OnLoadedListener() {
+            new LoadWebPageTask(context, new LoadWebPageTask.OnLoadedListener() {
                 @Override
                 public void onLoaded(String json) {
                     ProgressWidget.onLoaded(context, appWidgetIds, json);
                 }
             }).execute();
+        } else {
+            String cache = MainActivity.getCache(context);
+            if (cache != null) {
+                onLoaded(context, appWidgetIds, cache);
+            }
         }
     }
 

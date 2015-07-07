@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Papyros Voortgang</string>
+    <string name="appwidget_contentDescription">Voortgang naar de volgende Papyros mijlpaal</string>
+    <string name="cancel">Annuleren</string>
+    <string name="click_on_the_widget_message">Klik op de widget voor instellingen</string>
+    <string name="closed_at">Gesloten op:</string>
+    <string name="closed_issues">Opgeloste problemen</string>
+    <string name="created_at">Gemaakt op:</string>
+    <string name="due_on">Verwacht op:</string>
+    <string name="error403">403 Error. Probeer het laten opnieuw.</string>
+    <string name="error404">404 Error</string>
+    <string name="no_network">Er is geen verbinding met een netwerk.</string>
+    <string name="ok">OK</string>
+    <string name="open_issues">Onopgeloste problemen</string>
+    <string name="progress">Voorgang:</string>
+    <string name="state">Status:</string>
+    <string name="text_size">Text grootte:</string>
+    <string name="unknown">Onbekend</string>
+    <string name="updated_at">Bijgewerkt op:</string>
+</resources>

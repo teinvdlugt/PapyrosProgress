@@ -47,11 +47,16 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            new LoadWebPageTask(this).execute();
+            new LoadWebPageTask(getActivity(), this).execute();
         } else {
-            theView.findViewById(R.id.progress_bar).setVisibility(View.GONE);
-            errorTextView.setText(R.string.no_network);
-            errorTextView.setVisibility(View.VISIBLE);
+            String cache = MainActivity.getCache(getActivity());
+            if (cache != null) {
+                onLoaded(cache);
+            } else {
+                theView.findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                errorTextView.setText(R.string.no_network);
+                errorTextView.setVisibility(View.VISIBLE);
+            }
         }
 
         return theView;
