@@ -18,4 +18,5 @@
     <string name="text_size">Taille de la police:</string>
     <string name="unknown">Inconnu à ce jour</string>
     <string name="updated_at">Mis à jour le</string>
+    <string name="offline_snackbar">Mode hors ligne; les données peuvent ne plus être à jour.</string>
 </resources>
