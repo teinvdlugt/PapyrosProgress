@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -159,7 +160,7 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
         public void onBindViewHolder(MileStoneViewHolder viewHolder, int i) {
             String name = getString(R.string.unknown);
             String state = getString(R.string.unknown);
-            String createdAt = null, updatedAt = null, dueOn = null, closedAt = null;
+            String createdAt = null, updatedAt = null, dueOn = null, closedAt = null, githubURL = null;
             int openIssues = 0, closedIssues = 0, progress;
 
             try {
@@ -195,6 +196,11 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
                     closedAt = data[i].getString(MainActivity.CLOSED_AT);
                 }
             } catch (JSONException ignored) { /*ignore*/ }
+            try {
+                if (!data[i].isNull(MainActivity.GITHUB_URL)) {
+                    githubURL = data[i].getString(MainActivity.GITHUB_URL);
+                }
+            } catch (JSONException ignored) { /*ignore*/ }
 
             progress = closedIssues * 100 / (openIssues + closedIssues);
 
@@ -214,7 +220,19 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
             if (dueOn == null) viewHolder.dueOn.setVisibility(View.GONE);
             else viewHolder.dueOn.setText(getString(R.string.due_on) + " " + reformatDate(oldFormat, newFormat, dueOn));
             if (closedAt == null) viewHolder.closedAt.setVisibility(View.GONE);
-            else viewHolder.closedAt.setText(getString(R.string.closed_at) + " " + reformatDate(oldFormat, newFormat, closedAt));
+
+            if (githubURL == null) {
+                viewHolder.githubButton.setOnClickListener(null);
+                viewHolder.githubButton.setVisibility(View.GONE); // TODO doesn't look pretty but should not happen very often
+            } else {
+                final String finalGithubURL = githubURL;
+                viewHolder.githubButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MainActivity.openWebPage(getActivity(), finalGithubURL);
+                    }
+                });
+            }
         }
 
         @Override
@@ -237,6 +255,7 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
         TextView title, openIssues, closedIssues, progressTV, state,
                 createdAt, updatedAt, dueOn, closedAt;
         ProgressBar progressBar;
+        Button githubButton;
 
         public MileStoneViewHolder(View itemView) {
             super(itemView);
@@ -251,6 +270,7 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
             updatedAt = (TextView) itemView.findViewById(R.id.updatedAt);
             dueOn = (TextView) itemView.findViewById(R.id.dueOn);
             closedAt = (TextView) itemView.findViewById(R.id.closedAt);
+            githubButton = (Button) itemView.findViewById(R.id.github_button);
         }
     }
 }

@@ -1,16 +1,23 @@
 package com.teinproductions.tein.papyrosprogress;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.webkit.URLUtil;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String UPDATED_AT = "updated_at";
     public static final String DUE_ON = "due_on";
     public static final String CLOSED_AT = "closed_at";
+    public static final String GITHUB_URL = "html_url";
 
     public static final String CACHE_FILE = "papyros_cache";
 
@@ -32,6 +40,41 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.visitHomepage:
+                openWebPage(this, "http://papyros.io");
+                return true;
+            case R.id.visitGithub:
+                openWebPage(this, "https://github.com/papyros");
+                return true;
+        }
+
+        return false;
+    }
+
+    public static void openWebPage(Context context, String URL) {
+        if (URLUtil.isValidUrl(URL)) {
+            Uri webPage = Uri.parse(URL);
+            Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
+
+            // Check if the web intent is safe (if a browser is installed)
+            PackageManager packageManager = context.getPackageManager();
+            List activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+            if (activities.size() > 0) {
+                context.startActivity(intent);
+            }
+        }
     }
 
     public static String getCache(Context context) {
