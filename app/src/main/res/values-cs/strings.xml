@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Vývoj systému Papyros</string>
+    <string name="appwidget_contentDescription">Postup do dalšího milníku Papyros</string>
+    <string name="cancel">Zrušit</string>
+    <string name="click_on_the_widget_message">Klikněte na widget pro nastavení</string>
+    <string name="closed_at">Uzavřeno:</string>
+    <string name="ok">OK</string>
+    <string name="open_issues">Otevřené problémy:</string>
+    <string name="closed_issues">Uzavřené problémy:</string>
+    <string name="progress">Vývoj:</string>
+    <string name="state">Status:</string>
+    <string name="created_at">Vytvořeno:</string>
+    <string name="updated_at">Aktualizováno:</string>
+    <string name="due_on">Do:</string>
+    <string name="unknown">Neznámý</string>
+    <string name="no_network">Nepřipojen k síti</string>
+    <string name="error403">Error 403. Prosím zkontrolujte později.</string>
+    <string name="error404">Error 404</string>
+    <string name="offline_snackbar">Offile mód: data nemusí být aktuální</string>
+    <string name="text_size">Velikost textu:</string>
+</resources>
