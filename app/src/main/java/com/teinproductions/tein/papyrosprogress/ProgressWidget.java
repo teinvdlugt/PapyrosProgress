@@ -26,13 +26,7 @@ public class ProgressWidget extends AppWidgetProvider {
         updateAppWidgets(context, appWidgetIds);
     }
 
-    @Override
-    public void onEnabled(Context context) {
-        Toast.makeText(context, context.getString(R.string.click_on_the_widget_message), Toast.LENGTH_LONG).show();
-    }
-
-    static RemoteViews updateAppWidget(Context context,
-                                       int appWidgetId, String json) {
+    static RemoteViews updateAppWidget(Context context, int appWidgetId, String json) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.progress_widget);
 
         // Set text size of text view
@@ -54,12 +48,11 @@ public class ProgressWidget extends AppWidgetProvider {
 
         if (json == null) {
             json = MainActivity.getCache(context);
-            if (json == null) {
+            /*if (json == null) {
                 Log.d("cachethedata", "retrieve from cache failed");
             } else {
                 Log.d("cachethedata", "retrieve from cache succeeded");
-            }
-
+            }*/
         }
         if (json == null) {
             // Old method, maybe there is still a progress stored. Otherwise the progress will be 0.
