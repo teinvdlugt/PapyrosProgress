@@ -3,7 +3,6 @@
     <string name="app_name">Vývoj systému Papyros</string>
     <string name="appwidget_contentDescription">Postup do dalšího milníku Papyros</string>
     <string name="cancel">Zrušit</string>
-    <string name="click_on_the_widget_message">Klikněte na widget pro nastavení</string>
     <string name="closed_at">Uzavřeno:</string>
     <string name="ok">OK</string>
     <string name="open_issues">Otevřené problémy:</string>
@@ -19,4 +18,7 @@
     <string name="error404">Error 404</string>
     <string name="offline_snackbar">Offile mód: data nemusí být aktuální</string>
     <string name="text_size">Velikost textu:</string>
+    <string name="view_on_github">View on Github</string>
+    <string name="visit_github">Visit Github page</string>
+    <string name="visit_homepage">Visit Papyros homepage</string>
 </resources>

@@ -3,7 +3,6 @@
     <string name="app_name">Papyros Voortgang</string>
     <string name="appwidget_contentDescription">Voortgang naar de volgende Papyros mijlpaal</string>
     <string name="cancel">Annuleren</string>
-    <string name="click_on_the_widget_message">Klik op de widget voor instellingen</string>
     <string name="closed_at">Gesloten op:</string>
     <string name="closed_issues">Opgeloste problemen:</string>
     <string name="created_at">Gemaakt op:</string>
@@ -19,4 +18,7 @@
     <string name="unknown">Onbekend</string>
     <string name="updated_at">Bijgewerkt op:</string>
     <string name="offline_snackbar">Offline modus: gegevens kunnen verouderd zijn</string>
+    <string name="view_on_github">Bekijk op Github</string>
+    <string name="visit_github">Bezoek Github pagina</string>
+    <string name="visit_homepage">Bezoek Papyros homepagina</string>
 </resources>

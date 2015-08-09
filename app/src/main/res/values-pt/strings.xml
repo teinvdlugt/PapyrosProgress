@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Progresso do Papyros</string>
+    <string name="appwidget_contentDescription">Progresso para a liberação da próxima versão do Papyros</string>
+    <string name="text_size">Tamanho do texto:</string>
+    <string name="cancel">Cancelar</string>
+    <string name="ok">OK</string>
+    <string name="open_issues">Problemas ativos:</string>
+    <string name="closed_issues">Problemas resolvidos:</string>
+    <string name="progress">Progresso:</string>
+    <string name="state">Estado:</string>
+    <string name="created_at">Criado em:</string>
+    <string name="updated_at">Atualizado em:</string>
+    <string name="due_on">Previsto para:</string>
+    <string name="closed_at">Fechado em:</string>
+    <string name="unknown">Desconhecido</string>
+    <string name="no_network">Não conectado à internet</string>
+    <string name="error403">Erro 403. Por favor, verifique novamente mais tarde.</string>
+    <string name="error404">Erro 404</string>
+    <string name="offline_snackbar">Modo offline: os dados podem estar desatualizados</string>
+    <string name="view_on_github">View on Github</string>
+    <string name="visit_github">Visit Github page</string>
+    <string name="visit_homepage">Visit Papyros homepage</string>
+</resources>

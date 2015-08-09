@@ -11,7 +11,6 @@
     <string name="state">State:</string>
     <string name="unknown">Unknown</string>
     <string name="no_network">Not connected to a network</string>
-    <string name="click_on_the_widget_message">Click on the widget for settings</string>
     <string name="error403">Error 403. Please check again later.</string>
     <string name="error404">404 Error</string>
     <string name="created_at">Created at:</string>
