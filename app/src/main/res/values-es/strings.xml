@@ -18,7 +18,7 @@
     <string name="error403">Error 403. Inténtalo más tarde</string>
     <string name="error404">Error 404</string>
     <string name="offline_snackbar">Modo sin conexión. La información puede estar desactualizada</string>
-    <string name="visit_homepage">Visit Papyros homepage</string>
-    <string name="view_on_github">View on Github</string>
-    <string name="visit_github">Visit Github page</string>
+    <string name="visit_homepage">Abrir la página de Papyros</string>
+    <string name="view_on_github">Ver en Github</string>
+    <string name="visit_github">Abrir proyecto en Guthub</string>
 </resources>
