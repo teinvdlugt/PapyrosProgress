@@ -9,10 +9,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,17 +46,8 @@ public class ProgressWidget extends AppWidgetProvider {
 
         if (json == null) {
             json = MainActivity.getCache(context);
-            /*if (json == null) {
-                Log.d("cachethedata", "retrieve from cache failed");
-            } else {
-                Log.d("cachethedata", "retrieve from cache succeeded");
-            }*/
         }
-        if (json == null) {
-            // Old method, maybe there is still a progress stored. Otherwise the progress will be 0.
-            progress = context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                    .getInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, 0);
-        } else {
+        if (json != null) {
             try {
                 JSONArray jArray = new JSONArray(json);
                 JSONObject jObject = jArray.getJSONObject(0);
@@ -67,8 +56,6 @@ public class ProgressWidget extends AppWidgetProvider {
                 int closedIssues = jObject.getInt(MainActivity.CLOSED_ISSUES);
 
                 progress = closedIssues * 100 / (openIssues + closedIssues);
-                context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                        .edit().putInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, progress).apply();
 
                 // Nothing went wrong, so the web page contents are correct and can be cached
                 MainActivity.saveCache(context, json);

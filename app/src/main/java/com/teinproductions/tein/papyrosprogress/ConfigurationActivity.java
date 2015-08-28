@@ -18,7 +18,6 @@ public class ConfigurationActivity extends AppCompatActivity implements SeekBar.
 
     public static final String SHARED_PREFERENCES = "shared_preferences";
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
-    public static final String LAST_UPDATED_PROGRESS = "last_updated_progress";
 
     private SeekBar seekBar;
     private TextView textSizeTextView;

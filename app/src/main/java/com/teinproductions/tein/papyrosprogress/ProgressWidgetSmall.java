@@ -49,11 +49,7 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
         if (json == null) {
             json = MainActivity.getCache(context);
         }
-        if (json == null) {
-            // Old method, maybe there is still a progress stored. Otherwise the progress will be 0.
-            progress = context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                    .getInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, 0);
-        } else {
+        if (json != null) {
             try {
                 JSONArray jArray = new JSONArray(json);
                 JSONObject jObject = jArray.getJSONObject(0);
@@ -62,8 +58,6 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
                 int closedIssues = jObject.getInt(MainActivity.CLOSED_ISSUES);
 
                 progress = closedIssues * 100 / (openIssues + closedIssues);
-                context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                        .edit().putInt(ConfigurationActivity.LAST_UPDATED_PROGRESS, progress).apply();
 
                 // Nothing went wrong, so the web page contents are correct and can be cached
                 MainActivity.saveCache(context, json);
