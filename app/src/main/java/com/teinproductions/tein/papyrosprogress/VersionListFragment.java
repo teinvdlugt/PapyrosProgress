@@ -152,7 +152,7 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
 
         @Override
         public MileStoneViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View itemView = LayoutInflater.from(getActivity()).inflate(R.layout.list_item, viewGroup, false);
+            View itemView = LayoutInflater.from(getActivity()).inflate(R.layout.list_item_milestone, viewGroup, false);
             return new MileStoneViewHolder(itemView);
         }
 

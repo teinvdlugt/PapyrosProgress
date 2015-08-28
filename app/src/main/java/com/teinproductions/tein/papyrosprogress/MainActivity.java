@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
 
             // Set list adapter
             Log.d("papyrosprogress", "set recycler adapter");
-            recyclerView.setAdapter(new PapyrosRecyclerAdapter(jObjects, this));
+            recyclerView.setAdapter(new PapyrosRecyclerAdapter(jObjects, 33, this));
 
             // Fade out progress bar and fade in listView, if API >= 14
             int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
