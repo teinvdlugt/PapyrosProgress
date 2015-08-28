@@ -1,7 +1,8 @@
 package com.teinproductions.tein.papyrosprogress;
 
-import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,11 +16,6 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
 
     private String url = MainActivity.URL;
     private OnLoadedListener listener;
-
-    public LoadWebPageTask(String url, OnLoadedListener onLoadedListener) {
-        this.url = url;
-        this.listener = onLoadedListener;
-    }
 
     public LoadWebPageTask(OnLoadedListener onLoadedListener) {
         this.listener = onLoadedListener;
@@ -73,6 +69,7 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
+        Log.d("papyrosprogress", "onLoaded");
         listener.onLoaded(s);
     }
 
