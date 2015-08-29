@@ -1,5 +1,7 @@
 package com.teinproductions.tein.papyrosprogress;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
@@ -28,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -187,6 +191,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.visitGithub:
                 openWebPage(this, "https://github.com/papyros");
                 return true;
+            case R.id.notification:
+                Log.d("notification", "clicked menu item");
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        this, 1, new Intent(this, NotificationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis() + 500, pendingIntent);
         }
 
         return false;

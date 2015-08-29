@@ -11,4 +11,9 @@
         android:orderInCategory="101"
         app:showAsAction="never"
         android:id="@+id/visitGithub" />
+    <item
+        android:title="Issue notification"
+        android:orderInCategory="102"
+        app:showAsAction="never"
+        android:id="@+id/notification" />
 </menu>
