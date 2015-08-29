@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-//        setResult(RESULT_CANCELED);
 
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         srLayout.setOnRefreshListener(this);
@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void restoreAppWidgetStuff() {
+        if (Build.VERSION.SDK_INT < 16) return;
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             appWidgetId = extras.getInt(
