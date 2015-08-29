@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity
                         this, 1, new Intent(this, NotificationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis() + 500, pendingIntent);
+                alarmManager.setInexactRepeating(AlarmManager.RTC, 0, 3600000, pendingIntent);
         }
 
         return false;

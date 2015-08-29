@@ -27,8 +27,7 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
     public void onReceive(Context context, Intent intent) {
         Log.d("notification", "broadcast received");
         this.context = context;
-        issueNotification(0, 0);
-        /*try {
+        try {
             // Parse cache
             String cache = MainActivity.getCache(context);
             parseOld(cache);
@@ -37,7 +36,7 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
             new LoadWebPageTask(this).execute();
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     @Override
@@ -45,20 +44,20 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
         try {
             parseNew(result);
 
-            int progressOld = closedOld / (closedOld + openOld) * 100;
-            int progressNew = closedNew / (closedNew + openNew) * 100;
+            int progressOld = closedOld * 100 / (openOld + closedOld);
+            int progressNew = closedNew * 100 / (openNew + closedNew);
 
-            if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
-                issueNotification(progressOld, progressNew);
-            }
+            //if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
+            issueNotification(progressOld, progressNew);
+            //}
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private void issueNotification(int progressOld, int progressNew) {
-        String title = "Title";
-        String message = "Message";
+        String title = "Papyros Progress";
+        String message = milestoneTitleNew + " changed from " + progressOld + "% to " + progressNew + "%!";
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
