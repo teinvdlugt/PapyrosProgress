@@ -1,13 +1,12 @@
 package com.teinproductions.tein.papyrosprogress;
 
-import android.animation.Animator;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -49,9 +48,15 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
 
     public static final String CACHE_FILE = "papyros_cache";
 
+    public static final String SHARED_PREFERENCES = "shared_preferences";
+    public static final String TEXT_SIZE_PREFERENCE = "text_size";
+
     private RecyclerView recyclerView;
-    private TextView errorTextView;
-    private ProgressBar progressBar;
+
+    private int appWidgetId;
+    private int textSize = PapyrosRecyclerAdapter.DONT_SHOW_TEXT_SIZE_TILE;
+    private JSONObject[] data;
+    private String errorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,109 +65,94 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        errorTextView = (TextView) findViewById(R.id.noNetwork_textView);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        load();
+        reloadData();
     }
 
-    private void load() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        restoreAppWidgetStuff();
+    }
+
+    private void restoreAppWidgetStuff() {
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            appWidgetId = extras.getInt(
+                    AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+            textSize = getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                    .getInt(TEXT_SIZE_PREFERENCE + appWidgetId, 24);
+        }
+    }
+
+    private void updateRecyclerAdapter() {
+        recyclerView.setAdapter(new PapyrosRecyclerAdapter(data, textSize, this));
+        Log.d("updatestuff", "recyclerView updated");
+    }
+
+    private void showErrorMessage() {
+        if (errorMessage != null) {
+            Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private void reloadData() {
+        data = new JSONObject[0];
+        updateRecyclerAdapter();
+        // First try with cache:
+        String cache = getCache(this);
+        if (cache != null) {
+            try {
+                parseJSON(cache);
+                updateRecyclerAdapter();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Now try from the web:
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
             new LoadWebPageTask(this).execute();
         } else {
-            String cache = getCache(this);
-            if (cache != null) {
-                onLoaded(cache);
-                showNetworkSnackbar();
-            } else {
-                progressBar.setVisibility(View.GONE);
-                errorTextView.setText(R.string.no_network);
-                errorTextView.setVisibility(View.VISIBLE);
-            }
+            errorMessage = getString(R.string.offline_snackbar);
+            showErrorMessage();
         }
     }
 
     @Override
     public void onLoaded(String json) {
         if ("403".equals(json) || "404".equals(json)) {
-            String cache = getCache(this);
-            if (cache != null && !cache.equals(json)) { // To prevent infinite recursion
-                onLoaded(cache);
-                showNetworkSnackbar();
-            } else {
-                errorTextView.setText("403".equals(json) ? R.string.error403 : R.string.error404);
-                errorTextView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
+            errorMessage = getString("403".equals(json) ? R.string.error403 : R.string.error404);
+            showErrorMessage();
             return;
         }
 
         try {
-            JSONArray jArray = new JSONArray(json);
-            JSONObject[] jObjects = new JSONObject[jArray.length()];
-            for (int i = 0; i < jObjects.length; i++) {
-                jObjects[i] = jArray.getJSONObject(i);
-            }
-
-            // Set list adapter
-            Log.d("papyrosprogress", "set recycler adapter");
-            recyclerView.setAdapter(new PapyrosRecyclerAdapter(jObjects, 33, this));
-
-            // Fade out progress bar and fade in listView, if API >= 14
-            int duration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-            if (Build.VERSION.SDK_INT >= 14) {
-                progressBar.animate().alpha(0f).setDuration(duration)
-                        .setListener(new Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                progressBar.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-                            }
-                        }).start();
-                recyclerView.setAlpha(0f);
-                recyclerView.setVisibility(View.VISIBLE);
-                recyclerView.animate().alpha(1f).setDuration(duration).start();
-                Log.d("papyrosprogress", "recyclerView faded in");
-            } else {
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-            }
+            parseJSON(json);
+            recyclerView.setAdapter(new PapyrosRecyclerAdapter(data, textSize, this));
 
             // Nothing went wrong, so the web page contents are correct and can be cached
             saveCache(this, json);
-
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
             // This means the retrieved web page was not the right one
-            String cache = getCache(this);
-            if (cache != null && !cache.equals(json)) { // To prevent infinite recursion
-                onLoaded(cache);
-                showNetworkSnackbar();
-            } else {
-                errorTextView.setText(R.string.error404);
-                errorTextView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
+            errorMessage = getString(R.string.error404);
         }
     }
 
-    private void showNetworkSnackbar() {
-        Snackbar.make(recyclerView, getString(R.string.offline_snackbar), Snackbar.LENGTH_LONG).show();
+    private void parseJSON(String json) throws JSONException {
+        JSONArray jArray = new JSONArray(json);
+        data = new JSONObject[jArray.length()];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = jArray.getJSONObject(i);
+        }
     }
 
     @Override
@@ -226,7 +216,6 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
             FileOutputStream fos = context.openFileOutput(CACHE_FILE, MODE_PRIVATE);
             fos.write(cache.getBytes());
             fos.close();
-            Log.d("cachethedata", "cached");
         } catch (IOException e) {
             e.printStackTrace();
         }

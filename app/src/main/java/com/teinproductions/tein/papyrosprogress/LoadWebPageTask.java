@@ -1,8 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,7 +39,6 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
             conn.setDoInput(true);
             conn.connect();
             int response = conn.getResponseCode();
-            //Log.d("COFFEE", "Response is " + response);
 
             if (response == 403) return "403";
             if (response == 404) return "404";
@@ -69,7 +66,6 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        Log.d("papyrosprogress", "onLoaded");
         listener.onLoaded(s);
     }
 

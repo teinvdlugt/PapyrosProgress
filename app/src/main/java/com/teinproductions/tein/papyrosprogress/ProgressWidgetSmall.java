@@ -31,13 +31,13 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
 
         // Set text size of text view
         if (Build.VERSION.SDK_INT >= 16) {
-            int textSize = context.getSharedPreferences(ConfigurationActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                    .getInt(ConfigurationActivity.TEXT_SIZE_PREFERENCE + appWidgetId, 24);
+            int textSize = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                    .getInt(MainActivity.TEXT_SIZE_PREFERENCE + appWidgetId, 24);
             views.setTextViewTextSize(R.id.appwidget_text, TypedValue.COMPLEX_UNIT_SP, textSize);
         }
 
         // Set on click listener
-        Intent configIntent = new Intent(context, ConfigurationSmallActivity.class);
+        Intent configIntent = new Intent(context, MainActivity.class);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         configIntent.setData(Uri.parse("CONFIGURE_THE_WIDGET://widget/id" + appWidgetId)); // Some rubbish to make the intent unique
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);

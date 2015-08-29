@@ -20,9 +20,11 @@ import java.util.Date;
 
 
 public class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static final int DONT_SHOW_TEXT_SIZE_TILE = -1;
+
     private JSONObject[] data;
     private Context context;
-    private int textSize = -1;
+    private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
 
     private static final int ITEM_VIEW_TYPE_TEXT_SIZE = 0;
     private static final int ITEM_VIEW_TYPE_MILESTONE = 1;
