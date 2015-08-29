@@ -14,13 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
 
     private RecyclerView recyclerView;
+    private PapyrosRecyclerAdapter adapter;
     private SwipeRefreshLayout srLayout;
 
     private int appWidgetId;
@@ -68,12 +65,14 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         srLayout.setOnRefreshListener(this);
 
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new PapyrosRecyclerAdapter(data, textSize, this);
+        recyclerView.setAdapter(adapter);
+
         restoreAppWidgetStuff();
-        updateRecyclerAdapter();
         onRefresh();
     }
 
@@ -91,8 +90,10 @@ public class MainActivity extends AppCompatActivity
                     AppWidgetManager.INVALID_APPWIDGET_ID);
         }
         if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            textSize = getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                    .getInt(TEXT_SIZE_PREFERENCE + appWidgetId, 24);
+            adapter.setTextSize(getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                    .getInt(TEXT_SIZE_PREFERENCE + appWidgetId, 24));
+        } else {
+            adapter.setTextSize(PapyrosRecyclerAdapter.DONT_SHOW_TEXT_SIZE_TILE);
         }
     }
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity
         if (cache != null) {
             try {
                 parseJSON(cache);
-                updateRecyclerAdapter();
+                adapter.setData(data);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity
 
         try {
             parseJSON(json);
-            recyclerView.setAdapter(new PapyrosRecyclerAdapter(data, textSize, this));
+            adapter.setData(data);
 
             // Nothing went wrong, so the web page contents are correct and can be cached
             saveCache(this, json);
@@ -150,11 +151,6 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < data.length; i++) {
             data[i] = jArray.getJSONObject(i);
         }
-    }
-
-    private void updateRecyclerAdapter() {
-        recyclerView.setAdapter(new PapyrosRecyclerAdapter(data, textSize, this));
-        Log.d("updatestuff", "recyclerView updated");
     }
 
     private void showErrorMessage() {

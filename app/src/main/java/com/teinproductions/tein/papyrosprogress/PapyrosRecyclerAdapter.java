@@ -40,6 +40,17 @@ public class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.context = context;
     }
 
+    public void setData(JSONObject[] data) {
+        this.data = data;
+        notifyDataSetChanged();
+    }
+
+    public void setTextSize(int textSize) {
+        //boolean insert = this.textSize == DONT_SHOW_TEXT_SIZE_TILE && textSize != DONT_SHOW_TEXT_SIZE_TILE;
+        this.textSize = textSize;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position) {
         if (textSize != -1 && position == 0) {
