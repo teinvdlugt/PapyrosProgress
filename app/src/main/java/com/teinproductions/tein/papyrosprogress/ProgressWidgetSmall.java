@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,8 +24,8 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
         updateAppWidgets(context, appWidgetIds);
     }
 
-    static RemoteViews updateAppWidget(Context context,
-                                       int appWidgetId, String json) {
+    private static RemoteViews updateAppWidget(Context context,
+                                               int appWidgetId, String json) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.progress_widget_small);
 
         // Set text size of text view
@@ -91,7 +90,7 @@ public class ProgressWidgetSmall extends AppWidgetProvider {
         }
     }
 
-    static void onLoaded(Context context, int[] appWidgetIds, String json) {
+    private static void onLoaded(Context context, int[] appWidgetIds, String json) {
         if (appWidgetIds == null) return;
 
         if ("404".equals(json) || "403".equals(json)) {

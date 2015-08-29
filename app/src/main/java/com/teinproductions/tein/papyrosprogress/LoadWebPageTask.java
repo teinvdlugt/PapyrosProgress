@@ -10,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
+class LoadWebPageTask extends AsyncTask<Void, Void, String> {
 
     private String url = MainActivity.URL;
     private OnLoadedListener listener;
@@ -18,15 +18,6 @@ public class LoadWebPageTask extends AsyncTask<Void, Void, String> {
     public LoadWebPageTask(OnLoadedListener onLoadedListener) {
         this.listener = onLoadedListener;
     }
-
-    public void setListener(OnLoadedListener listener) {
-        this.listener = listener;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
 
     @Override
     protected String doInBackground(Void... params) {

@@ -22,7 +22,7 @@ public class ConfigurationActivity extends AppCompatActivity implements SeekBar.
     private SeekBar seekBar;
     private TextView textSizeTextView;
 
-    int appWidgetId;
+    private int appWidgetId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

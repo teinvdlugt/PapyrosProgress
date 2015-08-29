@@ -1,7 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ public class ConfigurationSmallActivity extends AppCompatActivity implements See
     private SeekBar seekBar;
     private TextView textSizeTextView;
 
-    int appWidgetId;
+    private int appWidgetId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

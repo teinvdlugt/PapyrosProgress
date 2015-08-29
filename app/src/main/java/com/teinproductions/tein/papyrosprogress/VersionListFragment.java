@@ -30,9 +30,9 @@ import java.util.Date;
 
 public class VersionListFragment extends Fragment implements LoadWebPageTask.OnLoadedListener {
 
-    RecyclerView recyclerView;
-    TextView errorTextView;
-    ProgressBar progressBar;
+    private RecyclerView recyclerView;
+    private TextView errorTextView;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -241,7 +241,7 @@ public class VersionListFragment extends Fragment implements LoadWebPageTask.OnL
         }
     }
 
-    public static String reformatDate(DateFormat oldFormat, DateFormat newFormat, String dateStr) {
+    private static String reformatDate(DateFormat oldFormat, DateFormat newFormat, String dateStr) {
         try {
             Date date = oldFormat.parse(dateStr);
             return newFormat.format(date);

@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity
     public static final String CLOSED_AT = "closed_at";
     public static final String GITHUB_URL = "html_url";
 
-    public static final String CACHE_FILE = "papyros_cache";
-
+    private static final String CACHE_FILE = "papyros_cache";
     public static final String SHARED_PREFERENCES = "shared_preferences";
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
 
@@ -54,7 +53,6 @@ public class MainActivity extends AppCompatActivity
     private SwipeRefreshLayout srLayout;
 
     private int appWidgetId;
-    private int textSize = PapyrosRecyclerAdapter.DONT_SHOW_TEXT_SIZE_TILE;
     private JSONObject[] data = new JSONObject[0];
     private String errorMessage;
 
@@ -69,7 +67,7 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PapyrosRecyclerAdapter(data, textSize, this);
+        adapter = new PapyrosRecyclerAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
         restoreAppWidgetStuff();

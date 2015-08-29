@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int DONT_SHOW_TEXT_SIZE_TILE = -1;
 
     private JSONObject[] data;
@@ -28,12 +28,6 @@ public class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private static final int ITEM_VIEW_TYPE_TEXT_SIZE = 0;
     private static final int ITEM_VIEW_TYPE_MILESTONE = 1;
-
-    public PapyrosRecyclerAdapter(JSONObject[] data, int textSize, Context context) {
-        this.data = data;
-        this.textSize = textSize;
-        this.context = context;
-    }
 
     public PapyrosRecyclerAdapter(JSONObject[] data, Context context) {
         this.data = data;
@@ -97,9 +91,9 @@ public class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
 class MileStoneViewHolder extends RecyclerView.ViewHolder {
-    TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
+    private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
             createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
     Button githubButton;
 
     public MileStoneViewHolder(View itemView) {
@@ -118,6 +112,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         githubButton = (Button) itemView.findViewById(R.id.github_button);
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public void showData(final Context context, JSONObject data) {
         String name = context.getString(R.string.unknown);
         String state = context.getString(R.string.unknown);
@@ -198,7 +193,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public static String reformatDate(DateFormat oldFormat, DateFormat newFormat, String dateStr) {
+    private static String reformatDate(DateFormat oldFormat, DateFormat newFormat, String dateStr) {
         try {
             Date date = oldFormat.parse(dateStr);
             return newFormat.format(date);
@@ -211,9 +206,9 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
 
 
 class TextSizeViewHolder extends RecyclerView.ViewHolder {
-    SeekBar seekBar;
-    TextView textSizeTextView;
-    Button okButton, cancelButton;
+    private SeekBar seekBar;
+    private TextView textSizeTextView;
+    private Button okButton, cancelButton;
 
     public TextSizeViewHolder(View itemView) {
         super(itemView);
