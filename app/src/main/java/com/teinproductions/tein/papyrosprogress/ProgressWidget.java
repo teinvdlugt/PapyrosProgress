@@ -37,6 +37,7 @@ public class ProgressWidget extends AppWidgetProvider {
         // Set on click listener
         Intent configIntent = new Intent(context, MainActivity.class);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        configIntent.putExtra(MainActivity.EXTRA_SMALL_WIDGET, false);
         configIntent.setData(Uri.parse("CONFIGURE_THE_WIDGET://widget/id" + appWidgetId)); // Some rubbish to make the intent unique
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         views.setOnClickPendingIntent(R.id.root, pendingIntent);

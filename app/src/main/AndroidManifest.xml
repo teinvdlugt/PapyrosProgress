@@ -23,12 +23,6 @@
         </activity>
 
         <!-- The config activities-->
-        <activity
-            android:name=".ConfigurationActivity"
-            android:label="@string/app_name" />
-        <activity
-            android:name=".ConfigurationSmallActivity"
-            android:label="@string/app_name" />
 
         <!-- The widgets -->
         <receiver android:name=".ProgressWidget">

@@ -31,7 +31,8 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements LoadWebPageTask.OnLoadedListener, SwipeRefreshLayout.OnRefreshListener {
+        implements LoadWebPageTask.OnLoadedListener, SwipeRefreshLayout.OnRefreshListener,
+        PapyrosRecyclerAdapter.OnTextSizeButtonClickListener {
 
     public static final String URL = "https://api.github.com/repos/papyros/papyros-shell/milestones";
     public static final String MILESTONE_TITLE = "title";
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     public static final String CLOSED_AT = "closed_at";
     public static final String GITHUB_URL = "html_url";
 
+    public static final String EXTRA_SMALL_WIDGET = "small_widget";
     private static final String CACHE_FILE = "papyros_cache";
     public static final String SHARED_PREFERENCES = "shared_preferences";
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
@@ -61,13 +63,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+//        setResult(RESULT_CANCELED);
 
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         srLayout.setOnRefreshListener(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PapyrosRecyclerAdapter(data, this);
+        adapter = new PapyrosRecyclerAdapter(this, data, this);
         recyclerView.setAdapter(adapter);
 
         restoreAppWidgetStuff();
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         if (cache != null) {
             try {
                 parseJSON(cache);
-                adapter.setData(data);
+                adapter.setMilestones(data);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -132,7 +135,7 @@ public class MainActivity extends AppCompatActivity
 
         try {
             parseJSON(json);
-            adapter.setData(data);
+            adapter.setMilestones(data);
 
             // Nothing went wrong, so the web page contents are correct and can be cached
             saveCache(this, json);
@@ -149,6 +152,16 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < data.length; i++) {
             data[i] = jArray.getJSONObject(i);
         }
+    }
+
+    @Override
+    public void onClickApply(int progress) {
+        getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
+                .putInt(TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
+
+        boolean smallWidget = getIntent().getBooleanExtra(EXTRA_SMALL_WIDGET, false);
+        if (smallWidget) ProgressWidgetSmall.updateAppWidgets(this, new int[]{appWidgetId});
+        else ProgressWidget.updateAppWidgets(this, new int[]{appWidgetId});
     }
 
     private void showErrorMessage() {

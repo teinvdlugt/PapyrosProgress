@@ -22,25 +22,26 @@ import java.util.Date;
 class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int DONT_SHOW_TEXT_SIZE_TILE = -1;
 
-    private JSONObject[] data;
-    private Context context;
-    private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
-
     private static final int ITEM_VIEW_TYPE_TEXT_SIZE = 0;
     private static final int ITEM_VIEW_TYPE_MILESTONE = 1;
 
-    public PapyrosRecyclerAdapter(JSONObject[] data, Context context) {
-        this.data = data;
+    private JSONObject[] milestones;
+    private Context context;
+    private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
+    private OnTextSizeButtonClickListener listener;
+
+    public PapyrosRecyclerAdapter(Context context, JSONObject[] milestones, OnTextSizeButtonClickListener listener) {
         this.context = context;
+        this.milestones = milestones;
+        this.listener = listener;
     }
 
-    public void setData(JSONObject[] data) {
-        this.data = data;
+    public void setMilestones(JSONObject[] milestones) {
+        this.milestones = milestones;
         notifyDataSetChanged();
     }
 
     public void setTextSize(int textSize) {
-        //boolean insert = this.textSize == DONT_SHOW_TEXT_SIZE_TILE && textSize != DONT_SHOW_TEXT_SIZE_TILE;
         this.textSize = textSize;
         notifyDataSetChanged();
     }
@@ -62,7 +63,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return new MileStoneViewHolder(itemViewMilestone);
             case ITEM_VIEW_TYPE_TEXT_SIZE:
                 View itemViewTextSize = LayoutInflater.from(context).inflate(R.layout.list_item_text_size, viewGroup, false);
-                return new TextSizeViewHolder(itemViewTextSize);
+                return new TextSizeViewHolder(itemViewTextSize, listener);
         }
         return null;
     }
@@ -72,7 +73,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (getItemViewType(position)) {
             case ITEM_VIEW_TYPE_MILESTONE:
                 if (textSize != -1) position--;
-                ((MileStoneViewHolder) viewHolder).showData(context, data[position]);
+                ((MileStoneViewHolder) viewHolder).showData(context, milestones[position]);
                 break;
             case ITEM_VIEW_TYPE_TEXT_SIZE:
                 ((TextSizeViewHolder) viewHolder).showData(context, textSize);
@@ -82,10 +83,14 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemCount() {
         if (textSize == -1) {
-            return data.length;
+            return milestones.length;
         } else {
-            return data.length + 1;
+            return milestones.length + 1;
         }
+    }
+
+    interface OnTextSizeButtonClickListener {
+        void onClickApply(int progress);
     }
 }
 
@@ -208,15 +213,22 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
 class TextSizeViewHolder extends RecyclerView.ViewHolder {
     private SeekBar seekBar;
     private TextView textSizeTextView;
-    private Button okButton, cancelButton;
+    private PapyrosRecyclerAdapter.OnTextSizeButtonClickListener mListener;
 
-    public TextSizeViewHolder(View itemView) {
+    public TextSizeViewHolder(View itemView, PapyrosRecyclerAdapter.OnTextSizeButtonClickListener listener) {
         super(itemView);
+        this.mListener = listener;
 
         seekBar = (SeekBar) itemView.findViewById(R.id.textSize_SeekBar);
         textSizeTextView = (TextView) itemView.findViewById(R.id.textSize_textView);
-        okButton = (Button) itemView.findViewById(R.id.okButton);
-        cancelButton = (Button) itemView.findViewById(R.id.cancelButton);
+        Button applyButton = (Button) itemView.findViewById(R.id.okButton);
+
+        applyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) mListener.onClickApply(seekBar.getProgress());
+            }
+        });
     }
 
     public void showData(final Context context, int textSize) {
