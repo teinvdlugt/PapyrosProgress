@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +34,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements LoadWebPageTask.OnLoadedListener {
+public class MainActivity extends AppCompatActivity
+        implements LoadWebPageTask.OnLoadedListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final String URL = "https://api.github.com/repos/papyros/papyros-shell/milestones";
     public static final String MILESTONE_TITLE = "title";
@@ -52,10 +54,11 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
 
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout srLayout;
 
     private int appWidgetId;
     private int textSize = PapyrosRecyclerAdapter.DONT_SHOW_TEXT_SIZE_TILE;
-    private JSONObject[] data;
+    private JSONObject[] data = new JSONObject[0];
     private String errorMessage;
 
     @Override
@@ -64,15 +67,19 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
+        srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        srLayout.setOnRefreshListener(this);
 
-        reloadData();
+        restoreAppWidgetStuff();
+        updateRecyclerAdapter();
+        onRefresh();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onRestart() {
+        super.onRestart();
         restoreAppWidgetStuff();
     }
 
@@ -89,20 +96,8 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
         }
     }
 
-    private void updateRecyclerAdapter() {
-        recyclerView.setAdapter(new PapyrosRecyclerAdapter(data, textSize, this));
-        Log.d("updatestuff", "recyclerView updated");
-    }
-
-    private void showErrorMessage() {
-        if (errorMessage != null) {
-            Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    private void reloadData() {
-        data = new JSONObject[0];
-        updateRecyclerAdapter();
+    @Override
+    public void onRefresh() {
         // First try with cache:
         String cache = getCache(this);
         if (cache != null) {
@@ -119,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
+            srLayout.setRefreshing(true);
             new LoadWebPageTask(this).execute();
         } else {
             errorMessage = getString(R.string.offline_snackbar);
@@ -128,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
 
     @Override
     public void onLoaded(String json) {
+        srLayout.setRefreshing(false);
         if ("403".equals(json) || "404".equals(json)) {
             errorMessage = getString("403".equals(json) ? R.string.error403 : R.string.error404);
             showErrorMessage();
@@ -152,6 +149,17 @@ public class MainActivity extends AppCompatActivity implements LoadWebPageTask.O
         data = new JSONObject[jArray.length()];
         for (int i = 0; i < data.length; i++) {
             data[i] = jArray.getJSONObject(i);
+        }
+    }
+
+    private void updateRecyclerAdapter() {
+        recyclerView.setAdapter(new PapyrosRecyclerAdapter(data, textSize, this));
+        Log.d("updatestuff", "recyclerView updated");
+    }
+
+    private void showErrorMessage() {
+        if (errorMessage != null) {
+            Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
         }
     }
 
