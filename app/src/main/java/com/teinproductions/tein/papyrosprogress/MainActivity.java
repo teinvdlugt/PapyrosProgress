@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context, 1, new Intent(context, NotificationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (set) alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
+        if (set) alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 AlarmManager.INTERVAL_HOUR, AlarmManager.INTERVAL_HOUR, pendingIntent);
         else alarmManager.cancel(pendingIntent);
 
