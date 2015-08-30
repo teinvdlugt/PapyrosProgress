@@ -8,8 +8,8 @@ android {
         applicationId "com.teinproductions.tein.papyrosprogress"
         minSdkVersion 11
         targetSdkVersion 23
-        versionCode 10
-        versionName "1.0.5"
+        versionCode 11
+        versionName "1.0.6"
     }
     buildTypes {
         release {
