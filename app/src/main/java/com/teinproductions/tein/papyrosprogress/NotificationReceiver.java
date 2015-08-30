@@ -61,6 +61,7 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
 
             if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
                 issueNotification(progressOld, progressNew);
+                MainActivity.saveCache(context, result);
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
