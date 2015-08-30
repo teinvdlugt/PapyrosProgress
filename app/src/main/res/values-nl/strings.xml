@@ -21,4 +21,8 @@
     <string name="view_on_github">Bekijk op Github</string>
     <string name="visit_github">Bezoek Github pagina</string>
     <string name="visit_homepage">Bezoek Papyros homepagina</string>
+    <string name="show_notification">Meldingen weergeven</string>
+    <string name="notific_msg_text_format">%1$s is veranderd van %2$d naar %3$d%%!</string>
+    <string name="notification_dialog_message">Wil je meldingen ontvangen wanneer de voortgang is veranderd?</string>
+    <string name="notification_dialog_title">Meldingen</string>
 </resources>

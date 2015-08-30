@@ -8,8 +8,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,17 +26,28 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("notification", "broadcast received");
         this.context = context;
-        try {
-            // Parse cache
-            String cache = MainActivity.getCache(context);
-            parseOld(cache);
 
-            // Parse web page
-            new LoadWebPageTask(this).execute();
-        } catch (JSONException | NullPointerException e) {
-            e.printStackTrace();
+        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
+            boolean notifications = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES,
+                    Context.MODE_PRIVATE).getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);
+            if (notifications) MainActivity.setOrCancelAlarm(context, true);
+        }
+
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            try {
+                // Parse cache
+                String cache = MainActivity.getCache(context);
+                parseOld(cache);
+
+                // Parse web page
+                new LoadWebPageTask(this).execute();
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -47,17 +59,18 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
             int progressOld = closedOld * 100 / (openOld + closedOld);
             int progressNew = closedNew * 100 / (openNew + closedNew);
 
-            //if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
-            issueNotification(progressOld, progressNew);
-            //}
-        } catch (JSONException e) {
+            if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
+                issueNotification(progressOld, progressNew);
+            }
+        } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
     }
 
     private void issueNotification(int progressOld, int progressNew) {
-        String title = "Papyros Progress";
-        String message = milestoneTitleNew + " changed from " + progressOld + "% to " + progressNew + "%!";
+        String title = context.getString(R.string.app_name);
+        String message = String.format(context.getString(R.string.notific_msg_text_format),
+                milestoneTitleNew, progressOld, progressNew);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);

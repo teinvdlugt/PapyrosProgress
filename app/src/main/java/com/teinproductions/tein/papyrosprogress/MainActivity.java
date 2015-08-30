@@ -3,21 +3,25 @@ package com.teinproductions.tein.papyrosprogress;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
@@ -31,7 +35,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity
     private static final String CACHE_FILE = "papyros_cache";
     public static final String SHARED_PREFERENCES = "shared_preferences";
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
+    public static final String NOTIFICATION_PREFERENCE = "notifications";
+    private static final String NOTIFICATION_ASKED_PREFERENCE = "notification_asked";
 
     private RecyclerView recyclerView;
     private PapyrosRecyclerAdapter adapter;
@@ -79,12 +84,39 @@ public class MainActivity extends AppCompatActivity
 
         restoreAppWidgetStuff();
         onRefresh();
+
+        checkNotificationsAsked();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         restoreAppWidgetStuff();
+    }
+
+    private void checkNotificationsAsked() {
+        final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        if (!preferences.getBoolean(NOTIFICATION_ASKED_PREFERENCE, false)) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.notification_dialog_title))
+                    .setMessage(getString(R.string.notification_dialog_message))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            preferences.edit().putBoolean(NOTIFICATION_PREFERENCE, true).apply();
+                            setOrCancelAlarm(MainActivity.this, true);
+                            invalidateOptionsMenu();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            preferences.edit().putBoolean(NOTIFICATION_PREFERENCE, false).apply();
+                            invalidateOptionsMenu();
+                        }
+                    }).create().show();
+            preferences.edit().putBoolean(NOTIFICATION_ASKED_PREFERENCE, true).apply();
+        }
     }
 
     private void restoreAppWidgetStuff() {
@@ -179,6 +211,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        boolean notifications = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(NOTIFICATION_PREFERENCE, false);
+        menu.findItem(R.id.notification).setChecked(notifications);
+
         return true;
     }
 
@@ -192,15 +228,39 @@ public class MainActivity extends AppCompatActivity
                 openWebPage(this, "https://github.com/papyros");
                 return true;
             case R.id.notification:
-                Log.d("notification", "clicked menu item");
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                        this, 1, new Intent(this, NotificationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis() + 500, pendingIntent);
-                alarmManager.setInexactRepeating(AlarmManager.RTC, 0, 3600000, pendingIntent);
+                if (item.isChecked()) {
+                    // Cancel alarm
+                    item.setChecked(false);
+                    setOrCancelAlarm(this, false);
+                } else {
+                    // Schedule alarm
+                    item.setChecked(true);
+                    setOrCancelAlarm(this, true);
+                }
+
+                // Save preference
+                getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
+                        .putBoolean(NOTIFICATION_PREFERENCE, item.isChecked()).apply();
         }
 
         return false;
+    }
+
+    public static void setOrCancelAlarm(Context context, boolean set) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 1, new Intent(context, NotificationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (set) alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
+                AlarmManager.INTERVAL_HOUR, AlarmManager.INTERVAL_HOUR, pendingIntent);
+        else alarmManager.cancel(pendingIntent);
+
+        ComponentName receiver = new ComponentName(context, NotificationReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        int receiverEnabled = set ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        pm.setComponentEnabledSetting(receiver,
+                receiverEnabled,
+                PackageManager.DONT_KILL_APP);
     }
 
     public static void openWebPage(Context context, String URL) {

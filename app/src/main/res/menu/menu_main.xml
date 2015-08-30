@@ -2,18 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="@string/visit_homepage"
+        android:id="@+id/visitHomepage"
         android:orderInCategory="100"
-        app:showAsAction="never"
-        android:id="@+id/visitHomepage" />
+        android:title="@string/visit_homepage"
+        app:showAsAction="never" />
     <item
-        android:title="@string/visit_github"
+        android:id="@+id/visitGithub"
         android:orderInCategory="101"
-        app:showAsAction="never"
-        android:id="@+id/visitGithub" />
+        android:title="@string/visit_github"
+        app:showAsAction="never" />
     <item
-        android:title="Issue notification"
+        android:id="@+id/notification"
+        android:checkable="true"
+        android:checked="true"
         android:orderInCategory="102"
-        app:showAsAction="never"
-        android:id="@+id/notification" />
+        android:title="@string/show_notification"
+        app:showAsAction="never" />
 </menu>
