@@ -18,4 +18,9 @@
         android:orderInCategory="102"
         android:title="@string/show_notification"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/issue_notification"
+        android:orderInCategory="103"
+        android:title="Issue notification"
+        app:showAsAction="never" />
 </menu>
