@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             errorMessage = getString(R.string.offline_snackbar);
             showErrorMessage();
+            srLayout.setRefreshing(false);
         }
     }
 
