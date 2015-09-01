@@ -3,7 +3,6 @@
 
     <string name="appwidget_contentDescription">Progress to next Papyros release milestone</string>
     <string name="text_size">Text size: </string>
-    <string name="cancel">Cancel</string>
     <string name="ok">Apply</string>
     <string name="open_issues">Open issues:</string>
     <string name="closed_issues">Closed issues:</string>

@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Vývoj systému Papyros</string>
     <string name="appwidget_contentDescription">Postup do dalšího milníku Papyros</string>
-    <string name="cancel">Zrušit</string>
     <string name="closed_at">Uzavřeno:</string>
     <string name="ok">OK</string>
     <string name="open_issues">Otevřené problémy:</string>

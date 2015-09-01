@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Papyros Voortgang</string>
     <string name="appwidget_contentDescription">Voortgang naar de volgende Papyros mijlpaal</string>
-    <string name="cancel">Annuleren</string>
     <string name="closed_at">Gesloten op:</string>
     <string name="closed_issues">Opgeloste problemen:</string>
     <string name="created_at">Gemaakt op:</string>

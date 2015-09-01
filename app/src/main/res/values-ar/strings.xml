@@ -2,4 +2,26 @@
 <resources>
     <string name="app_name">تقدُّم تطوير بابيروس</string>
     <string name="appwidget_contentDescription">التقدم حتى المرحلة القادمة من تطوير بابيروس</string>
+    <string name="ok">تثبيت</string>
+    <string name="text_size">حجم النص :</string>
+    <string name="open_issues">المشاكل الغير محلولة :</string>
+    <string name="closed_issues">المشاكل التي تم حلّها :</string>
+    <string name="progress">التقدم :</string>
+    <string name="state">الحالة :</string>
+    <string name="created_at">تم انشاؤه في : </string>
+    <string name="updated_at">تم تحديثه في :</string>
+    <string name="due_on">متوقع في :</string>
+    <string name="closed_at">تم غلقه في :</string>
+    <string name="unknown">غير معلوم </string>
+    <string name="no_network">لا يمكن التصال بالشبكة</string>
+    <string name="error403">خطأ رقم 403، يرجى المحاولة لاحقا</string>
+    <string name="error404">خطأ رقم 404</string>
+    <string name="offline_snackbar">وضع غير متصل بالشبكة، المعلومات يمكن ان تكون غير محدثة</string>
+    <string name="visit_homepage">زر الموقع الرئيسي لبابيروس</string>
+    <string name="view_on_github">شاهد على جيت هوب </string>
+    <string name="visit_github">زر صفحة المشروع على جيت هوب </string>
+    <string name="show_notification">فعّل الإشعارات</string>
+    <string name="notification_dialog_title">الإشعارات</string>
+    <string name="notification_dialog_message">هل تريد تلقي إشعار عندما يتم تحديث التقدّم ؟</string>
+    <string name="notific_msg_text_format">%1$s تغيرت من %2$d الى %3$d%%!</string>
 </resources>

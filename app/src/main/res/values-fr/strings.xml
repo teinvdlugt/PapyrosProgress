@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Progrès de Papyros</string>
     <string name="appwidget_contentDescription">Progès jusqu\'à la prochaine étape de Papyros</string>
-    <string name="cancel">Annuler</string>
     <string name="closed_at">Fermé le</string>
     <string name="closed_issues">Problèmes résolus:</string>
     <string name="created_at">Créé le</string>
