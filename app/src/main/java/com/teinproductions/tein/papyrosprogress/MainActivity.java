@@ -243,9 +243,6 @@ public class MainActivity extends AppCompatActivity
                 // Save preference
                 getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                         .putBoolean(NOTIFICATION_PREFERENCE, item.isChecked()).apply();
-                return true;
-            case R.id.issue_notification:
-                NotificationReceiver.issueNotification(this, 80, 82, "Version 0.1");
         }
 
         return false;
