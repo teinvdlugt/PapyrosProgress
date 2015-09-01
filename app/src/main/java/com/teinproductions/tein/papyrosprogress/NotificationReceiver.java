@@ -60,7 +60,7 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
             int progressNew = closedNew * 100 / (openNew + closedNew);
 
             if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
-                issueNotification(progressOld, progressNew);
+                issueNotification(context, progressOld, progressNew, milestoneTitleNew);
                 MainActivity.saveCache(context, result);
             }
         } catch (JSONException | NullPointerException e) {
@@ -68,10 +68,10 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
         }
     }
 
-    private void issueNotification(int progressOld, int progressNew) {
+    public static void issueNotification(Context context, int progressOld, int progressNew, String milestoneTitle) {
         String title = context.getString(R.string.app_name);
         String message = String.format(context.getString(R.string.notific_msg_text_format),
-                milestoneTitleNew, progressOld, progressNew);
+                milestoneTitle, progressOld, progressNew);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
