@@ -23,5 +23,5 @@
     <string name="show_notification">فعّل الإشعارات</string>
     <string name="notification_dialog_title">الإشعارات</string>
     <string name="notification_dialog_message">هل تريد تلقي إشعار عندما يتم تحديث التقدّم ؟</string>
-    <string name="notific_msg_text_format">%1$s تغيرت من %2$d الى %3$d%%!</string>
+    <string name="notific_msg_text_format" formatted="false">النسخة %s تغيرت من %d الى %d !</string>
 </resources>
