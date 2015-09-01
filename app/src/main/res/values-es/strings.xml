@@ -20,8 +20,8 @@
     <string name="visit_homepage">Abrir la página de Papyros</string>
     <string name="view_on_github">Ver en Github</string>
     <string name="visit_github">Abrir proyecto en Guthub</string>
-    <string name="show_notification">Enable notifications</string>
-    <string name="notification_dialog_title">Notifications</string>
-    <string name="notification_dialog_message">Would you like to receive a notification when the progress is updated?</string>
-    <string name="notific_msg_text_format">%1$s changed from %2$d to %3$d%%!</string>
+    <string name="show_notification">Mostrar notificaciones</string>
+    <string name="notification_dialog_title">Notificaciones</string>
+    <string name="notification_dialog_message">Recibir una notificación cuando cambie el progreso?</string>
+    <string name="notific_msg_text_format">¡La %1$s ha cambiado desde %2$d a %3$d%%!</string>
 </resources>
