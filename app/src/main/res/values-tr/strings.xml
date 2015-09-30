@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Papyros ilerlemesi</string>
-    <string name="appwidget_contentDescription">Bir sonraki Papyros sürümünün ilerlemesi</string>
+    <string name="app_name">Papyros Durumu</string>
+    <string name="appwidget_contentDescription">Bir sonraki Papyros sürümünün durumu</string>
     <string name="text_size">Yazı boyutu:</string>
     <string name="ok">Uygula</string>
     <string name="open_issues">Çözülmemiş sorunlar:</string>
     <string name="closed_issues">Çözülmüş sorunlar:</string>
-    <string name="progress">İlerleme</string>
-    <string name="state">Durum</string>
+    <string name="progress">İlerleme:</string>
+    <string name="state">Durum:</string>
     <string name="created_at">Oluşturuldu:</string>
     <string name="updated_at">Güncellendi:</string>
     <string name="due_on">Tahmini bitiş:</string>
@@ -20,7 +20,7 @@
     <string name="visit_homepage">Papyros Anasayfasını ziyaret et</string>
     <string name="visit_github">Github sayfasını ziyaret et</string>
     <string name="view_on_github">Github\'da görüntüle</string>
-    <string name="show_notification">Bildrimleri göster</string>
+    <string name="show_notification">Bildirimleri göster</string>
     <string name="notification_dialog_title">Bildirimler</string>
     <string name="notification_dialog_message">İlerleme güncellendiğinde bildirim almak ister misiniz?</string>
     <string name="notific_msg_text_format">%1$s, %2$d --> %3$d%% olarak değişti!</string>
