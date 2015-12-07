@@ -43,6 +43,16 @@
             android:text="@string/closed_issues"
             android:textSize="14sp" />
 
+        <ProgressBar
+            android:id="@+id/oldProgressBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         <TextView
             android:id="@+id/progress_textView"
             android:layout_width="wrap_content"
@@ -97,13 +107,6 @@
             android:text="@string/closed_at"
             android:textSize="14sp" />
 
-        <!--<ProgressBar
-            android:id="@+id/listItem_progressBar"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"/>-->
         <com.teinproductions.tein.papyrosprogress.PapyrosProgressBar
             android:id="@+id/listItem_progressBar"
             android:layout_width="match_parent"

@@ -1,7 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -15,7 +14,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -60,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
     public static final String NOTIFICATION_PREFERENCE = "notifications";
     private static final String NOTIFICATION_ASKED_PREFERENCE = "notification_asked";
+    public static final String OLD_PROGRESS_BAR_PREFERENCE = "old_progress_bar";
 
     private RecyclerView recyclerView;
     private PapyrosRecyclerAdapter adapter;
@@ -217,6 +216,9 @@ public class MainActivity extends AppCompatActivity
         boolean notifications = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(NOTIFICATION_PREFERENCE, false);
         menu.findItem(R.id.notification).setChecked(notifications);
 
+        boolean oldProgressBar = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(OLD_PROGRESS_BAR_PREFERENCE, false);
+        menu.findItem(R.id.oldProgressBar).setChecked(oldProgressBar);
+
         return true;
     }
 
@@ -243,6 +245,12 @@ public class MainActivity extends AppCompatActivity
                 // Save preference
                 getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                         .putBoolean(NOTIFICATION_PREFERENCE, item.isChecked()).apply();
+                return true;
+            case R.id.oldProgressBar:
+                item.setChecked(!item.isChecked());
+                adapter.setUseOldProgressBar(item.isChecked());
+                getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
+                        .putBoolean(OLD_PROGRESS_BAR_PREFERENCE, item.isChecked()).apply();
         }
 
         return false;

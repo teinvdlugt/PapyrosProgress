@@ -18,4 +18,11 @@
         android:orderInCategory="102"
         android:title="@string/show_notification"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/oldProgressBar"
+        android:checkable="true"
+        android:checked="false"
+        android:orderInCategory="103"
+        android:title="@string/use_old_progress_bar"
+        app:showAsAction="never" />
 </menu>

@@ -29,11 +29,15 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context context;
     private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
     private OnTextSizeButtonClickListener listener;
+    private boolean useOldProgressBar = false;
 
     public PapyrosRecyclerAdapter(Context context, JSONObject[] milestones, OnTextSizeButtonClickListener listener) {
         this.context = context;
         this.milestones = milestones;
         this.listener = listener;
+
+        this.useOldProgressBar = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getBoolean(MainActivity.OLD_PROGRESS_BAR_PREFERENCE, false);
     }
 
     public void setMilestones(JSONObject[] milestones) {
@@ -73,7 +77,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (getItemViewType(position)) {
             case ITEM_VIEW_TYPE_MILESTONE:
                 if (textSize != -1) position--;
-                ((MileStoneViewHolder) viewHolder).showData(context, milestones[position]);
+                ((MileStoneViewHolder) viewHolder).showData(context, milestones[position], useOldProgressBar);
                 break;
             case ITEM_VIEW_TYPE_TEXT_SIZE:
                 ((TextSizeViewHolder) viewHolder).showData(context, textSize);
@@ -89,6 +93,11 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public void setUseOldProgressBar(boolean useOldProgressBar) {
+        this.useOldProgressBar = useOldProgressBar;
+        notifyDataSetChanged();
+    }
+
     interface OnTextSizeButtonClickListener {
         void onClickApply(int progress);
     }
@@ -98,8 +107,9 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 class MileStoneViewHolder extends RecyclerView.ViewHolder {
     private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
             createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
+    private ProgressBar oldProgressBar;
     private PapyrosProgressBar progressBar;
-    Button githubButton;
+    private Button githubButton;
 
     public MileStoneViewHolder(View itemView) {
         super(itemView);
@@ -109,6 +119,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         closedIssuesTV = (TextView) itemView.findViewById(R.id.closed_issues_textView);
         progressTV = (TextView) itemView.findViewById(R.id.progress_textView);
         progressBar = (PapyrosProgressBar) itemView.findViewById(R.id.listItem_progressBar);
+        oldProgressBar = (ProgressBar) itemView.findViewById(R.id.oldProgressBar);
         stateTV = (TextView) itemView.findViewById(R.id.state_textView);
         createdAtTV = (TextView) itemView.findViewById(R.id.createdAt);
         updatedAtTV = (TextView) itemView.findViewById(R.id.updatedAt);
@@ -118,7 +129,16 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public void showData(final Context context, JSONObject data) {
+    public void showData(final Context context, JSONObject data, boolean useOldProgressBar) {
+        if (useOldProgressBar) {
+            progressBar.setVisibility(View.GONE);
+            oldProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+            oldProgressBar.setVisibility(View.GONE);
+        }
+
+
         String name = context.getString(R.string.unknown);
         String state = context.getString(R.string.unknown);
         String createdAt = null, updatedAt = null, dueOn = null, closedAt = null, githubURL = null;
@@ -169,6 +189,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         openIssuesTV.setText(context.getString(R.string.open_issues) + " " + openIssues);
         closedIssuesTV.setText(context.getString(R.string.closed_issues) + " " + closedIssues);
         progressBar.setProgress(progress);
+        oldProgressBar.setProgress(progress);
         progressTV.setText(context.getString(R.string.progress) + " " + progress + "%");
         stateTV.setText(context.getString(R.string.state) + " " + state);
 

@@ -24,4 +24,5 @@
     <string name="notific_msg_text_format" formatted="false">%1$s changed from %2$d to %3$d%%!</string>
     <string name="notification_dialog_title">Notifications</string>
     <string name="notification_dialog_message">Would you like to receive a notification when the progress is updated?</string>
+    <string name="use_old_progress_bar">Use old progress bar</string>
 </resources>
