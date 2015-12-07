@@ -26,6 +26,7 @@ public class ProgressWidget extends AppWidgetProvider {
 
     private static RemoteViews updateAppWidget(Context context, int appWidgetId, String json) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.progress_widget);
+        //RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_progress_widget);
 
         // Set text size of text view
         if (Build.VERSION.SDK_INT >= 16) {
@@ -70,6 +71,13 @@ public class ProgressWidget extends AppWidgetProvider {
 
         views.setTextViewText(R.id.appwidget_text, widgetText);
         views.setProgressBar(R.id.progress_bar, 100, progress, false);
+
+        /*PapyrosProgressBar progressBar = new PapyrosProgressBar(context);
+        progressBar.measure(150, 150);
+        progressBar.layout(0, 0, 150, 150);
+        progressBar.setProgress(progress);
+        progressBar.setDrawingCacheEnabled(true);
+        views.setImageViewBitmap(R.id.imageView, progressBar.getDrawingCache());*/
 
         return views;
     }
