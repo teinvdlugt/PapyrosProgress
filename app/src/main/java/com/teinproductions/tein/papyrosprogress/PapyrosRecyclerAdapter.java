@@ -98,7 +98,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 class MileStoneViewHolder extends RecyclerView.ViewHolder {
     private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
             createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
-    private ProgressBar progressBar;
+    private PapyrosProgressBar progressBar;
     Button githubButton;
 
     public MileStoneViewHolder(View itemView) {
@@ -108,7 +108,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         openIssuesTV = (TextView) itemView.findViewById(R.id.open_issues_textView);
         closedIssuesTV = (TextView) itemView.findViewById(R.id.closed_issues_textView);
         progressTV = (TextView) itemView.findViewById(R.id.progress_textView);
-        progressBar = (ProgressBar) itemView.findViewById(R.id.listItem_progressBar);
+        progressBar = (PapyrosProgressBar) itemView.findViewById(R.id.listItem_progressBar);
         stateTV = (TextView) itemView.findViewById(R.id.state_textView);
         createdAtTV = (TextView) itemView.findViewById(R.id.createdAt);
         updatedAtTV = (TextView) itemView.findViewById(R.id.updatedAt);
