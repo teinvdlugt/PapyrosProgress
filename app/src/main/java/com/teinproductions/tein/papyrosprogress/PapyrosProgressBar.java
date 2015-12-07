@@ -93,7 +93,7 @@ public class PapyrosProgressBar extends View {
 
         percentageTextPaint = new Paint();
         percentageTextPaint.setAntiAlias(true);
-        percentageTextPaint.setColor(Color.LTGRAY);
+        percentageTextPaint.setColor(Color.WHITE);
 
         applyDefaultDimensions();
     }
