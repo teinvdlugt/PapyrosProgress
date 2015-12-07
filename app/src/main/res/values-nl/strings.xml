@@ -24,4 +24,5 @@
     <string name="notific_msg_text_format">%1$s is veranderd van %2$d naar %3$d%%!</string>
     <string name="notification_dialog_message">Wil je meldingen ontvangen wanneer de voortgang is veranderd?</string>
     <string name="notification_dialog_title">Meldingen</string>
+    <string name="use_old_progress_bar">Gebruik oude voortgangsbalk</string>
 </resources>

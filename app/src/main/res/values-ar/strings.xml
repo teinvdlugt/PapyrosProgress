@@ -24,4 +24,5 @@
     <string name="notification_dialog_title">الإشعارات</string>
     <string name="notification_dialog_message">هل تريد تلقي إشعار عندما يتم تحديث التقدّم ؟</string>
     <string name="notific_msg_text_format" formatted="false">النسخة %s تغيرت من %d الى %d !</string>
+    <string name="use_old_progress_bar">Use old progress bar</string>
 </resources>

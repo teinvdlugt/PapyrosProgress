@@ -24,4 +24,5 @@
     <string name="notification_dialog_title">Bildirimler</string>
     <string name="notification_dialog_message">İlerleme güncellendiğinde bildirim almak ister misiniz?</string>
     <string name="notific_msg_text_format">%1$s, %2$d --> %3$d%% olarak değişti!</string>
+    <string name="use_old_progress_bar">Use old progress bar</string>
 </resources>

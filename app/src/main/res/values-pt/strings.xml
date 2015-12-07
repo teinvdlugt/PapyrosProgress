@@ -24,4 +24,5 @@
     <string name="notification_dialog_title">Notificações</string>
     <string name="notification_dialog_message">Você gostaria de receber uma notificação quando houver progresso?</string>
     <string name="notific_msg_text_format">%1$s mudou de %2$d para %3$d%%!</string>
+    <string name="use_old_progress_bar">Use old progress bar</string>
 </resources>

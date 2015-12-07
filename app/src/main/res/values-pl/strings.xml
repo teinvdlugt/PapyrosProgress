@@ -24,4 +24,5 @@
     <string name="notification_dialog_title">Powiadomienia</string>
     <string name="notification_dialog_message">Czy wyświetlać powiadomienia, kiedy stan zostanie zaktualizowany?</string>
     <string name="notific_msg_text_format">%1$s zmieniony z %2$d na %3$d%%!</string>
+    <string name="use_old_progress_bar">Użyj starego paska postępu</string>
 </resources>

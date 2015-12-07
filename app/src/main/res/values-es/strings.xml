@@ -24,4 +24,5 @@
     <string name="notification_dialog_title">Notificaciones</string>
     <string name="notification_dialog_message">Recibir una notificación cuando cambie el progreso?</string>
     <string name="notific_msg_text_format">¡La %1$s ha cambiado desde %2$d a %3$d%%!</string>
+    <string name="use_old_progress_bar">Use old progress bar</string>
 </resources>
