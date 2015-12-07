@@ -25,4 +25,9 @@
         android:orderInCategory="103"
         android:title="@string/use_old_progress_bar"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/rate_app"
+        android:orderInCategory="104"
+        android:title="@string/rate_in_play_store"
+        app:showAsAction="never" />
 </menu>

@@ -25,4 +25,5 @@
     <string name="notification_dialog_message">Wil je meldingen ontvangen wanneer de voortgang is veranderd?</string>
     <string name="notification_dialog_title">Meldingen</string>
     <string name="use_old_progress_bar">Gebruik oude voortgangsbalk</string>
+    <string name="rate_in_play_store">Beoordelen in de Play Store</string>
 </resources>

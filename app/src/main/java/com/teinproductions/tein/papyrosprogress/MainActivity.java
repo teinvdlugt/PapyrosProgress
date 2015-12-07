@@ -251,9 +251,15 @@ public class MainActivity extends AppCompatActivity
                 adapter.setUseOldProgressBar(item.isChecked());
                 getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                         .putBoolean(OLD_PROGRESS_BAR_PREFERENCE, item.isChecked()).apply();
+                return true;
+            case R.id.rate_app:
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("market://details?id=com.teinproductions.tein.papyrosprogress"));
+                startActivity(intent);
+                return true;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     public static void setOrCancelAlarm(Context context, boolean set) {
