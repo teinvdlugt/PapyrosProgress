@@ -25,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +61,9 @@ public class MainActivity extends AppCompatActivity
     public static final String NOTIFICATION_PREFERENCE = "notifications";
     private static final String NOTIFICATION_ASKED_PREFERENCE = "notification_asked";
     public static final String OLD_PROGRESS_BAR_PREFERENCE = "old_progress_bar";
+
+    public static final String GA_EXTERNAL_LINKS_EVENT_CATEGORY = "External links";
+    public static final String GA_PREFERENCES_EVENT_CATEGORY = "Preferences";
 
     private RecyclerView recyclerView;
     private PapyrosRecyclerAdapter adapter;
@@ -228,9 +233,21 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.visitHomepage:
                 openWebPage(this, "http://papyros.io");
+
+                try {
+                    sendEventHit(GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit papyros.io", null);
+                } catch (Exception e) {
+                    // I don't want to cause this any errors,
+                    // because that would seem weird to the user
+                }
                 return true;
             case R.id.visitGithub:
                 openWebPage(this, "https://github.com/papyros");
+
+                try {
+                    sendEventHit(GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit Github page", null);
+                } catch (Exception ignored) { /*ignored*/ }
+
                 return true;
             case R.id.notification:
                 if (item.isChecked()) {
@@ -252,15 +269,32 @@ public class MainActivity extends AppCompatActivity
                 adapter.setUseOldProgressBar(item.isChecked());
                 getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                         .putBoolean(OLD_PROGRESS_BAR_PREFERENCE, item.isChecked()).apply();
+
+                try {
+                    sendEventHit(GA_PREFERENCES_EVENT_CATEGORY, "Change old progress bar preference", "" + item.isChecked());
+                } catch (Exception ignored) { /*ignored*/ }
+
                 return true;
             case R.id.rate_app:
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("market://details?id=com.teinproductions.tein.papyrosprogress"));
                 startActivity(intent);
+
+                try {
+                    sendEventHit(GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
+                } catch (Exception ignored) { /*ignored*/ }
                 return true;
             default:
                 return false;
         }
+    }
+
+    public void sendEventHit(String category, String action, String label) {
+        HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
+        if (category != null) builder.setCategory(category);
+        if (action != null) builder.setAction(action);
+        if (label != null) builder.setLabel(label);
+        ((GAApplication) getApplication()).getTracker().send(builder.build());
     }
 
     public static void setOrCancelAlarm(Context context, boolean set) {
