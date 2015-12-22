@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        ((GAApplication) getApplication()).startTracking();
 
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         srLayout.setOnRefreshListener(this);

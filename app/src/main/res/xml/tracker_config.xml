@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ga_trackingId">UA-71651722-1</string>
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <screenName name="com.teinproductions.tein.papyrosprogress.MainActivity">
+        Main Activity
+    </screenName>
+</resources>
