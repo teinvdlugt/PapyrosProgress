@@ -48,13 +48,13 @@ public abstract class AbstractProgressWidget extends AppWidgetProvider {
         }
     }
 
-    public static int[] getAppWidgetLargeIds(Context context, AppWidgetManager awManager) {
-        ComponentName componentName = ComponentName.createRelative(context, ProgressWidgetLarge.class.getName());
+    private static int[] getAppWidgetLargeIds(Context context, AppWidgetManager awManager) {
+        ComponentName componentName = new ComponentName(context, ProgressWidgetLarge.class);
         return awManager.getAppWidgetIds(componentName);
     }
 
-    public static int[] getAppWidgetSmallIds(Context context, AppWidgetManager awManager) {
-        ComponentName componentName = ComponentName.createRelative(context, ProgressWidgetSmall.class.getName());
+    private static int[] getAppWidgetSmallIds(Context context, AppWidgetManager awManager) {
+        ComponentName componentName = new ComponentName(context, ProgressWidgetSmall.class);
         return awManager.getAppWidgetIds(componentName);
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractProgressWidget extends AppWidgetProvider {
         updateAppWidgets(context, progress);
     }
 
-    public static int getCachedProgress(Context context) {
+    private static int getCachedProgress(Context context) {
         try {
             String cache = MainActivity.getCache(context);
             JSONObject jsonObject = new JSONArray(cache).getJSONObject(0);

@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 
 public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPageTask.OnLoadedListener {
-    public static final int NOTIFICATION_ID = 1;
+    private static final int NOTIFICATION_ID = 1;
 
     private int closedOld, closedNew, openOld, openNew;
     private String milestoneTitleOld, milestoneTitleNew;
@@ -96,7 +96,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         AbstractProgressWidget.updateAppWidgets(context, progressNew);
     }
 
-    public static void issueNotification(Context context, int progressOld, int progressNew, String milestoneTitle) {
+    private static void issueNotification(Context context, int progressOld, int progressNew, String milestoneTitle) {
         String title = context.getString(R.string.app_name);
         String message = String.format(context.getString(R.string.notific_msg_text_format),
                 milestoneTitle, progressOld, progressNew);

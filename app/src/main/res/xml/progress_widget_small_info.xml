@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:initialKeyguardLayout="@layout/progress_widget_small"
     android:initialLayout="@layout/progress_widget_small"
     android:minHeight="40dp"
     android:minWidth="40dp"
     android:previewImage="@drawable/preview_image_small"
     android:updatePeriodMillis="0"
-    android:widgetCategory="home_screen|keyguard" />
+    android:widgetCategory="home_screen|keyguard"
+    tools:ignore="UnusedAttribute" />

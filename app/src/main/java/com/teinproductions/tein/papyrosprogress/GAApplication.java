@@ -13,7 +13,7 @@ import com.google.android.gms.analytics.Tracker;
  */
 public class GAApplication extends Application {
 
-    public Tracker mTracker;
+    private Tracker mTracker;
 
     public void startTracking() {
         if (mTracker == null) {

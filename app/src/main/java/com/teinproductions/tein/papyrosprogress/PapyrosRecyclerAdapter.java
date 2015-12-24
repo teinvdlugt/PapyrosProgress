@@ -1,5 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -193,7 +194,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         progressTV.setText(context.getString(R.string.progress) + " " + progress + "%");
         stateTV.setText(context.getString(R.string.state) + " " + state);
 
-        DateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        @SuppressLint("SimpleDateFormat") DateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         DateFormat newFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
         if (createdAt == null) createdAt = context.getString(R.string.unknown);
         createdAtTV.setText(context.getString(R.string.created_at) + " " + reformatDate(oldFormat, newFormat, createdAt));

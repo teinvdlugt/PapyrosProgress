@@ -12,7 +12,6 @@ import java.net.URL;
 
 class LoadWebPageTask extends AsyncTask<Void, Void, String> {
 
-    private String url = MainActivity.URL;
     private OnLoadedListener listener;
 
     public LoadWebPageTask(OnLoadedListener onLoadedListener) {
@@ -22,7 +21,7 @@ class LoadWebPageTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... params) {
         try {
-            URL url = new URL(this.url);
+            URL url = new URL(MainActivity.URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(20000);

@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void sendEventHit(String category, String action, String label) {
+    private void sendEventHit(String category, String action, String label) {
         HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
         if (category != null) builder.setCategory(category);
         if (action != null) builder.setAction(action);
