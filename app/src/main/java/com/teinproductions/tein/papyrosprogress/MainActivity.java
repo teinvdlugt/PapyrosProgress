@@ -205,8 +205,8 @@ public class MainActivity extends AppCompatActivity
                 .putInt(TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
 
         boolean smallWidget = getIntent().getBooleanExtra(EXTRA_SMALL_WIDGET, false);
-        if (smallWidget) ProgressWidgetSmall.updateAppWidgets(this, new int[]{appWidgetId});
-        else ProgressWidget.updateAppWidgets(this, new int[]{appWidgetId});
+        if (smallWidget) ProgressWidgetSmall.updateAppWidgets(this, new int[]{appWidgetId}, 0, true);
+        else ProgressWidget.updateAppWidgets(this, new int[]{appWidgetId}, 0, true);
     }
 
     private void showErrorMessage() {

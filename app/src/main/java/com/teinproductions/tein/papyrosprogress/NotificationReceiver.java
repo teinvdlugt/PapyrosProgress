@@ -4,7 +4,9 @@ package com.teinproductions.tein.papyrosprogress;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -60,8 +62,20 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
             int progressNew = closedNew * 100 / (openNew + closedNew);
 
             if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
+                // There is a change in progress! Send notification:
                 issueNotification(context, progressOld, progressNew, milestoneTitleNew);
+
+                // Cache the json file
                 MainActivity.saveCache(context, result);
+
+                // Notify the app widgets
+                AppWidgetManager manager = AppWidgetManager.getInstance(context);
+                ComponentName componentName = ComponentName.createRelative(context, ProgressWidget.class.getName());
+                ComponentName componentNameSmall = ComponentName.createRelative(context, ProgressWidgetSmall.class.getName());
+                int[] appWidgetIds = manager.getAppWidgetIds(componentName);
+                int[] appWidgetSmallIds = manager.getAppWidgetIds(componentNameSmall);
+                ProgressWidget.updateAppWidgets(context, appWidgetIds, progressNew, false);
+                ProgressWidgetSmall.updateAppWidgets(context, appWidgetSmallIds, progressNew, false);
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
