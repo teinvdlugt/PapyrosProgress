@@ -7,11 +7,21 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.widget.RemoteViews;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public abstract class AbstractProgressWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
-        AlarmUtils.reconsiderSettingAlarm(context);
+        AlarmUtils.setAlarm(context);
+        // TODO Update app widgets
+    }
+
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        updateFromCache(context);
     }
 
     @Override
@@ -54,5 +64,30 @@ public abstract class AbstractProgressWidget extends AppWidgetProvider {
         int[] appWidgetSmallIds = getAppWidgetSmallIds(context, awManager);
 
         return !(appWidgetLargeIds.length == 0 && appWidgetSmallIds.length == 0);
+    }
+
+    /**
+     * Update all app widgets without loading the progress from the Internet.
+     * Used for example when the text size of a widget is updated, or when a widget
+     * is first instantiated.
+     */
+    public static void updateFromCache(Context context) {
+        int progress = getCachedProgress(context);
+        updateAppWidgets(context, progress);
+    }
+
+    public static int getCachedProgress(Context context) {
+        try {
+            String cache = MainActivity.getCache(context);
+            JSONObject jsonObject = new JSONArray(cache).getJSONObject(0);
+
+            int open = jsonObject.getInt(MainActivity.OPEN_ISSUES);
+            int closed = jsonObject.getInt(MainActivity.CLOSED_ISSUES);
+
+            return closed * 100 / (open + closed);
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

@@ -165,6 +165,8 @@ public class MainActivity extends AppCompatActivity
             showErrorMessage();
             srLayout.setRefreshing(false);
         }
+
+        // TODO update app widgets if progress is updated
     }
 
     @Override
@@ -202,7 +204,7 @@ public class MainActivity extends AppCompatActivity
         getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                 .putInt(TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
 
-        AbstractProgressWidget.updateAppWidgets(this, getCachedProgress(this));
+        AbstractProgressWidget.updateFromCache(this);
     }
 
     private void showErrorMessage() {
@@ -336,21 +338,6 @@ public class MainActivity extends AppCompatActivity
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public static int getCachedProgress(Context context) {
-        try {
-            String cache = getCache(context);
-            JSONObject jsonObject = new JSONArray(cache).getJSONObject(0);
-
-            int open = jsonObject.getInt(MainActivity.OPEN_ISSUES);
-            int closed = jsonObject.getInt(MainActivity.CLOSED_ISSUES);
-
-            return closed * 100 / (open + closed);
-        } catch (JSONException | NullPointerException e) {
-            e.printStackTrace();
-            return 0;
         }
     }
 }
