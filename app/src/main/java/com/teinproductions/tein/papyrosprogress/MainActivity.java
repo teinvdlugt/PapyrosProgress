@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity
 
         boolean smallWidget = getIntent().getBooleanExtra(EXTRA_SMALL_WIDGET, false);
         if (smallWidget) ProgressWidgetSmall.updateAppWidgets(this, new int[]{appWidgetId}, 0, true);
-        else ProgressWidget.updateAppWidgets(this, new int[]{appWidgetId}, 0, true);
+        else ProgressWidgetLarge.updateAppWidgets(this, new int[]{appWidgetId}, 0, true);
     }
 
     private void showErrorMessage() {

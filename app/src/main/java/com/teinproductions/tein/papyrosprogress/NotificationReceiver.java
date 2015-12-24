@@ -69,13 +69,7 @@ public class NotificationReceiver extends BroadcastReceiver implements LoadWebPa
                 MainActivity.saveCache(context, result);
 
                 // Notify the app widgets
-                AppWidgetManager manager = AppWidgetManager.getInstance(context);
-                ComponentName componentName = ComponentName.createRelative(context, ProgressWidget.class.getName());
-                ComponentName componentNameSmall = ComponentName.createRelative(context, ProgressWidgetSmall.class.getName());
-                int[] appWidgetIds = manager.getAppWidgetIds(componentName);
-                int[] appWidgetSmallIds = manager.getAppWidgetIds(componentNameSmall);
-                ProgressWidget.updateAppWidgets(context, appWidgetIds, progressNew, false);
-                ProgressWidgetSmall.updateAppWidgets(context, appWidgetSmallIds, progressNew, false);
+                AbstractProgressWidget.updateAppWidgets(context, progressNew);
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();

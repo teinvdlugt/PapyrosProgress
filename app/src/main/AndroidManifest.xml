@@ -29,7 +29,7 @@
         <!-- The config activities-->
 
         <!-- The widgets -->
-        <receiver android:name=".ProgressWidget">
+        <receiver android:name=".ProgressWidgetLarge">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
