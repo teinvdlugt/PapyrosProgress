@@ -15,6 +15,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"
@@ -25,8 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- The config activities-->
 
         <!-- The widgets -->
         <receiver android:name=".ProgressWidgetLarge">
@@ -49,14 +48,15 @@
                 android:resource="@xml/progress_widget_small_info" />
         </receiver>
 
-        <!--Notification-->
+        <!-- BroadcastReceivers -->
+        <receiver android:name=".UpdateCheckReceiver" />
+
         <receiver
-            android:name=".NotificationReceiver"
-            android:enabled="false">
+            android:name=".BootReceiver"
+            android:enabled="true"> <!-- TODO change enabled when widgets are removed or added or notification preference is changed - http://developer.android.com/training/scheduling/alarms.html#boot -->
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>

@@ -11,20 +11,18 @@ public abstract class AbstractProgressWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
-        // TODO AlarmUtils.setAlarm();
+        AlarmUtils.reconsiderSettingAlarm(context);
     }
 
     @Override
     public void onDisabled(Context context) {
-        // TODO AlarmUtils.cancelAlarm();
+        AlarmUtils.reconsiderSettingAlarm(context);
     }
 
-    static void updateAppWidgets(final Context context, int progress) {
-        AppWidgetManager manager = AppWidgetManager.getInstance(context);
-        ComponentName componentNameLarge = ComponentName.createRelative(context, ProgressWidgetLarge.class.getName());
-        ComponentName componentNameSmall = ComponentName.createRelative(context, ProgressWidgetSmall.class.getName());
-        int[] appWidgetLargeIds = manager.getAppWidgetIds(componentNameLarge);
-        int[] appWidgetSmallIds = manager.getAppWidgetIds(componentNameSmall);
+    public static void updateAppWidgets(final Context context, int progress) {
+        AppWidgetManager awManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetLargeIds = getAppWidgetLargeIds(context, awManager);
+        int[] appWidgetSmallIds = getAppWidgetSmallIds(context, awManager);
 
         for (int appWidgetId : appWidgetLargeIds) {
             RemoteViews views = ProgressWidgetLarge.getRemoteViews(context, appWidgetId, progress);
@@ -38,5 +36,23 @@ public abstract class AbstractProgressWidget extends AppWidgetProvider {
                 AppWidgetManager.getInstance(context).updateAppWidget(appWidgetSmallId, views);
             }
         }
+    }
+
+    public static int[] getAppWidgetLargeIds(Context context, AppWidgetManager awManager) {
+        ComponentName componentName = ComponentName.createRelative(context, ProgressWidgetLarge.class.getName());
+        return awManager.getAppWidgetIds(componentName);
+    }
+
+    public static int[] getAppWidgetSmallIds(Context context, AppWidgetManager awManager) {
+        ComponentName componentName = ComponentName.createRelative(context, ProgressWidgetSmall.class.getName());
+        return awManager.getAppWidgetIds(componentName);
+    }
+
+    public static boolean areAppWidgetsEnabled(Context context) {
+        AppWidgetManager awManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetLargeIds = getAppWidgetLargeIds(context, awManager);
+        int[] appWidgetSmallIds = getAppWidgetSmallIds(context, awManager);
+
+        return !(appWidgetLargeIds.length == 0 && appWidgetSmallIds.length == 0);
     }
 }

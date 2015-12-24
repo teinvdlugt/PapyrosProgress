@@ -1,9 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -110,7 +107,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             preferences.edit().putBoolean(NOTIFICATION_PREFERENCE, true).apply();
-                            setOrCancelAlarm(MainActivity.this, true);
+                            AlarmUtils.setAlarm(MainActivity.this);
                             invalidateOptionsMenu();
                         }
                     })
@@ -118,6 +115,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             preferences.edit().putBoolean(NOTIFICATION_PREFERENCE, false).apply();
+                            AlarmUtils.reconsiderSettingAlarm(MainActivity.this);
                             invalidateOptionsMenu();
                         }
                     }).create().show();
@@ -204,9 +202,7 @@ public class MainActivity extends AppCompatActivity
         getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                 .putInt(TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
 
-        boolean smallWidget = getIntent().getBooleanExtra(EXTRA_SMALL_WIDGET, false);
-        if (smallWidget) ProgressWidgetSmall.updateAppWidgets(this, new int[]{appWidgetId}, 0, true);
-        else ProgressWidgetLarge.updateAppWidgets(this, new int[]{appWidgetId}, 0, true);
+        AbstractProgressWidget.updateAppWidgets(this, getCachedProgress(this));
     }
 
     private void showErrorMessage() {
@@ -253,11 +249,11 @@ public class MainActivity extends AppCompatActivity
                 if (item.isChecked()) {
                     // Cancel alarm
                     item.setChecked(false);
-                    setOrCancelAlarm(this, false);
+                    AlarmUtils.reconsiderSettingAlarm(this);
                 } else {
                     // Schedule alarm
                     item.setChecked(true);
-                    setOrCancelAlarm(this, true);
+                    AlarmUtils.setAlarm(this);
                 }
 
                 // Save preference
@@ -295,23 +291,6 @@ public class MainActivity extends AppCompatActivity
         if (action != null) builder.setAction(action);
         if (label != null) builder.setLabel(label);
         ((GAApplication) getApplication()).getTracker().send(builder.build());
-    }
-
-    public static void setOrCancelAlarm(Context context, boolean set) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context, 1, new Intent(context, NotificationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if (set) alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                AlarmManager.INTERVAL_HOUR, AlarmManager.INTERVAL_HOUR, pendingIntent);
-        else alarmManager.cancel(pendingIntent);
-
-        ComponentName receiver = new ComponentName(context, NotificationReceiver.class);
-        PackageManager pm = context.getPackageManager();
-        int receiverEnabled = set ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-        pm.setComponentEnabledSetting(receiver,
-                receiverEnabled,
-                PackageManager.DONT_KILL_APP);
     }
 
     public static void openWebPage(Context context, String URL) {
@@ -357,6 +336,21 @@ public class MainActivity extends AppCompatActivity
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static int getCachedProgress(Context context) {
+        try {
+            String cache = getCache(context);
+            JSONObject jsonObject = new JSONArray(cache).getJSONObject(0);
+
+            int open = jsonObject.getInt(MainActivity.OPEN_ISSUES);
+            int closed = jsonObject.getInt(MainActivity.CLOSED_ISSUES);
+
+            return closed * 100 / (open + closed);
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 }
