@@ -2,6 +2,7 @@
 <resources>
     <string name="ga_trackingId">UA-71651722-1</string>
     <bool name="ga_autoActivityTracking">true</bool>
+    <bool name="ga_reportUncaughtExceptions">true</bool>
 
     <screenName name="com.teinproductions.tein.papyrosprogress.MainActivity">
         Main Activity
