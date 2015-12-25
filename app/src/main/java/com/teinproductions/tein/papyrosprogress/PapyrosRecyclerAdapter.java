@@ -17,9 +17,6 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 
 
@@ -53,7 +50,8 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static void sortByCreatedDate(JSONObject[] milestones) {
         // First, get the create-dates of all milestones
         long[] createdDates = new long[milestones.length];
-        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat(MileStoneViewHolder.JSON_DATE_FORMAT);
+        @SuppressLint("SimpleDateFormat")
+        DateFormat dateFormat = new SimpleDateFormat(MileStoneViewHolder.JSON_DATE_FORMAT);
         for (int i = 0; i < createdDates.length; i++) {
             createdDates[i] = 0;
             try {

@@ -1,5 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,12 +16,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 
 public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPageTask.OnLoadedListener {
     private static final int NOTIFICATION_ID = 1;
 
-    private int closedOld, closedNew, openOld, openNew;
-    private String milestoneTitleOld, milestoneTitleNew;
+    private Map<String, Integer> oldMilestones = new HashMap<>();
+    private Map<String, Integer> newMilestones = new HashMap<>();
+    private String firstCreated; // Title of first created milestone
     private Context context;
 
     @Override
@@ -56,54 +67,129 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         try {
             parseNew(result);
 
-            int progressOld = closedOld * 100 / (openOld + closedOld);
-            int progressNew = closedNew * 100 / (openNew + closedNew);
-
-            if (milestoneTitleNew.equals(milestoneTitleOld) && progressOld != progressNew) {
-                // There is a change in progress!
-                progressChanged(result, progressOld, progressNew);
+            // Check if milestones have been added
+            Set<String> addedMilestones = new HashSet<>();
+            for (String title : newMilestones.keySet()) {
+                if (!oldMilestones.containsKey(title)) {
+                    addedMilestones.add(title);
+                    newMilestones.remove(title);
+                }
             }
-        } catch (JSONException | NullPointerException e) {
+
+            // Check if milestones have been removed
+            Set<String> removedMilestones = new HashSet<>();
+            for (String title : oldMilestones.keySet()) {
+                if (!newMilestones.containsKey(title)) {
+                    removedMilestones.add(title);
+                    oldMilestones.remove(title);
+                }
+            }
+
+            // Compare progresses of milestones which are in both sets
+            Map<String, int[]> changedProgresses = new HashMap<>();
+            Set<String> titles = newMilestones.keySet();
+            for (String title : titles) {
+                if (!Objects.equals(oldMilestones.get(title), newMilestones.get(title))) {
+                    changedProgresses.put(title, new int[]{oldMilestones.get(title), newMilestones.get(title)});
+                }
+            }
+
+            // Check if there are any changes
+            if (addedMilestones.size() > 0 || removedMilestones.size() > 0 || changedProgresses.size() > 0) {
+                // Save cache
+                MainActivity.saveCache(context, result);
+
+                progressChanged(addedMilestones, removedMilestones, changedProgresses);
+            }
+        } catch (JSONException | NullPointerException | ParseException e) {
             e.printStackTrace();
         }
     }
 
     private void parseOld(String json) throws JSONException {
-        JSONObject jsonObject = new JSONArray(json).getJSONObject(0);
-        milestoneTitleOld = jsonObject.getString(MainActivity.MILESTONE_TITLE);
-        openOld = jsonObject.getInt(MainActivity.OPEN_ISSUES);
-        closedOld = jsonObject.getInt(MainActivity.CLOSED_ISSUES);
+        JSONArray jArray = new JSONArray(json);
+        for (int i = 0; i < jArray.length(); i++) {
+            JSONObject milestone = jArray.getJSONObject(i);
+            oldMilestones.put(getTitle(milestone), getProgress(milestone));
+        }
     }
 
-    private void parseNew(String json) throws JSONException {
-        JSONObject jsonObject = new JSONArray(json).getJSONObject(0);
-        milestoneTitleNew = jsonObject.getString(MainActivity.MILESTONE_TITLE);
-        openNew = jsonObject.getInt(MainActivity.OPEN_ISSUES);
-        closedNew = jsonObject.getInt(MainActivity.CLOSED_ISSUES);
+    private void parseNew(String json) throws JSONException, ParseException {
+        // While doing this, also check for first created milestone (to display progress from in app widget)
+        long firstCreatedDate = Long.MAX_VALUE;
+        @SuppressLint("SimpleDateFormat")
+        DateFormat dateFormat = new SimpleDateFormat(MileStoneViewHolder.JSON_DATE_FORMAT);
+
+        JSONArray jArray = new JSONArray(json);
+        for (int i = 0; i < jArray.length(); i++) {
+            JSONObject milestone = jArray.getJSONObject(i);
+            String title = getTitle(milestone);
+            newMilestones.put(title, getProgress(milestone));
+
+            long created = dateFormat.parse(milestone.getString(MainActivity.CREATED_AT)).getTime();
+            if (created < firstCreatedDate) {
+                firstCreatedDate = created;
+                firstCreated = title;
+            }
+        }
     }
 
-    private void progressChanged(String json, int progressOld, int progressNew) {
-        // Cache the json file
-        MainActivity.saveCache(context, json);
+    private static String getTitle(JSONObject milestone) throws JSONException {
+        return milestone.getString(MainActivity.MILESTONE_TITLE);
+    }
 
+    private static int getProgress(JSONObject milestone) throws JSONException {
+        int openIssues = milestone.getInt(MainActivity.OPEN_ISSUES);
+        int closedIssues = milestone.getInt(MainActivity.CLOSED_ISSUES);
+        return closedIssues * 100 / (openIssues + closedIssues);
+    }
+
+    private void progressChanged(Set<String> addedMilestones, Set<String> removedMilestones,
+                                 Map<String, int[]> changedProgresses) {
         // Send notification
         boolean sendNotification = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);
         if (sendNotification)
-            issueNotification(context, progressOld, progressNew, milestoneTitleNew);
+            issueNotification(context, addedMilestones, removedMilestones, changedProgresses);
 
         // Notify the app widgets
-        AbstractProgressWidget.updateAppWidgets(context, progressNew);
+        Integer progress = newMilestones.get(firstCreated);
+        if (progress != null) {
+            AbstractProgressWidget.updateAppWidgets(context, progress);
+        }
     }
 
-    private static void issueNotification(Context context, int progressOld, int progressNew, String milestoneTitle) {
-        String title = context.getString(R.string.app_name);
-        String message = String.format(context.getString(R.string.notific_msg_text_format),
-                milestoneTitle, progressOld, progressNew);
+    private static void issueNotification(Context context, Set<String> addedMilestones,
+                                          Set<String> removedMilestones, Map<String, int[]> changedProgresses) {
+        String title = context.getString(R.string.notification_title);
+        StringBuilder message = new StringBuilder();
 
+        // Changed progresses
+        for (String milestoneTitle : changedProgresses.keySet()) {
+            int oldProgress = changedProgresses.get(milestoneTitle)[0];
+            int newProgress = changedProgresses.get(milestoneTitle)[1];
+            message.append("\n").append(String.format(context.getString(R.string.notific_msg_text_format),
+                    milestoneTitle, oldProgress, newProgress));
+        }
+
+        // Added milestones
+        for (String milestoneTitle : addedMilestones) {
+            message.append("\n").append(context.getString(R.string.milestone_added_notificaction, milestoneTitle));
+        }
+
+        // Removed milestones
+        for (String milestoneTitle : removedMilestones) {
+            message.append("\n").append(context.getString(R.string.milestone_removed_notification, milestoneTitle));
+        }
+
+        // Remove first newline
+        message.delete(0, 2);
+
+        // Create PendingIntent
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        // Build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentTitle(title)
                 .setContentText(message)
@@ -113,6 +199,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true);
 
+        // Issue the notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
