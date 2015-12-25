@@ -17,6 +17,9 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 
 
@@ -42,8 +45,40 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setMilestones(JSONObject[] milestones) {
+        sortByCreatedDate(milestones);
         this.milestones = milestones;
         notifyDataSetChanged();
+    }
+
+    private static void sortByCreatedDate(JSONObject[] milestones) {
+        // First, get the create-dates of all milestones
+        long[] createdDates = new long[milestones.length];
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat(MileStoneViewHolder.JSON_DATE_FORMAT);
+        for (int i = 0; i < createdDates.length; i++) {
+            createdDates[i] = 0;
+            try {
+                String formattedDate = milestones[i].getString(MainActivity.CREATED_AT);
+                createdDates[i] = dateFormat.parse(formattedDate).getTime();
+            } catch (JSONException | ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Sort by created date in ascending order TODO Move closed milestones to bottom of list
+        // Uses bubble sort algorithm
+        for (int i = milestones.length - 1; i > 1; i--) {
+            for (int j = 0; j < i; j++) {
+                if (createdDates[j] > createdDates[j + 1]) {
+                    JSONObject temp = milestones[j];
+                    milestones[j] = milestones[j + 1];
+                    milestones[j + 1] = temp;
+
+                    long temp2 = createdDates[j];
+                    createdDates[j] = createdDates[j + 1];
+                    createdDates[j + 1] = temp2;
+                }
+            }
+        }
     }
 
     public void setTextSize(int textSize) {
@@ -106,6 +141,8 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 class MileStoneViewHolder extends RecyclerView.ViewHolder {
+    public static final String JSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
     private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
             createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
     private ProgressBar oldProgressBar;
@@ -194,7 +231,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         progressTV.setText(context.getString(R.string.progress) + " " + progress + "%");
         stateTV.setText(context.getString(R.string.state) + " " + state);
 
-        @SuppressLint("SimpleDateFormat") DateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        @SuppressLint("SimpleDateFormat") DateFormat oldFormat = new SimpleDateFormat(JSON_DATE_FORMAT);
         DateFormat newFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
         if (createdAt == null) createdAt = context.getString(R.string.unknown);
         createdAtTV.setText(context.getString(R.string.created_at) + " " + reformatDate(oldFormat, newFormat, createdAt));
