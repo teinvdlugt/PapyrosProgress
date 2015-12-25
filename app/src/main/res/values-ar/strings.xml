@@ -26,4 +26,7 @@
     <string name="notific_msg_text_format" formatted="false">النسخة %s تغيرت من %d الى %d !</string>
     <string name="use_old_progress_bar">Use old progress bar</string>
     <string name="rate_in_play_store">Rate in Play Store</string>
+    <string name="milestone_added_notification">The milestone \"%s\" has been created.</string>
+    <string name="milestone_removed_notification">The milestone \"%s\" has been removed.</string>
+    <string name="notification_title">تقدُّم تطوير بابيروس</string>
 </resources>

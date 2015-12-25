@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -69,19 +70,21 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
             // Check if milestones have been added
             Set<String> addedMilestones = new HashSet<>();
-            for (String title : newMilestones.keySet()) {
+            for (Iterator<String> it = newMilestones.keySet().iterator(); it.hasNext();) {
+                String title = it.next();
                 if (!oldMilestones.containsKey(title)) {
                     addedMilestones.add(title);
-                    newMilestones.remove(title);
+                    it.remove();
                 }
             }
 
             // Check if milestones have been removed
             Set<String> removedMilestones = new HashSet<>();
-            for (String title : oldMilestones.keySet()) {
+            for (Iterator<String> it = oldMilestones.keySet().iterator(); it.hasNext();) {
+                String title = it.next();
                 if (!newMilestones.containsKey(title)) {
                     removedMilestones.add(title);
-                    oldMilestones.remove(title);
+                    it.remove();
                 }
             }
 
@@ -174,7 +177,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
         // Added milestones
         for (String milestoneTitle : addedMilestones) {
-            message.append("\n").append(context.getString(R.string.milestone_added_notificaction, milestoneTitle));
+            message.append("\n").append(context.getString(R.string.milestone_added_notification, milestoneTitle));
         }
 
         // Removed milestones
@@ -183,7 +186,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         }
 
         // Remove first newline
-        message.delete(0, 2);
+        message.delete(0, 1);
 
         // Create PendingIntent
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
@@ -194,6 +197,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                 .setContentTitle(title)
                 .setContentText(message)
                 .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setSmallIcon(R.mipmap.notification_small_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
                 .setDefaults(Notification.DEFAULT_ALL)
