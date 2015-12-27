@@ -112,6 +112,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     }
 
     private void parseOld(String json) throws JSONException {
+        oldMilestones.clear();
         JSONArray jArray = new JSONArray(json);
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject milestone = jArray.getJSONObject(i);
@@ -120,6 +121,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     }
 
     private void parseNew(String json) throws JSONException, ParseException {
+        newMilestones.clear();
         JSONArray jArray = new JSONArray(json);
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject milestone = jArray.getJSONObject(i);

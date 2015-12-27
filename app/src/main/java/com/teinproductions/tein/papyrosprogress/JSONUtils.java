@@ -55,7 +55,7 @@ public class JSONUtils {
         return closedIssues * 100 / (openIssues + closedIssues);
     }
 
-    public static Milestone[] getMilestones(Context context, String json) throws JSONException, ParseException {
+    public static Milestone[] getMilestones(String json) throws JSONException, ParseException {
         JSONArray jArray = new JSONArray(json);
         Milestone[] result = new Milestone[jArray.length()];
 

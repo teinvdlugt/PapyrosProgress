@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
         String cache = getCache(this);
         if (cache != null) {
             try {
-                adapter.setMilestones(JSONUtils.getMilestones(this, cache));
+                adapter.setMilestones(JSONUtils.getMilestones(cache));
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
             }
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         try {
-            adapter.setMilestones(JSONUtils.getMilestones(this, json));
+            adapter.setMilestones(JSONUtils.getMilestones(json));
 
             // Nothing went wrong, so the web page contents are correct and can be cached
             saveCache(this, json);
