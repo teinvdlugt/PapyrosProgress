@@ -1,22 +1,18 @@
 package com.teinproductions.tein.papyrosprogress;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -26,13 +22,14 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int ITEM_VIEW_TYPE_TEXT_SIZE = 0;
     private static final int ITEM_VIEW_TYPE_MILESTONE = 1;
 
-    private JSONObject[] milestones;
+    private Milestone[] milestones;
     private Context context;
     private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
+    private String widgetMilestoneTitle;
     private OnTextSizeButtonClickListener listener;
     private boolean useOldProgressBar = false;
 
-    public PapyrosRecyclerAdapter(Context context, JSONObject[] milestones, OnTextSizeButtonClickListener listener) {
+    public PapyrosRecyclerAdapter(Context context, Milestone[] milestones, OnTextSizeButtonClickListener listener) {
         this.context = context;
         this.milestones = milestones;
         this.listener = listener;
@@ -41,39 +38,22 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 .getBoolean(MainActivity.OLD_PROGRESS_BAR_PREFERENCE, false);
     }
 
-    public void setMilestones(JSONObject[] milestones) {
+    public void setMilestones(Milestone[] milestones) {
         sortByCreatedDate(milestones);
         this.milestones = milestones;
         notifyDataSetChanged();
     }
 
-    private static void sortByCreatedDate(JSONObject[] milestones) {
-        // First, get the create-dates of all milestones
-        long[] createdDates = new long[milestones.length];
-        @SuppressLint("SimpleDateFormat")
-        DateFormat dateFormat = new SimpleDateFormat(MileStoneViewHolder.JSON_DATE_FORMAT);
-        for (int i = 0; i < createdDates.length; i++) {
-            createdDates[i] = 0;
-            try {
-                String formattedDate = milestones[i].getString(MainActivity.CREATED_AT);
-                createdDates[i] = dateFormat.parse(formattedDate).getTime();
-            } catch (JSONException | ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
+    private static void sortByCreatedDate(Milestone[] milestones) {
         // Sort by created date in ascending order TODO Move closed milestones to bottom of list
         // Uses bubble sort algorithm
+
         for (int i = milestones.length - 1; i > 1; i--) {
             for (int j = 0; j < i; j++) {
-                if (createdDates[j] > createdDates[j + 1]) {
-                    JSONObject temp = milestones[j];
+                if (milestones[j].getCreatedAt() > milestones[j + 1].getCreatedAt()) {
+                    Milestone temp = milestones[j];
                     milestones[j] = milestones[j + 1];
                     milestones[j + 1] = temp;
-
-                    long temp2 = createdDates[j];
-                    createdDates[j] = createdDates[j + 1];
-                    createdDates[j + 1] = temp2;
                 }
             }
         }
@@ -82,6 +62,10 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void setTextSize(int textSize) {
         this.textSize = textSize;
         notifyDataSetChanged();
+    }
+
+    public void setWidgetMilestoneTitle(String widgetMilestoneTitle) {
+        this.widgetMilestoneTitle = widgetMilestoneTitle;
     }
 
     @Override
@@ -114,7 +98,18 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((MileStoneViewHolder) viewHolder).showData(context, milestones[position], useOldProgressBar);
                 break;
             case ITEM_VIEW_TYPE_TEXT_SIZE:
-                ((TextSizeViewHolder) viewHolder).showData(context, textSize);
+                String[] milestoneTitles = new String[milestones.length];
+                for (int i = 0; i < milestoneTitles.length; i++) {
+                    milestoneTitles[i] = milestones[i].getTitle();
+                }
+                int selectedItemPosition = 0;
+                if (widgetMilestoneTitle != null)
+                    for (int i = 0; i < milestoneTitles.length; i++)
+                        if (widgetMilestoneTitle.equals(milestoneTitles[i])) {
+                            selectedItemPosition = i;
+                            break;
+                        }
+                ((TextSizeViewHolder) viewHolder).showData(context, textSize, milestoneTitles, selectedItemPosition);
         }
     }
 
@@ -133,7 +128,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     interface OnTextSizeButtonClickListener {
-        void onClickApply(int progress);
+        void onClickApply(int progress, String milestoneTitle);
     }
 }
 
@@ -165,7 +160,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public void showData(final Context context, JSONObject data, boolean useOldProgressBar) {
+    public void showData(final Context context, Milestone milestone, boolean useOldProgressBar) {
         if (useOldProgressBar) {
             progressBar.setVisibility(View.GONE);
             oldProgressBar.setVisibility(View.VISIBLE);
@@ -174,78 +169,46 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             oldProgressBar.setVisibility(View.GONE);
         }
 
+        int progress = milestone.getProgress();
 
-        String name = context.getString(R.string.unknown);
-        String state = context.getString(R.string.unknown);
-        String createdAt = null, updatedAt = null, dueOn = null, closedAt = null, githubURL = null;
-        int openIssues = 0, closedIssues = 0, progress;
-
-        try {
-            name = data.getString(MainActivity.MILESTONE_TITLE);
-        } catch (JSONException ignored) { /*ignore*/ }
-        try {
-            openIssues = data.getInt(MainActivity.OPEN_ISSUES);
-        } catch (JSONException ignored) { /*ignore*/ }
-        try {
-            closedIssues = data.getInt(MainActivity.CLOSED_ISSUES);
-        } catch (JSONException ignored) { /*ignore*/ }
-        try {
-            state = data.getString(MainActivity.STATE);
-        } catch (JSONException ignored) { /*ignore*/ }
-        if (state == null) state = "null";
-        try {
-            if (!data.isNull(MainActivity.CREATED_AT)) {
-                createdAt = data.getString(MainActivity.CREATED_AT);
-            }
-        } catch (JSONException ignored) { /*ignore*/ }
-        try {
-            if (!data.isNull(MainActivity.UPDATED_AT)) {
-                updatedAt = data.getString(MainActivity.UPDATED_AT);
-            }
-        } catch (JSONException ignored) { /*ignore*/ }
-        try {
-            if (!data.isNull(MainActivity.DUE_ON)) {
-                dueOn = data.getString(MainActivity.DUE_ON);
-            }
-        } catch (JSONException ignored) { /*ignore*/ }
-        try {
-            if (!data.isNull(MainActivity.CLOSED_AT)) {
-                closedAt = data.getString(MainActivity.CLOSED_AT);
-            }
-        } catch (JSONException ignored) { /*ignore*/ }
-        try {
-            if (!data.isNull(MainActivity.GITHUB_URL)) {
-                githubURL = data.getString(MainActivity.GITHUB_URL);
-            }
-        } catch (JSONException ignored) { /*ignore*/ }
-
-        progress = closedIssues * 100 / (openIssues + closedIssues);
-
-        titleTV.setText(name);
-        openIssuesTV.setText(context.getString(R.string.open_issues) + " " + openIssues);
-        closedIssuesTV.setText(context.getString(R.string.closed_issues) + " " + closedIssues);
+        // Set texts
+        titleTV.setText(milestone.getTitle());
+        openIssuesTV.setText(context.getString(R.string.open_issues) + " " + milestone.getOpenIssues());
+        closedIssuesTV.setText(context.getString(R.string.closed_issues) + " " + milestone.getClosedIssues());
         progressBar.setProgress(progress);
         oldProgressBar.setProgress(progress);
         progressTV.setText(context.getString(R.string.progress) + " " + progress + "%");
-        stateTV.setText(context.getString(R.string.state) + " " + state);
+        stateTV.setText(context.getString(R.string.state) + " " + milestone.getState());
 
-        @SuppressLint("SimpleDateFormat") DateFormat oldFormat = new SimpleDateFormat(JSON_DATE_FORMAT);
-        DateFormat newFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
-        if (createdAt == null) createdAt = context.getString(R.string.unknown);
-        createdAtTV.setText(context.getString(R.string.created_at) + " " + reformatDate(oldFormat, newFormat, createdAt));
-        if (updatedAt == null) updatedAtTV.setVisibility(View.GONE);
+        // Set date texts
+        DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
+        if (milestone.getCreatedAt() == -1)
+            createdAtTV.setText(context.getString(R.string.unknown));
         else
-            updatedAtTV.setText(context.getString(R.string.updated_at) + " " + reformatDate(oldFormat, newFormat, updatedAt));
-        if (dueOn == null) dueOnTV.setVisibility(View.GONE);
-        else
-            dueOnTV.setText(context.getString(R.string.due_on) + " " + reformatDate(oldFormat, newFormat, dueOn));
-        if (closedAt == null) closedAtTV.setVisibility(View.GONE);
+            createdAtTV.setText(context.getString(R.string.created_at) + " " + format.format(new Date(milestone.getCreatedAt())));
+        if (milestone.getUpdatedAt() == -1) updatedAtTV.setVisibility(View.GONE);
+        else {
+            updatedAtTV.setVisibility(View.VISIBLE);
+            updatedAtTV.setText(context.getString(R.string.updated_at) + " " + format.format(new Date(milestone.getUpdatedAt())));
+        }
+        if (milestone.getDueOn() == -1) dueOnTV.setVisibility(View.GONE);
+        else {
+            dueOnTV.setVisibility(View.VISIBLE);
+            dueOnTV.setText(context.getString(R.string.due_on) + " " + format.format(new Date(milestone.getDueOn())));
+        }
+        if (milestone.getClosedAt() == -1) closedAtTV.setVisibility(View.GONE);
+        else {
+            closedAtTV.setVisibility(View.VISIBLE);
+            closedAtTV.setText(context.getString(R.string.closed_at) + " " + format.format(new Date(milestone.getClosedAt())));
+        }
 
-        if (githubURL == null) {
+        // Set github url text
+        if (milestone.getGithubUrl() == null) {
             githubButton.setOnClickListener(null);
-            githubButton.setVisibility(View.GONE); // TODO doesn't look pretty but should not happen very often
+            githubButton.setVisibility(View.GONE);
         } else {
-            final String finalGithubURL = githubURL;
+            githubButton.setVisibility(View.VISIBLE);
+            final String finalGithubURL = milestone.getGithubUrl();
             githubButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -254,22 +217,14 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             });
         }
     }
-
-    private static String reformatDate(DateFormat oldFormat, DateFormat newFormat, String dateStr) {
-        try {
-            Date date = oldFormat.parse(dateStr);
-            return newFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return dateStr;
-        }
-    }
 }
 
 
 class TextSizeViewHolder extends RecyclerView.ViewHolder {
     private SeekBar seekBar;
     private TextView textSizeTextView;
+    private Spinner spinner;
+    private String[] milestoneTitles;
     private PapyrosRecyclerAdapter.OnTextSizeButtonClickListener mListener;
 
     public TextSizeViewHolder(View itemView, PapyrosRecyclerAdapter.OnTextSizeButtonClickListener listener) {
@@ -278,19 +233,28 @@ class TextSizeViewHolder extends RecyclerView.ViewHolder {
 
         seekBar = (SeekBar) itemView.findViewById(R.id.textSize_SeekBar);
         textSizeTextView = (TextView) itemView.findViewById(R.id.textSize_textView);
+        spinner = (Spinner) itemView.findViewById(R.id.milestone_spinner);
         Button applyButton = (Button) itemView.findViewById(R.id.okButton);
 
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mListener != null) mListener.onClickApply(seekBar.getProgress());
+                if (mListener != null)
+                    mListener.onClickApply(seekBar.getProgress(), milestoneTitles[spinner.getSelectedItemPosition()]);
             }
         });
     }
 
-    public void showData(final Context context, int textSize) {
+    public void showData(final Context context, int textSize, String[] milestoneTitles, int selectedItem) {
         seekBar.setProgress(textSize);
         textSizeTextView.setText(context.getString(R.string.text_size) + " " + textSize);
+
+        this.milestoneTitles = milestoneTitles;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item,
+                milestoneTitles);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(selectedItem);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

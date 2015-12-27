@@ -24,15 +24,14 @@ import android.webkit.URLUtil;
 
 import com.google.android.gms.analytics.HitBuilders;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.List;
 
 
@@ -41,23 +40,16 @@ public class MainActivity extends AppCompatActivity
         PapyrosRecyclerAdapter.OnTextSizeButtonClickListener {
 
     public static final String URL = "https://api.github.com/repos/papyros/papyros-shell/milestones";
-    public static final String MILESTONE_TITLE = "title";
-    public static final String OPEN_ISSUES = "open_issues";
-    public static final String CLOSED_ISSUES = "closed_issues";
-    public static final String STATE = "state";
-    public static final String CREATED_AT = "created_at";
-    public static final String UPDATED_AT = "updated_at";
-    public static final String DUE_ON = "due_on";
-    public static final String CLOSED_AT = "closed_at";
-    public static final String GITHUB_URL = "html_url";
 
     public static final String EXTRA_SMALL_WIDGET = "small_widget";
     private static final String CACHE_FILE = "papyros_cache";
+
     public static final String SHARED_PREFERENCES = "shared_preferences";
-    public static final String TEXT_SIZE_PREFERENCE = "text_size";
     public static final String NOTIFICATION_PREFERENCE = "notifications";
     private static final String NOTIFICATION_ASKED_PREFERENCE = "notification_asked";
     public static final String OLD_PROGRESS_BAR_PREFERENCE = "old_progress_bar";
+    public static final String TEXT_SIZE_PREFERENCE = "text_size";
+    public static final String MILESTONE_WIDGET_PREFERENCE = "milestone_";
 
     public static final String GA_EXTERNAL_LINKS_EVENT_CATEGORY = "External links";
     public static final String GA_PREFERENCES_EVENT_CATEGORY = "Preferences";
@@ -67,7 +59,6 @@ public class MainActivity extends AppCompatActivity
     private SwipeRefreshLayout srLayout;
 
     private int appWidgetId;
-    private JSONObject[] data = new JSONObject[0];
     private String errorMessage;
 
     @Override
@@ -84,7 +75,7 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PapyrosRecyclerAdapter(this, data, this);
+        adapter = new PapyrosRecyclerAdapter(this, new Milestone[0], this);
         recyclerView.setAdapter(adapter);
 
         restoreAppWidgetStuff();
@@ -135,8 +126,9 @@ public class MainActivity extends AppCompatActivity
                     AppWidgetManager.INVALID_APPWIDGET_ID);
         }
         if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            adapter.setTextSize(getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                    .getInt(TEXT_SIZE_PREFERENCE + appWidgetId, 24));
+            SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+            adapter.setTextSize(pref.getInt(TEXT_SIZE_PREFERENCE + appWidgetId, 24));
+            adapter.setWidgetMilestoneTitle(pref.getString(MILESTONE_WIDGET_PREFERENCE + appWidgetId, null));
         } else {
             adapter.setTextSize(PapyrosRecyclerAdapter.DONT_SHOW_TEXT_SIZE_TILE);
         }
@@ -148,9 +140,8 @@ public class MainActivity extends AppCompatActivity
         String cache = getCache(this);
         if (cache != null) {
             try {
-                parseJSON(cache);
-                adapter.setMilestones(data);
-            } catch (JSONException e) {
+                adapter.setMilestones(JSONUtils.getMilestones(this, cache));
+            } catch (JSONException | ParseException e) {
                 e.printStackTrace();
             }
         }
@@ -167,8 +158,6 @@ public class MainActivity extends AppCompatActivity
             showErrorMessage();
             srLayout.setRefreshing(false);
         }
-
-        // TODO update app widgets if progress is updated
     }
 
     @Override
@@ -181,30 +170,23 @@ public class MainActivity extends AppCompatActivity
         }
 
         try {
-            parseJSON(json);
-            adapter.setMilestones(data);
+            adapter.setMilestones(JSONUtils.getMilestones(this, json));
 
             // Nothing went wrong, so the web page contents are correct and can be cached
             saveCache(this, json);
-        } catch (JSONException | NullPointerException e) {
+        } catch (JSONException | NullPointerException | ParseException e) {
             e.printStackTrace();
             // This means the retrieved web page was not the right one
             errorMessage = getString(R.string.error404);
         }
     }
 
-    private void parseJSON(String json) throws JSONException {
-        JSONArray jArray = new JSONArray(json);
-        data = new JSONObject[jArray.length()];
-        for (int i = 0; i < data.length; i++) {
-            data[i] = jArray.getJSONObject(i);
-        }
-    }
-
     @Override
-    public void onClickApply(int progress) {
-        getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
-                .putInt(TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
+    public void onClickApply(int progress, String milestoneTitle) {
+        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit();
+
+        editor.putInt(TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
+        editor.putString(MILESTONE_WIDGET_PREFERENCE + appWidgetId, milestoneTitle).apply();
 
         AbstractProgressWidget.updateFromCache(this);
     }

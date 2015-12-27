@@ -1,6 +1,5 @@
 package com.teinproductions.tein.papyrosprogress;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,14 +15,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -32,7 +28,6 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
     private Map<String, Integer> oldMilestones = new HashMap<>();
     private Map<String, Integer> newMilestones = new HashMap<>();
-    private String firstCreated; // Title of first created milestone
     private Context context;
 
     @Override
@@ -70,7 +65,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
             // Check if milestones have been added
             Set<String> addedMilestones = new HashSet<>();
-            for (Iterator<String> it = newMilestones.keySet().iterator(); it.hasNext();) {
+            for (Iterator<String> it = newMilestones.keySet().iterator(); it.hasNext(); ) {
                 String title = it.next();
                 if (!oldMilestones.containsKey(title)) {
                     addedMilestones.add(title);
@@ -80,7 +75,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
             // Check if milestones have been removed
             Set<String> removedMilestones = new HashSet<>();
-            for (Iterator<String> it = oldMilestones.keySet().iterator(); it.hasNext();) {
+            for (Iterator<String> it = oldMilestones.keySet().iterator(); it.hasNext(); ) {
                 String title = it.next();
                 if (!newMilestones.containsKey(title)) {
                     removedMilestones.add(title);
@@ -92,7 +87,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
             Map<String, int[]> changedProgresses = new HashMap<>();
             Set<String> titles = newMilestones.keySet();
             for (String title : titles) {
-                if (!Objects.equals(oldMilestones.get(title), newMilestones.get(title))) {
+                if (!oldMilestones.get(title).equals(newMilestones.get(title))) {
                     changedProgresses.put(title, new int[]{oldMilestones.get(title), newMilestones.get(title)});
                 }
             }
@@ -102,8 +97,15 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                 // Save cache
                 MainActivity.saveCache(context, result);
 
-                progressChanged(addedMilestones, removedMilestones, changedProgresses);
+                boolean sendNotification = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                        .getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);
+                if (sendNotification)
+                    issueNotification(context, addedMilestones, removedMilestones, changedProgresses);
             }
+
+            // I have experienced some problems with the app widgets, so update them
+            // frequently, even when there is no change in progress
+            AbstractProgressWidget.updateAppWidgets(context, newMilestones);
         } catch (JSONException | NullPointerException | ParseException e) {
             e.printStackTrace();
         }
@@ -113,52 +115,15 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         JSONArray jArray = new JSONArray(json);
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject milestone = jArray.getJSONObject(i);
-            oldMilestones.put(getTitle(milestone), getProgress(milestone));
+            oldMilestones.put(JSONUtils.getTitle(milestone), JSONUtils.getProgress(milestone));
         }
     }
 
     private void parseNew(String json) throws JSONException, ParseException {
-        // While doing this, also check for first created milestone (to display progress from in app widget)
-        long firstCreatedDate = Long.MAX_VALUE;
-        @SuppressLint("SimpleDateFormat")
-        DateFormat dateFormat = new SimpleDateFormat(MileStoneViewHolder.JSON_DATE_FORMAT);
-
         JSONArray jArray = new JSONArray(json);
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject milestone = jArray.getJSONObject(i);
-            String title = getTitle(milestone);
-            newMilestones.put(title, getProgress(milestone));
-
-            long created = dateFormat.parse(milestone.getString(MainActivity.CREATED_AT)).getTime();
-            if (created < firstCreatedDate) {
-                firstCreatedDate = created;
-                firstCreated = title;
-            }
-        }
-    }
-
-    private static String getTitle(JSONObject milestone) throws JSONException {
-        return milestone.getString(MainActivity.MILESTONE_TITLE);
-    }
-
-    private static int getProgress(JSONObject milestone) throws JSONException {
-        int openIssues = milestone.getInt(MainActivity.OPEN_ISSUES);
-        int closedIssues = milestone.getInt(MainActivity.CLOSED_ISSUES);
-        return closedIssues * 100 / (openIssues + closedIssues);
-    }
-
-    private void progressChanged(Set<String> addedMilestones, Set<String> removedMilestones,
-                                 Map<String, int[]> changedProgresses) {
-        // Send notification
-        boolean sendNotification = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);
-        if (sendNotification)
-            issueNotification(context, addedMilestones, removedMilestones, changedProgresses);
-
-        // Notify the app widgets
-        Integer progress = newMilestones.get(firstCreated);
-        if (progress != null) {
-            AbstractProgressWidget.updateAppWidgets(context, progress);
+            newMilestones.put(JSONUtils.getTitle(milestone), JSONUtils.getProgress(milestone));
         }
     }
 

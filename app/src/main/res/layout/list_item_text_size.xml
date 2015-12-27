@@ -28,6 +28,12 @@
             android:layout_height="wrap_content"
             android:progress="24" />
 
+        <Spinner
+            android:id="@+id/milestone_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp" />
+
         <LinearLayout
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
