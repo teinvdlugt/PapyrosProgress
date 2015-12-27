@@ -26,5 +26,4 @@
         android:contentDescription="@string/appwidget_contentDescription"
         android:textColor="#ffffff"
         android:textSize="24sp" />
-
 </LinearLayout>
