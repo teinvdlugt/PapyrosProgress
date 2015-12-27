@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ((GAApplication) getApplication()).startTracking();
 
+        sendBroadcast(new Intent(this, UpdateCheckReceiver.class));
+
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         srLayout.setOnRefreshListener(this);
 
