@@ -1,5 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,19 +23,19 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int ITEM_VIEW_TYPE_TEXT_SIZE = 0;
     private static final int ITEM_VIEW_TYPE_MILESTONE = 1;
 
+    private Activity activity; // Needed for Google Analytics event reporting
     private Milestone[] milestones;
-    private Context context;
     private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
     private String widgetMilestoneTitle;
     private OnTextSizeButtonClickListener listener;
     private boolean useOldProgressBar = false;
 
-    public PapyrosRecyclerAdapter(Context context, Milestone[] milestones, OnTextSizeButtonClickListener listener) {
-        this.context = context;
+    public PapyrosRecyclerAdapter(Activity activity, Milestone[] milestones, OnTextSizeButtonClickListener listener) {
+        this.activity = activity;
         this.milestones = milestones;
         this.listener = listener;
 
-        this.useOldProgressBar = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        this.useOldProgressBar = activity.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getBoolean(MainActivity.OLD_PROGRESS_BAR_PREFERENCE, false);
     }
 
@@ -81,10 +82,10 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         switch (viewType) {
             case ITEM_VIEW_TYPE_MILESTONE:
-                View itemViewMilestone = LayoutInflater.from(context).inflate(R.layout.list_item_milestone, viewGroup, false);
+                View itemViewMilestone = LayoutInflater.from(activity).inflate(R.layout.list_item_milestone, viewGroup, false);
                 return new MileStoneViewHolder(itemViewMilestone);
             case ITEM_VIEW_TYPE_TEXT_SIZE:
-                View itemViewTextSize = LayoutInflater.from(context).inflate(R.layout.list_item_text_size, viewGroup, false);
+                View itemViewTextSize = LayoutInflater.from(activity).inflate(R.layout.list_item_text_size, viewGroup, false);
                 return new TextSizeViewHolder(itemViewTextSize, listener);
         }
         return null;
@@ -95,7 +96,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (getItemViewType(position)) {
             case ITEM_VIEW_TYPE_MILESTONE:
                 if (textSize != -1) position--;
-                ((MileStoneViewHolder) viewHolder).showData(context, milestones[position], useOldProgressBar);
+                ((MileStoneViewHolder) viewHolder).showData(activity, milestones[position], useOldProgressBar);
                 break;
             case ITEM_VIEW_TYPE_TEXT_SIZE:
                 String[] milestoneTitles = new String[milestones.length];
@@ -109,7 +110,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             selectedItemPosition = i;
                             break;
                         }
-                ((TextSizeViewHolder) viewHolder).showData(context, textSize, milestoneTitles, selectedItemPosition);
+                ((TextSizeViewHolder) viewHolder).showData(activity, textSize, milestoneTitles, selectedItemPosition);
         }
     }
 
@@ -160,7 +161,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public void showData(final Context context, Milestone milestone, boolean useOldProgressBar) {
+    public void showData(final Activity context, final Milestone milestone, boolean useOldProgressBar) {
         if (useOldProgressBar) {
             progressBar.setVisibility(View.GONE);
             oldProgressBar.setVisibility(View.VISIBLE);
@@ -208,11 +209,12 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             githubButton.setVisibility(View.GONE);
         } else {
             githubButton.setVisibility(View.VISIBLE);
-            final String finalGithubURL = milestone.getGithubUrl();
             githubButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.openWebPage(context, finalGithubURL);
+                    MainActivity.sendEventHit(context, MainActivity.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
+                            "View on github", milestone.getTitle());
+                    MainActivity.openWebPage(context, milestone.getGithubUrl());
                 }
             });
         }

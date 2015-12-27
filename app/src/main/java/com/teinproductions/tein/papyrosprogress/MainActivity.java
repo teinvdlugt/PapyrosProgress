@@ -1,5 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
+import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity
                 openWebPage(this, "http://papyros.io");
 
                 try {
-                    sendEventHit(GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit papyros.io", null);
+                    sendEventHit(this, GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit papyros.io", null);
                 } catch (Exception e) {
                     // I don't want to cause this any errors,
                     // because that would seem weird to the user
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity
                 openWebPage(this, "https://github.com/papyros");
 
                 try {
-                    sendEventHit(GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit Github page", null);
+                    sendEventHit(this, GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit Github page", null);
                 } catch (Exception ignored) { /*ignored*/ }
 
                 return true;
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity
                         .putBoolean(OLD_PROGRESS_BAR_PREFERENCE, item.isChecked()).apply();
 
                 try {
-                    sendEventHit(GA_PREFERENCES_EVENT_CATEGORY, "Change old progress bar preference", "" + item.isChecked());
+                    sendEventHit(this, GA_PREFERENCES_EVENT_CATEGORY, "Change old progress bar preference", "" + item.isChecked());
                 } catch (Exception ignored) { /*ignored*/ }
 
                 return true;
@@ -263,7 +264,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
 
                 try {
-                    sendEventHit(GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
+                    sendEventHit(this, GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
                 } catch (Exception ignored) { /*ignored*/ }
                 return true;
             default:
@@ -271,12 +272,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void sendEventHit(String category, String action, String label) {
+    public static void sendEventHit(Activity activity, String category, String action, String label) {
         HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
         if (category != null) builder.setCategory(category);
         if (action != null) builder.setAction(action);
         if (label != null) builder.setLabel(label);
-        ((GAApplication) getApplication()).getTracker().send(builder.build());
+        ((GAApplication) activity.getApplication()).getTracker().send(builder.build());
     }
 
     public static void openWebPage(Context context, String URL) {
