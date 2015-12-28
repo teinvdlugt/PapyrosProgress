@@ -2,20 +2,20 @@
 <resources>
     <string name="app_name">Progrès de Papyros</string>
     <string name="appwidget_contentDescription">Progès jusqu\'à la prochaine étape de Papyros</string>
-    <string name="closed_at">Fermé le</string>
-    <string name="closed_issues">Problèmes résolus:</string>
-    <string name="created_at">Créé le</string>
-    <string name="due_on">Expecté le</string>
+    <string name="closed_at">Fermé le %1$s</string>
+    <string name="closed_issues">Problèmes résolus: %1$d</string>
+    <string name="created_at">Créé le %1$s</string>
+    <string name="due_on">Expecté le %1$s</string>
     <string name="error404">Erreur 404</string>
     <string name="error403">Erreur 403. Réessayez plus tard.</string>
     <string name="no_network">Il n\'y a pas de connection au réseau</string>
     <string name="ok">Valider</string>
-    <string name="open_issues">Problèmes non résolus:</string>
-    <string name="progress">Progrès:</string>
-    <string name="state">État:</string>
-    <string name="text_size">Taille de la police:</string>
+    <string name="open_issues">Problèmes non résolus : %1$d</string>
+    <string name="progress">Progrès: %1$d%%</string>
+    <string name="state">État: %1$s</string>
+    <string name="text_size">Taille de la police: %1$d</string>
     <string name="unknown">Inconnu à ce jour</string>
-    <string name="updated_at">Mis à jour le</string>
+    <string name="updated_at">Mis à jour le %1$s</string>
     <string name="offline_snackbar">Mode hors ligne; les données peuvent ne plus être à jour.</string>
     <string name="visit_homepage">Visiter la page d\'acceuil de Papyros</string>
     <string name="view_on_github">Voir sur Github</string>
@@ -26,7 +26,7 @@
     <string name="notific_msg_text_format">%1$s changed from %2$d to %3$d%%!</string>
     <string name="use_old_progress_bar">Use old progress bar</string>
     <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%s\" has been removed.</string>
+    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
+    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
     <string name="notification_title">Progrès de Papyros</string>
 </resources>

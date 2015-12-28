@@ -2,21 +2,21 @@
 <resources>
     <string name="app_name">Vývoj systému Papyros</string>
     <string name="appwidget_contentDescription">Postup do dalšího milníku Papyros</string>
-    <string name="closed_at">Uzavřeno:</string>
+    <string name="closed_at">Uzavřeno: %1$s</string>
     <string name="ok">OK</string>
-    <string name="open_issues">Otevřené problémy:</string>
-    <string name="closed_issues">Uzavřené problémy:</string>
-    <string name="progress">Vývoj:</string>
-    <string name="state">Status:</string>
-    <string name="created_at">Vytvořeno:</string>
-    <string name="updated_at">Aktualizováno:</string>
-    <string name="due_on">Do:</string>
+    <string name="open_issues">Otevřené problémy: %1$d</string>
+    <string name="closed_issues">Uzavřené problémy: %1$d</string>
+    <string name="progress">Vývoj: %1$d%%</string>
+    <string name="state">Status: %1$s</string>
+    <string name="created_at">Vytvořeno: %1$s</string>
+    <string name="updated_at">Aktualizováno: %1$s</string>
+    <string name="due_on">Do: %1$s</string>
     <string name="unknown">Neznámý</string>
     <string name="no_network">Nepřipojen k síti</string>
     <string name="error403">Error 403. Prosím zkontrolujte později.</string>
     <string name="error404">Error 404</string>
     <string name="offline_snackbar">Offile mód: data nemusí být aktuální</string>
-    <string name="text_size">Velikost textu:</string>
+    <string name="text_size">Velikost textu: %1$d</string>
     <string name="view_on_github">Zobrazit na Githubu</string>
     <string name="visit_github">Navštívit Github stránku</string>
     <string name="visit_homepage">Navštívit domovskou stránku Papyros</string>
@@ -26,7 +26,7 @@
     <string name="notific_msg_text_format">%1$s changed from %2$d to %3$d%%!</string>
     <string name="use_old_progress_bar">Use old progress bar</string>
     <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%s\" has been removed.</string>
+    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
+    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
     <string name="notification_title">Vývoj systému Papyros</string>
 </resources>

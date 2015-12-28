@@ -174,33 +174,33 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
 
         // Set texts
         titleTV.setText(milestone.getTitle());
-        openIssuesTV.setText(context.getString(R.string.open_issues) + " " + milestone.getOpenIssues());
-        closedIssuesTV.setText(context.getString(R.string.closed_issues) + " " + milestone.getClosedIssues());
+        openIssuesTV.setText(context.getString(R.string.open_issues, milestone.getOpenIssues()));
+        closedIssuesTV.setText(context.getString(R.string.closed_issues, milestone.getClosedIssues()));
         progressBar.setProgress(progress);
         oldProgressBar.setProgress(progress);
-        progressTV.setText(context.getString(R.string.progress) + " " + progress + "%");
-        stateTV.setText(context.getString(R.string.state) + " " + milestone.getState());
+        progressTV.setText(context.getString(R.string.progress, progress));
+        stateTV.setText(context.getString(R.string.state, milestone.getState()));
 
         // Set date texts
         DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
         if (milestone.getCreatedAt() == -1)
             createdAtTV.setText(context.getString(R.string.unknown));
         else
-            createdAtTV.setText(context.getString(R.string.created_at) + " " + format.format(new Date(milestone.getCreatedAt())));
+            createdAtTV.setText(context.getString(R.string.created_at, format.format(new Date(milestone.getCreatedAt()))));
         if (milestone.getUpdatedAt() == -1) updatedAtTV.setVisibility(View.GONE);
         else {
             updatedAtTV.setVisibility(View.VISIBLE);
-            updatedAtTV.setText(context.getString(R.string.updated_at) + " " + format.format(new Date(milestone.getUpdatedAt())));
+            updatedAtTV.setText(context.getString(R.string.updated_at, format.format(new Date(milestone.getUpdatedAt()))));
         }
         if (milestone.getDueOn() == -1) dueOnTV.setVisibility(View.GONE);
         else {
             dueOnTV.setVisibility(View.VISIBLE);
-            dueOnTV.setText(context.getString(R.string.due_on) + " " + format.format(new Date(milestone.getDueOn())));
+            dueOnTV.setText(context.getString(R.string.due_on, format.format(new Date(milestone.getDueOn()))));
         }
         if (milestone.getClosedAt() == -1) closedAtTV.setVisibility(View.GONE);
         else {
             closedAtTV.setVisibility(View.VISIBLE);
-            closedAtTV.setText(context.getString(R.string.closed_at) + " " + format.format(new Date(milestone.getClosedAt())));
+            closedAtTV.setText(context.getString(R.string.closed_at, format.format(new Date(milestone.getClosedAt()))));
         }
 
         // Set github url text
@@ -249,7 +249,7 @@ class TextSizeViewHolder extends RecyclerView.ViewHolder {
 
     public void showData(final Context context, int textSize, String[] milestoneTitles, int selectedItem) {
         seekBar.setProgress(textSize);
-        textSizeTextView.setText(context.getString(R.string.text_size) + " " + textSize);
+        textSizeTextView.setText(context.getString(R.string.text_size, textSize));
 
         this.milestoneTitles = milestoneTitles;
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item,
@@ -261,7 +261,7 @@ class TextSizeViewHolder extends RecyclerView.ViewHolder {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textSizeTextView.setText(context.getString(R.string.text_size) + " " + progress);
+                textSizeTextView.setText(context.getString(R.string.text_size, progress));
             }
 
             @Override

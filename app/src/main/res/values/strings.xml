@@ -2,20 +2,20 @@
     <string name="app_name">Papyros Progress</string>
 
     <string name="appwidget_contentDescription">Progress to next Papyros release milestone</string>
-    <string name="text_size">Text size: </string>
+    <string name="text_size">Text size: %1$d</string>
     <string name="ok">Apply</string>
-    <string name="open_issues">Open issues:</string>
-    <string name="closed_issues">Closed issues:</string>
-    <string name="progress">Progress:</string>
-    <string name="state">State:</string>
+    <string name="open_issues">Open issues: %1$d</string>
+    <string name="closed_issues">Closed issues: %1$d</string>
+    <string name="progress">Progress: %1$d%%</string>
+    <string name="state">State: %1$s</string>
     <string name="unknown">Unknown</string>
     <string name="no_network">Not connected to a network</string>
     <string name="error403">Error 403. Please check again later.</string>
     <string name="error404">404 Error</string>
-    <string name="created_at">Created at:</string>
-    <string name="updated_at">Updated at:</string>
-    <string name="due_on">Due on:</string>
-    <string name="closed_at">Closed at:</string>
+    <string name="created_at">Created at: %1$s</string>
+    <string name="updated_at">Updated at: %1$s</string>
+    <string name="due_on">Due on: %1$s</string>
+    <string name="closed_at">Closed at: %1$s</string>
     <string name="offline_snackbar">Offline mode: data may be out of date</string>
     <string name="visit_homepage">Visit Papyros homepage</string>
     <string name="visit_github">Visit Github page</string>
@@ -27,6 +27,6 @@
     <string name="use_old_progress_bar">Use old progress bar</string>
     <string name="rate_in_play_store">Rate in Play Store</string>
     <string name="notification_title">Papyros updates</string>
-    <string name="milestone_added_notification" formatted="false">The milestone \"%s\" has been created.</string>
-    <string name="milestone_removed_notification" formatted="false">The milestone \"%s\" has been removed.</string>
+    <string name="milestone_added_notification" formatted="false">The milestone \"%1$s\" has been created.</string>
+    <string name="milestone_removed_notification" formatted="false">The milestone \"%1$s\" has been removed.</string>
 </resources>

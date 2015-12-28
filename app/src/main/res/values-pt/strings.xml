@@ -2,16 +2,16 @@
 <resources>
     <string name="app_name">Progresso do Papyros</string>
     <string name="appwidget_contentDescription">Progresso para a liberação da próxima versão do Papyros</string>
-    <string name="text_size">Tamanho do texto:</string>
+    <string name="text_size">Tamanho do texto: %1$d</string>
     <string name="ok">OK</string>
-    <string name="open_issues">Problemas ativos:</string>
-    <string name="closed_issues">Problemas resolvidos:</string>
-    <string name="progress">Progresso:</string>
-    <string name="state">Estado:</string>
-    <string name="created_at">Criado em:</string>
-    <string name="updated_at">Atualizado em:</string>
-    <string name="due_on">Previsto para:</string>
-    <string name="closed_at">Fechado em:</string>
+    <string name="open_issues">Problemas ativos: %1$d</string>
+    <string name="closed_issues">Problemas resolvidos: %1$d</string>
+    <string name="progress">Progresso: %1$d%%</string>
+    <string name="state">Estado: %s</string>
+    <string name="created_at">Criado em: %1$s</string>
+    <string name="updated_at">Atualizado em: %1$s</string>
+    <string name="due_on">Previsto para: %1$s</string>
+    <string name="closed_at">Fechado em: %1$s</string>
     <string name="unknown">Desconhecido</string>
     <string name="no_network">Não conectado à internet</string>
     <string name="error403">Erro 403. Por favor, verifique novamente mais tarde.</string>
@@ -24,9 +24,9 @@
     <string name="notification_dialog_title">Notificações</string>
     <string name="notification_dialog_message">Você gostaria de receber uma notificação quando houver progresso?</string>
     <string name="notific_msg_text_format">%1$s mudou de %2$d para %3$d%%!</string>
-    <string name="use_old_progress_bar">Use old progress bar</string>
-    <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%s\" has been removed.</string>
-    <string name="notification_title">Progresso do Papyros</string>
+    <string name="use_old_progress_bar">Usar barra de progresso antiga</string>
+    <string name="rate_in_play_store">Avaliar na Play Store</string>
+    <string name="milestone_added_notification">O milestone \"%1$s\" foi criado.</string>
+    <string name="milestone_removed_notification">O milestone \"%1$s\" foi removido.</string>
+    <string name="notification_title">Atualizações do Papyros</string>
 </resources>

@@ -3,15 +3,15 @@
     <string name="app_name">تقدُّم تطوير بابيروس</string>
     <string name="appwidget_contentDescription">التقدم حتى المرحلة القادمة من تطوير بابيروس</string>
     <string name="ok">تثبيت</string>
-    <string name="text_size">حجم النص :</string>
-    <string name="open_issues">المشاكل الغير محلولة :</string>
-    <string name="closed_issues">المشاكل التي تم حلّها :</string>
-    <string name="progress">التقدم :</string>
-    <string name="state">الحالة :</string>
-    <string name="created_at">تم انشاؤه في : </string>
-    <string name="updated_at">تم تحديثه في :</string>
-    <string name="due_on">متوقع في :</string>
-    <string name="closed_at">تم غلقه في :</string>
+    <string name="text_size">حجم النص : %1$d</string>
+    <string name="open_issues">المشاكل الغير محلولة : %1$d</string>
+    <string name="closed_issues">المشاكل التي تم حلّها : %1$d</string>
+    <string name="progress">التقدم : %1$d٪</string>
+    <string name="state">الحالة : %1$s</string>
+    <string name="created_at">تم انشاؤه في : %1$s</string>
+    <string name="updated_at">تم تحديثه في : %1$s</string>
+    <string name="due_on">متوقع في : %1$s</string>
+    <string name="closed_at">تم غلقه في : %1$s</string>
     <string name="unknown">غير معلوم </string>
     <string name="no_network">لا يمكن التصال بالشبكة</string>
     <string name="error403">خطأ رقم 403، يرجى المحاولة لاحقا</string>
@@ -23,10 +23,10 @@
     <string name="show_notification">فعّل الإشعارات</string>
     <string name="notification_dialog_title">الإشعارات</string>
     <string name="notification_dialog_message">هل تريد تلقي إشعار عندما يتم تحديث التقدّم ؟</string>
-    <string name="notific_msg_text_format" formatted="false">النسخة %s تغيرت من %d الى %d !</string>
+    <string name="notific_msg_text_format" formatted="false">النسخة %1$s تغيرت من %2$d الى %3$d !</string>
     <string name="use_old_progress_bar">Use old progress bar</string>
     <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%s\" has been removed.</string>
+    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
+    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
     <string name="notification_title">تقدُّم تطوير بابيروس</string>
 </resources>
