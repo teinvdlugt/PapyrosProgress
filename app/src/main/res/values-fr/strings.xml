@@ -23,7 +23,7 @@
     <string name="show_notification">Montrer les notifications</string>
     <string name="notification_dialog_title">Notifications</string>
     <string name="notification_dialog_message">Voulez-vous recevoir des notifications quand la le progrès à changé?</string>
-    <string name="notific_msg_text_format">%1%s a changé de %2$d à %3$d%%.</string>
+    <string name="notific_msg_text_format">%1$s a changé de %2$d à %3$d%%.</string>
     <string name="use_old_progress_bar">Utiliser la vieille barre de progression</string>
     <string name="rate_in_play_store">Noter sur le Play Store </string>
     <string name="milestone_added_notification">L\'étape \"%1$s\" a été créée.</string>
