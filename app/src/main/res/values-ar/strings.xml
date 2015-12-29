@@ -24,9 +24,9 @@
     <string name="notification_dialog_title">الإشعارات</string>
     <string name="notification_dialog_message">هل تريد تلقي إشعار عندما يتم تحديث التقدّم ؟</string>
     <string name="notific_msg_text_format" formatted="false">النسخة %1$s تغيرت من %2$d الى %3$d !</string>
-    <string name="use_old_progress_bar">Use old progress bar</string>
-    <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
-    <string name="notification_title">تقدُّم تطوير بابيروس</string>
+    <string name="use_old_progress_bar">إستعمل شريط التقدم القديم</string>
+    <string name="rate_in_play_store">قيم التطبيق على البلاي ستور</string>
+    <string name="milestone_added_notification">تم إنشاء المعلم \"%1$s\".</string>
+    <string name="milestone_removed_notification">تم حذف المعلم \"%1$s\".</string>
+    <string name="notification_title">تحديثات بابيروس</string>
 </resources>

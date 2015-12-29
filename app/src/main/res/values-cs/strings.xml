@@ -20,13 +20,13 @@
     <string name="view_on_github">Zobrazit na Githubu</string>
     <string name="visit_github">Navštívit Github stránku</string>
     <string name="visit_homepage">Navštívit domovskou stránku Papyros</string>
-    <string name="show_notification">Enable notifications</string>
-    <string name="notification_dialog_title">Notifications</string>
-    <string name="notification_dialog_message">Would you like to receive a notification when the progress is updated?</string>
-    <string name="notific_msg_text_format">%1$s changed from %2$d to %3$d%%!</string>
-    <string name="use_old_progress_bar">Use old progress bar</string>
-    <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
-    <string name="notification_title">Vývoj systému Papyros</string>
+    <string name="show_notification">Zobrazovat notifikace</string>
+    <string name="notification_dialog_title">Notifikace</string>
+    <string name="notification_dialog_message">Chtěl byste dostávat notifikace o aktualizacích?</string>
+    <string name="notific_msg_text_format">%1$s změněn z %2$d na %3$d%%!</string>
+    <string name="use_old_progress_bar">Použít starý indikátor postupu</string>
+    <string name="rate_in_play_store">Ohodnotit na Play Store</string>
+    <string name="milestone_added_notification">Milník \"%1$s\" byl vytvořen.</string>
+    <string name="milestone_removed_notification">Milník \"%1$s\" byl odstraněn.</string>
+    <string name="notification_title">Aktualizace Papyrosu</string>
 </resources>

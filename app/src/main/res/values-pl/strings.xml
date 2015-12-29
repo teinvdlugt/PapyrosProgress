@@ -25,8 +25,8 @@
     <string name="notification_dialog_message">Czy wyświetlać powiadomienia, kiedy stan zostanie zaktualizowany?</string>
     <string name="notific_msg_text_format">%1$s zmieniony z %2$d na %3$d%%!</string>
     <string name="use_old_progress_bar">Użyj starego paska postępu</string>
-    <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
-    <string name="notification_title">Postęp rozwoju Papyros</string>
+    <string name="rate_in_play_store">Oceń w Sklepie Play</string>
+    <string name="milestone_added_notification">Stworzono milestone \"%1$s\".</string>
+    <string name="milestone_removed_notification">Usunięto milestone \"%1$s\".</string>
+    <string name="notification_title">Aktualizacje Papyros</string>
 </resources>

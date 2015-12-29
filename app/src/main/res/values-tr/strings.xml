@@ -17,16 +17,16 @@
     <string name="error403">Hata 403. Daha sonra tekrar deneyin.</string>
     <string name="error404">Hata 404</string>
     <string name="offline_snackbar">Çevrimdışı Mod: Veriler güncel olmayabilir</string>
-    <string name="visit_homepage">Papyros Anasayfasını ziyaret et</string>
-    <string name="visit_github">Github sayfasını ziyaret et</string>
+    <string name="visit_homepage">Papyros Anasayfası</string>
+    <string name="visit_github">Github Sayfası</string>
     <string name="view_on_github">Github\'da görüntüle</string>
     <string name="show_notification">Bildirimleri göster</string>
     <string name="notification_dialog_title">Bildirimler</string>
     <string name="notification_dialog_message">İlerleme güncellendiğinde bildirim almak ister misiniz?</string>
     <string name="notific_msg_text_format"><![CDATA[%1$s, %2$d —> %3$d%% olarak değişti!]]></string>
-    <string name="use_old_progress_bar">Use old progress bar</string>
-    <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
-    <string name="notification_title">Papyros Durumu</string>
+    <string name="use_old_progress_bar">Eski ilerleme çubuğu</string>
+    <string name="rate_in_play_store">	Play Store\'da oy ver</string>
+    <string name="milestone_added_notification">\"%1$s\" oluşturuldu.</string>
+    <string name="milestone_removed_notification">\"%1$s\" kaldırıldı.</string>
+    <string name="notification_title">Papyros güncellemesi</string>
 </resources>

@@ -24,9 +24,9 @@
     <string name="notification_dialog_title">Notificaciones</string>
     <string name="notification_dialog_message">Recibir una notificación cuando cambie el progreso?</string>
     <string name="notific_msg_text_format">¡La %1$s ha cambiado desde %2$d a %3$d%%!</string>
-    <string name="use_old_progress_bar">Use old progress bar</string>
-    <string name="rate_in_play_store">Rate in Play Store</string>
-    <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
-    <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
-    <string name="notification_title">Progreso de Papyros</string>
+    <string name="use_old_progress_bar">Usar la barra de progreso antigua </string>
+    <string name="rate_in_play_store">Calificar en la Play Store</string>
+    <string name="milestone_added_notification">Se ha creado la etapa \"%1$s\"</string>
+    <string name="milestone_removed_notification">Se ha eliminado la etapa \"%1$s\"</string>
+    <string name="notification_title">Actualizaciones de Papyros </string>
 </resources>
