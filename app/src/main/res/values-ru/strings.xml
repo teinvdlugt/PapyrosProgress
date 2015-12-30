@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Papyros Progress</string>
+    <string name="appwidget_contentDescription">Прогресс следующего выпуска Papyros</string>
+    <string name="text_size">Размер текста: %1$d</string>
+    <string name="ok">Применить</string>
+    <string name="open_issues">Неразрешённые проблемы: %1$d</string>
+    <string name="closed_issues">Разрешённые проблемы: %1$d</string>
+    <string name="progress">Прогресс: %1$d%%</string>
+    <string name="state">Состояние: %1$s</string>
+    <string name="created_at">Начато: %1$s</string>
+    <string name="updated_at">Обновлено: %1$s</string>
+    <string name="due_on">Дедлайн: %1$s</string>
+    <string name="closed_at">Завершено: %1$s</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="no_network">Нет подключения к сети</string>
+    <string name="error403">Ошибка 403. Повторите попытку позже.</string>
+    <string name="error404">Ошибка 404</string>
+    <string name="offline_snackbar">Офлайн-режим: данные могут нуждаться в обновлении</string>
+    <string name="visit_homepage">Посетить веб-сайт Papyros</string>
+    <string name="visit_github">Посетить страничку в Github</string>
+    <string name="view_on_github">Просмотреть в Github</string>
+    <string name="show_notification">Показывать уведомления</string>
+    <string name="notification_dialog_title">Уведомления</string>
+    <string name="notification_dialog_message">Хотите ли Вы получать уведомление каждый раз, когда прогресс обновляется?</string>
+    <string name="rate_in_play_store">Оценить в Play Маркете</string>
+    <string name="notification_title">Обновления Papyros</string>
+    <string name="milestone_added_notification">Создана ветвь \"%1$s\".</string>
+    <string name="milestone_removed_notification">Удалена ветвь \"%1$s\".</string>
+    <string name="use_old_progress_bar">Использовать старую полосу прогресса</string>
+    <string name="notific_msg_text_format">%1$s обновлено с %2$d до %3$d%%!</string>
+</resources>
