@@ -30,4 +30,9 @@
         android:orderInCategory="104"
         android:title="@string/rate_in_play_store"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/test_notification"
+        android:orderInCategory="105"
+        android:title="Test notification"
+        app:showAsAction="never" />
 </menu>

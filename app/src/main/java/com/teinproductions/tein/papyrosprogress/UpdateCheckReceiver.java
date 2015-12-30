@@ -129,7 +129,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         }
     }
 
-    private static void issueNotification(Context context, Set<String> addedMilestones,
+    public static void issueNotification(Context context, Set<String> addedMilestones,
                                           Set<String> removedMilestones, Map<String, int[]> changedProgresses) {
         String title = context.getString(R.string.notification_title);
         StringBuilder message = new StringBuilder();

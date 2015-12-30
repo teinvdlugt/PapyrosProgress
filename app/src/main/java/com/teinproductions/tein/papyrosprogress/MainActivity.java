@@ -33,7 +33,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity
@@ -267,6 +271,15 @@ public class MainActivity extends AppCompatActivity
                     sendEventHit(this, GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
                 } catch (Exception ignored) { /*ignored*/ }
                 return true;
+            case R.id.test_notification:
+                Set<String> addedMilestones = new HashSet<>();
+                addedMilestones.add("Version 1.0");
+                Set<String> removedMilestones = new HashSet<>();
+                removedMilestones.add("Version 0.1");
+                Map<String, int[]> changedProgress = new HashMap<>();
+                changedProgress.put("Version 0.2", new int[]{6, 18});
+                changedProgress.put("Version 0.3", new int[]{0, 4});
+                UpdateCheckReceiver.issueNotification(this, addedMilestones, removedMilestones, changedProgress);
             default:
                 return false;
         }
