@@ -6,9 +6,11 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import org.json.JSONArray;
@@ -24,7 +26,8 @@ import java.util.Set;
 
 
 public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPageTask.OnLoadedListener {
-    private static final int NOTIFICATION_ID = 1;
+    private static final int PROGRESS_NOTIFICATION_ID = 1;
+    private static final int BLOG_NOTIFICATION_ID = 2;
 
     private Map<String, Integer> oldMilestones = new HashMap<>();
     private Map<String, Integer> newMilestones = new HashMap<>();
@@ -33,25 +36,63 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
+        SharedPreferences pref = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE);
 
         // Check Internet connection
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected()) return;
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-            // Connected to the Internet!
+        // Check if progress has to be checked
+        boolean progressNotifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
+        boolean appWidgets = AbstractProgressWidget.areAppWidgetsEnabled(context);
+
+        // Check if blog has to be checked
+        boolean blogNotifications = pref.getBoolean(MainActivity.BLOG_NOTIFICATION_PREFERENCE, true);
+
+        if (progressNotifications || appWidgets) {
             try {
                 // Parse the cache
-                String cache = MainActivity.getCache(context);
+                String cache = MainActivity.getFile(context, MainActivity.MILESTONES_CACHE_FILE);
                 if (cache == null) {
                     // We have nothing to compare the new progress to
-                    return;
+                    throw new NullPointerException("There was no saved progress cache");
                 }
 
                 parseOld(cache);
 
                 // Parse web page
                 new LoadWebPageTask(this).execute();
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (blogNotifications) {
+            try {
+                String cache = MainActivity.getFile(context, MainActivity.BLOG_CACHE_FILE);
+                if (cache == null) {
+                    throw new NullPointerException("There was no saved blog cache");
+                }
+
+                final int cacheSize = new JSONArray(cache).length();
+
+                new LoadWebPageTask(MainActivity.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
+                    @Override
+                    public void onLoaded(String result) {
+                        try {
+                            final int newSize = new JSONArray(result).length();
+
+                            if (newSize > cacheSize) {
+                                // A blog post has been added
+                                issueBlogNotification(UpdateCheckReceiver.this.context);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
             }
@@ -95,7 +136,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
             // Check if there are any changes
             if (addedMilestones.size() > 0 || removedMilestones.size() > 0 || changedProgresses.size() > 0) {
                 // Save cache
-                MainActivity.saveCache(context, result);
+                MainActivity.saveFile(context, result, MainActivity.MILESTONES_CACHE_FILE);
 
                 boolean sendNotification = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                         .getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);
@@ -172,6 +213,28 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
         // Issue the notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        notificationManager.notify(PROGRESS_NOTIFICATION_ID, builder.build());
+    }
+
+    private static void issueBlogNotification(Context context) {
+        String title = context.getString(R.string.notification_title);
+        String message = context.getString(R.string.blog_notification_content);
+
+        PendingIntent pendingIntent;
+        try {
+            pendingIntent = PendingIntent.getActivity(context, 0,
+                    new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.PAPYROS_BLOG_URL)),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setContentIntent(pendingIntent);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(BLOG_NOTIFICATION_ID, builder.build());
     }
 }

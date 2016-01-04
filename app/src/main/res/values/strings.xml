@@ -29,4 +29,6 @@
     <string name="notification_title">Papyros updates</string>
     <string name="milestone_added_notification" formatted="false">The milestone \"%1$s\" has been created.</string>
     <string name="milestone_removed_notification" formatted="false">The milestone \"%1$s\" has been removed.</string>
+    <string name="blog_notifications">Blog notifications</string>
+    <string name="blog_notification_content">A Papyros blog post has been added</string>
 </resources>

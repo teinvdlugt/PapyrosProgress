@@ -5,17 +5,21 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 public class AlarmUtils {
 
     public static void reconsiderSettingAlarm(Context context) {
         // Check if notifications are enabled:
-        boolean notifications = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
-                Context.MODE_PRIVATE).getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);
+        SharedPreferences pref = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE);
+        boolean notifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
+        boolean blogNotifications = pref.getBoolean(MainActivity.BLOG_NOTIFICATION_PREFERENCE, true);
+
         // Check if app widgets are present:
         boolean appWidgets = AbstractProgressWidget.areAppWidgetsEnabled(context);
 
-        if (notifications || appWidgets) {
+        if (notifications || blogNotifications || appWidgets) {
             // Set alarm
             setAlarm(context);
         } else {

@@ -39,11 +39,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements LoadWebPageTask.OnLoadedListener, SwipeRefreshLayout.OnRefreshListener,
         PapyrosRecyclerAdapter.OnTextSizeButtonClickListener {
-
+    // TODO: 4-1-2016 Move static constants to Constants class
     public static final String URL = "https://api.github.com/repos/papyros/papyros-shell/milestones";
+    public static final String PAPYROS_BLOG_API_URL = "https://api.github.com/repositories/26886336/contents/_posts";
+    public static final String PAPYROS_BLOG_URL = "http://papyros.io/blog/";
 
     public static final String EXTRA_SMALL_WIDGET = "small_widget";
-    private static final String CACHE_FILE = "papyros_cache";
+    public static final String MILESTONES_CACHE_FILE = "papyros_cache";
+    public static final String BLOG_CACHE_FILE = "papyros_blog_cache";
 
     public static final String SHARED_PREFERENCES = "shared_preferences";
     public static final String NOTIFICATION_PREFERENCE = "notifications";
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     public static final String OLD_PROGRESS_BAR_PREFERENCE = "old_progress_bar";
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
     public static final String MILESTONE_WIDGET_PREFERENCE = "milestone_";
+    public static final String BLOG_NOTIFICATION_PREFERENCE = "blog_notifications";
 
     public static final String GA_EXTERNAL_LINKS_EVENT_CATEGORY = "External links";
     public static final String GA_PREFERENCES_EVENT_CATEGORY = "Preferences";
@@ -138,7 +142,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRefresh() {
         // First try with cache:
-        String cache = getCache(this);
+        String cache = getFile(this, MainActivity.MILESTONES_CACHE_FILE);
         if (cache != null) {
             try {
                 adapter.setMilestones(JSONUtils.getMilestones(cache));
@@ -174,7 +178,7 @@ public class MainActivity extends AppCompatActivity
             adapter.setMilestones(JSONUtils.getMilestones(json));
 
             // Nothing went wrong, so the web page contents are correct and can be cached
-            saveCache(this, json);
+            saveFile(this, json, MainActivity.MILESTONES_CACHE_FILE);
         } catch (JSONException | NullPointerException | ParseException e) {
             e.printStackTrace();
             // This means the retrieved web page was not the right one
@@ -247,6 +251,17 @@ public class MainActivity extends AppCompatActivity
                 getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                         .putBoolean(NOTIFICATION_PREFERENCE, item.isChecked()).apply();
                 return true;
+            case R.id.blog_notifications:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    AlarmUtils.reconsiderSettingAlarm(this);
+                } else {
+                    item.setChecked(true);
+                    AlarmUtils.setAlarm(this);
+                }
+
+                getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
+                        .putBoolean(BLOG_NOTIFICATION_PREFERENCE, item.isChecked()).apply();
             case R.id.oldProgressBar:
                 item.setChecked(!item.isChecked());
                 adapter.setUseOldProgressBar(item.isChecked());
@@ -295,11 +310,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static String getCache(Context context) {
+    public static String getFile(Context context, String fileName) {
         StringBuilder sb;
 
         try {
-            FileInputStream fis = context.openFileInput(CACHE_FILE);
+            FileInputStream fis = context.openFileInput(fileName);
             InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
             BufferedReader buffReader = new BufferedReader(isr);
 
@@ -316,10 +331,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static void saveCache(Context context, String cache) {
+    public static void saveFile(Context context, String fileContent, String fileName) {
         try {
-            FileOutputStream fos = context.openFileOutput(CACHE_FILE, MODE_PRIVATE);
-            fos.write(cache.getBytes());
+            FileOutputStream fos = context.openFileOutput(fileName, MODE_PRIVATE);
+            fos.write(fileContent.getBytes());
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
