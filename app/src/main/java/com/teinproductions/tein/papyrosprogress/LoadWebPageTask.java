@@ -1,6 +1,7 @@
 package com.teinproductions.tein.papyrosprogress;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +44,7 @@ class LoadWebPageTask extends AsyncTask<Void, Void, String> {
             return read(is);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d("RESULT: ", "Error");
             return null;
         }
     }
@@ -63,6 +65,7 @@ class LoadWebPageTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         listener.onLoaded(s);
+        Log.d("RESULT: ", "onLoaded");
     }
 
     interface OnLoadedListener {

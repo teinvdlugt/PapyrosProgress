@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity
         PapyrosRecyclerAdapter.OnTextSizeButtonClickListener {
     // TODO: 4-1-2016 Move static constants to Constants class
     public static final String URL = "https://api.github.com/repos/papyros/papyros-shell/milestones";
-    public static final String PAPYROS_BLOG_API_URL = "https://api.github.com/repositories/26886336/contents/_posts";
+    public static final String PAPYROS_BLOG_API_URL = "https://api.github.com/repos/papyros/papyros.github.io/contents/_posts";
     public static final String PAPYROS_BLOG_URL = "http://papyros.io/blog/";
 
     public static final String EXTRA_SMALL_WIDGET = "small_widget";
@@ -167,6 +168,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaded(String json) {
+        Log.d("RESULT: ", json);
         srLayout.setRefreshing(false);
         if ("403".equals(json) || "404".equals(json)) {
             errorMessage = getString("403".equals(json) ? R.string.error403 : R.string.error404);
@@ -339,5 +341,12 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+}
+
+class LoadTest implements LoadWebPageTask.OnLoadedListener {
+    @Override
+    public void onLoaded(String result) {
+        Log.d("RESULT: ", "LoadTest: " + result);
     }
 }

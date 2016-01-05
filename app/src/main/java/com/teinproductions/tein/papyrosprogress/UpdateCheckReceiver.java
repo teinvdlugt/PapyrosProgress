@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,37 +71,48 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         }
 
         if (blogNotifications) {
+            int cacheSize;
             try {
                 String cache = MainActivity.getFile(context, MainActivity.BLOG_CACHE_FILE);
-                if (cache == null) {
-                    throw new NullPointerException("There was no saved blog cache");
-                }
+                cacheSize = new JSONArray(cache).length();
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Something was wrong with the cache file so delete it
+                context.deleteFile(MainActivity.BLOG_CACHE_FILE);
+                cacheSize = -1;
+            }
 
-                final int cacheSize = new JSONArray(cache).length();
+            final int finalCacheSize = cacheSize;
 
-                new LoadWebPageTask(MainActivity.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
-                    @Override
-                    public void onLoaded(String result) {
+            new LoadWebPageTask(new LoadWebPageTask.OnLoadedListener() {
+                @Override
+                public void onLoaded(String result) {
+                    Log.d("RESULT:", "Blog notifications: " + result);
+                    if (finalCacheSize != -1) {
                         try {
                             final int newSize = new JSONArray(result).length();
 
-                            if (newSize > cacheSize) {
+                            if (newSize > finalCacheSize) {
                                 // A blog post has been added
                                 issueBlogNotification(UpdateCheckReceiver.this.context);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                            // Don't save cache, so return
+                            return;
                         }
                     }
-                });
-            } catch (JSONException | NullPointerException e) {
-                e.printStackTrace();
-            }
+
+                    MainActivity.saveFile(UpdateCheckReceiver.this.context, result, MainActivity.BLOG_CACHE_FILE);
+                }
+            }).execute();
+
         }
     }
 
     @Override
     public void onLoaded(String result) {
+        Log.d("RESULT:", "progress notifications: " + result);
         try {
             parseNew(result);
 
