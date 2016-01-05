@@ -6,8 +6,8 @@
     <string name="closed_issues">Opgeloste problemen: %1$d</string>
     <string name="created_at">Gemaakt op: %1$s</string>
     <string name="due_on">Verwacht op: %1$s</string>
-    <string name="error403">403 Error. Probeer het later opnieuw.</string>
-    <string name="error404">%1$d Error</string>
+    <string name="error403">Error 403. Probeer het later opnieuw.</string>
+    <string name="error404">Error %1$d</string>
     <string name="no_network">Er is geen verbinding met een netwerk.</string>
     <string name="ok">OK</string>
     <string name="open_issues">Onopgeloste problemen: %1$d</string>
@@ -29,4 +29,5 @@
     <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
     <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
     <string name="notification_title">Papyros updates</string>
+    <string name="blog_notification_content">Er is een Papyros blog post toegevoegd</string>
 </resources>

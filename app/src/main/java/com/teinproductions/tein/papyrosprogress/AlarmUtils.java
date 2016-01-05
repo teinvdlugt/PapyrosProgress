@@ -14,12 +14,11 @@ public class AlarmUtils {
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
                 Context.MODE_PRIVATE);
         boolean notifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
-        boolean blogNotifications = pref.getBoolean(MainActivity.BLOG_NOTIFICATION_PREFERENCE, true);
 
         // Check if app widgets are present:
         boolean appWidgets = AbstractProgressWidget.areAppWidgetsEnabled(context);
 
-        if (notifications || blogNotifications || appWidgets) {
+        if (notifications || appWidgets) {
             // Set alarm
             setAlarm(context);
         } else {

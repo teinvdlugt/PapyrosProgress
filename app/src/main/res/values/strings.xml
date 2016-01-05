@@ -11,7 +11,7 @@
     <string name="unknown">Unknown</string>
     <string name="no_network">Not connected to a network</string>
     <string name="error403">Error 403. Please check again later.</string>
-    <string name="error404">%1$d Error</string>
+    <string name="error404">Error %1$d</string>
     <string name="created_at">Created at: %1$s</string>
     <string name="updated_at">Updated at: %1$s</string>
     <string name="due_on">Due on: %1$s</string>
@@ -29,6 +29,5 @@
     <string name="notification_title">Papyros updates</string>
     <string name="milestone_added_notification" formatted="false">The milestone \"%1$s\" has been created.</string>
     <string name="milestone_removed_notification" formatted="false">The milestone \"%1$s\" has been removed.</string>
-    <string name="blog_notifications">Blog notifications</string>
     <string name="blog_notification_content">A Papyros blog post has been added</string>
 </resources>

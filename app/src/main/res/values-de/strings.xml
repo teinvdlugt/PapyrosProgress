@@ -29,4 +29,5 @@
     <string name="milestone_added_notification">Der Meilenstein \"%1$s\" wurde erstellt.</string>
     <string name="milestone_removed_notification">Der Meilenstein \"%1$s\" wurde entfernt.</string>
     <string name="notification_title">Papyros Fortschritt</string>
+    <string name="blog_notification_content">A Papyros blog post has been added</string>
 </resources>

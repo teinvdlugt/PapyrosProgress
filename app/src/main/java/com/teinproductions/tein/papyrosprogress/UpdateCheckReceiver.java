@@ -42,8 +42,6 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("TAG", "onReceive");
-
         this.context = context;
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
                 Context.MODE_PRIVATE);
@@ -54,14 +52,13 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         if (networkInfo == null || !networkInfo.isConnected()) return;
 
         // Check if progress has to be checked
-        boolean progressNotifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
+        boolean notifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
         boolean appWidgets = AbstractProgressWidget.areAppWidgetsEnabled(context);
-        if (progressNotifications || appWidgets) checkProgress();
+        if (notifications || appWidgets) checkProgress();
 
         // Check if blog has to be checked
         boolean extra = intent.getBooleanExtra(CHECK_BLOGS_EXTRA, true);
-        boolean blogNotifications = pref.getBoolean(MainActivity.BLOG_NOTIFICATION_PREFERENCE, true);
-        if (extra && blogNotifications) checkBlog();
+        if (extra && notifications) checkBlog();
     }
 
     // PROGRESS NOTIFICATIONS
@@ -204,7 +201,6 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     // BLOG NOTIFICATIONS
 
     private void checkBlog() {
-        Log.d("TAG", "checkBlog() called");
         // The amount of blog posts that were found when last checked
         final SharedPreferences pref = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         final int cachePostAmount = pref.getInt(MainActivity.CACHED_BLOG_AMOUNT, -1);
@@ -257,7 +253,5 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                 .setAutoCancel(true);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(BLOG_NOTIFICATION_ID, builder.build());
-
-        Log.d("TAG", "notification issued");
     }
 }

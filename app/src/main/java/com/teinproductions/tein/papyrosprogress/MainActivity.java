@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity
     public static final String OLD_PROGRESS_BAR_PREFERENCE = "old_progress_bar";
     public static final String TEXT_SIZE_PREFERENCE = "text_size";
     public static final String MILESTONE_WIDGET_PREFERENCE = "milestone_";
-    public static final String BLOG_NOTIFICATION_PREFERENCE = "blog_notifications";
 
     public static final String GA_EXTERNAL_LINKS_EVENT_CATEGORY = "External links";
     public static final String GA_PREFERENCES_EVENT_CATEGORY = "Preferences";
@@ -256,17 +255,6 @@ public class MainActivity extends AppCompatActivity
                 getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
                         .putBoolean(NOTIFICATION_PREFERENCE, item.isChecked()).apply();
                 return true;
-            case R.id.blog_notifications:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                    AlarmUtils.reconsiderSettingAlarm(this);
-                } else {
-                    item.setChecked(true);
-                    AlarmUtils.setAlarm(this);
-                }
-
-                getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
-                        .putBoolean(BLOG_NOTIFICATION_PREFERENCE, item.isChecked()).apply();
             case R.id.oldProgressBar:
                 item.setChecked(!item.isChecked());
                 adapter.setUseOldProgressBar(item.isChecked());

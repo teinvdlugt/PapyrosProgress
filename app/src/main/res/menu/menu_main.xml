@@ -19,13 +19,6 @@
         android:title="@string/show_notification"
         app:showAsAction="never" />
     <item
-        android:id="@+id/blog_notifications"
-        android:checkable="true"
-        android:checked="true"
-        android:orderInCategory="103"
-        android:title="@string/blog_notifications"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/oldProgressBar"
         android:checkable="true"
         android:checked="false"
