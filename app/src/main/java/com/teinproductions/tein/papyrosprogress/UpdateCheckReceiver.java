@@ -12,7 +12,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,13 +83,15 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
             final int finalCacheSize = cacheSize;
 
-            new LoadWebPageTask(new LoadWebPageTask.OnLoadedListener() {
+            new LoadWebPageTask(MainActivity.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
                 @Override
-                public void onLoaded(String result) {
-                    Log.d("RESULT:", "Blog notifications: " + result);
+                public void onLoaded(LoadWebPageTask.Response result) {
                     if (finalCacheSize != -1) {
+                        // If the size of the JSON array has been correctly parsed from the cache,
+                        // compare that to the size of the new array.
+                        // If not, just cache the file again from the result.
                         try {
-                            final int newSize = new JSONArray(result).length();
+                            final int newSize = new JSONArray(result.content).length();
 
                             if (newSize > finalCacheSize) {
                                 // A blog post has been added
@@ -103,7 +104,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                         }
                     }
 
-                    MainActivity.saveFile(UpdateCheckReceiver.this.context, result, MainActivity.BLOG_CACHE_FILE);
+                    MainActivity.saveFile(UpdateCheckReceiver.this.context, result.content, MainActivity.BLOG_CACHE_FILE);
                 }
             }).execute();
 
@@ -111,10 +112,9 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     }
 
     @Override
-    public void onLoaded(String result) {
-        Log.d("RESULT:", "progress notifications: " + result);
+    public void onLoaded(LoadWebPageTask.Response result) {
         try {
-            parseNew(result);
+            parseNew(result.content);
 
             // Check if milestones have been added
             Set<String> addedMilestones = new HashSet<>();
@@ -148,7 +148,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
             // Check if there are any changes
             if (addedMilestones.size() > 0 || removedMilestones.size() > 0 || changedProgresses.size() > 0) {
                 // Save cache
-                MainActivity.saveFile(context, result, MainActivity.MILESTONES_CACHE_FILE);
+                MainActivity.saveFile(context, result.content, MainActivity.MILESTONES_CACHE_FILE);
 
                 boolean sendNotification = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                         .getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);

@@ -1,7 +1,6 @@
 package com.teinproductions.tein.papyrosprogress;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-class LoadWebPageTask extends AsyncTask<Void, Void, String> {
+class LoadWebPageTask extends AsyncTask<Void, Void, LoadWebPageTask.Response> {
 
     private OnLoadedListener listener;
     private final String url;
@@ -26,7 +25,7 @@ class LoadWebPageTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... params) {
+    protected Response doInBackground(Void... params) {
         try {
             URL url = new URL(LoadWebPageTask.this.url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -35,16 +34,16 @@ class LoadWebPageTask extends AsyncTask<Void, Void, String> {
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             conn.connect();
-            int response = conn.getResponseCode();
+            int responseCode = conn.getResponseCode();
 
-            if (response == 403) return "403";
-            if (response == 404) return "404";
+            if (responseCode < 200 || responseCode >= 400) {
+                return new Response(responseCode, null);
+            }
 
             InputStream is = conn.getInputStream();
-            return read(is);
+            return new Response(responseCode, read(is));
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d("RESULT: ", "Error");
             return null;
         }
     }
@@ -63,12 +62,21 @@ class LoadWebPageTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        listener.onLoaded(s);
-        Log.d("RESULT: ", "onLoaded");
+    protected void onPostExecute(Response r) {
+        listener.onLoaded(r);
+    }
+
+    public static class Response {
+        public final int responseCode;
+        public final String content;
+
+        public Response(int responseCode, String content) {
+            this.responseCode = responseCode;
+            this.content = content;
+        }
     }
 
     interface OnLoadedListener {
-        void onLoaded(String result);
+        void onLoaded(Response result);
     }
 }

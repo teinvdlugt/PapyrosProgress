@@ -7,7 +7,7 @@
     <string name="created_at">Utworzono: %1$s</string>
     <string name="due_on">Termin: %1$s</string>
     <string name="error403">Błąd 403. Proszę spróbować później</string>
-    <string name="error404">Błąd 404</string>
+    <string name="error404">Błąd %1$d</string>
     <string name="no_network">Brak połączenia z siecią</string>
     <string name="offline_snackbar">Tryb Offline: dane mogą być nieaktualne</string>
     <string name="ok">OK</string>

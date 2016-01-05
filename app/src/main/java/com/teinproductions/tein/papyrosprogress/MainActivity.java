@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
@@ -167,20 +166,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoaded(String json) {
-        Log.d("RESULT: ", json);
+    public void onLoaded(LoadWebPageTask.Response response) {
         srLayout.setRefreshing(false);
-        if ("403".equals(json) || "404".equals(json)) {
-            errorMessage = getString("403".equals(json) ? R.string.error403 : R.string.error404);
+        if (response.content == null) {
+            if (response.responseCode == 403) {
+                errorMessage = getString(R.string.error403);
+            } else {
+                errorMessage = getString(R.string.error404, response.responseCode);
+            }
+
             showErrorMessage();
             return;
         }
 
         try {
-            adapter.setMilestones(JSONUtils.getMilestones(json));
+            adapter.setMilestones(JSONUtils.getMilestones(response.content));
 
             // Nothing went wrong, so the web page contents are correct and can be cached
-            saveFile(this, json, MainActivity.MILESTONES_CACHE_FILE);
+            saveFile(this, response.content, MainActivity.MILESTONES_CACHE_FILE);
         } catch (JSONException | NullPointerException | ParseException e) {
             e.printStackTrace();
             // This means the retrieved web page was not the right one
@@ -341,12 +344,5 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-}
-
-class LoadTest implements LoadWebPageTask.OnLoadedListener {
-    @Override
-    public void onLoaded(String result) {
-        Log.d("RESULT: ", "LoadTest: " + result);
     }
 }

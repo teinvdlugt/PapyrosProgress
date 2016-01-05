@@ -6,7 +6,7 @@
     <string name="closed_issues">Problèmes résolus: %1$d</string>
     <string name="created_at">Créé le %1$s</string>
     <string name="due_on">Expecté le %1$s</string>
-    <string name="error404">Erreur 404</string>
+    <string name="error404">Erreur %1$d</string>
     <string name="error403">Erreur 403. Réessayez plus tard.</string>
     <string name="no_network">Il n\'y a pas de connection au réseau</string>
     <string name="ok">Valider</string>

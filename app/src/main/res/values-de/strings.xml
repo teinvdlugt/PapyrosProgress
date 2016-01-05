@@ -11,7 +11,7 @@
     <string name="unknown">Unbekannt</string>
     <string name="no_network">Nicht mit dem Netzwerk verbunden</string>
     <string name="error403">Error 403. Bitte versuchen Sie es später erneut.</string>
-    <string name="error404">404 Error</string>
+    <string name="error404">%1$d Error</string>
     <string name="created_at">Erstellt am: %1$s</string>
     <string name="updated_at">Aktualisiert am: %1$s</string>
     <string name="due_on">Fällig am: %1$s</string>

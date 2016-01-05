@@ -15,7 +15,7 @@
     <string name="unknown">Неизвестно</string>
     <string name="no_network">Нет подключения к сети</string>
     <string name="error403">Ошибка 403. Повторите попытку позже.</string>
-    <string name="error404">Ошибка 404</string>
+    <string name="error404">Ошибка %1$d</string>
     <string name="offline_snackbar">Офлайн-режим: данные могут нуждаться в обновлении</string>
     <string name="visit_homepage">Посетить веб-сайт Papyros</string>
     <string name="visit_github">Посетить страничку в Github</string>

@@ -7,7 +7,7 @@
     <string name="created_at">Gemaakt op: %1$s</string>
     <string name="due_on">Verwacht op: %1$s</string>
     <string name="error403">403 Error. Probeer het later opnieuw.</string>
-    <string name="error404">404 Error</string>
+    <string name="error404">%1$d Error</string>
     <string name="no_network">Er is geen verbinding met een netwerk.</string>
     <string name="ok">OK</string>
     <string name="open_issues">Onopgeloste problemen: %1$d</string>

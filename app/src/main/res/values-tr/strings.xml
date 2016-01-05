@@ -15,7 +15,7 @@
     <string name="unknown">Bilinmeyen</string>
     <string name="no_network">İnternete bağlanılamıyor</string>
     <string name="error403">Hata 403. Daha sonra tekrar deneyin.</string>
-    <string name="error404">Hata 404</string>
+    <string name="error404">Hata %1$d</string>
     <string name="offline_snackbar">Çevrimdışı Mod: Veriler güncel olmayabilir</string>
     <string name="visit_homepage">Papyros Anasayfası</string>
     <string name="visit_github">Github Sayfası</string>
