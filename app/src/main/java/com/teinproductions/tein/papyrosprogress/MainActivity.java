@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity
 
     public static final String EXTRA_SMALL_WIDGET = "small_widget";
     public static final String MILESTONES_CACHE_FILE = "papyros_cache";
-    public static final String BLOG_CACHE_FILE = "papyros_blog_cache";
 
     public static final String SHARED_PREFERENCES = "shared_preferences";
     public static final String NOTIFICATION_PREFERENCE = "notifications";
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String GA_EXTERNAL_LINKS_EVENT_CATEGORY = "External links";
     public static final String GA_PREFERENCES_EVENT_CATEGORY = "Preferences";
+    public static final String CACHED_BLOG_AMOUNT = "cached_blog_amount";
 
     private RecyclerView recyclerView;
     private PapyrosRecyclerAdapter adapter;

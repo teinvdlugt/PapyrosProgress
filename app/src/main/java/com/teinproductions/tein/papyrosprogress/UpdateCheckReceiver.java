@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,12 +30,20 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     private static final int PROGRESS_NOTIFICATION_ID = 1;
     private static final int BLOG_NOTIFICATION_ID = 2;
 
+    /**
+     * Boolean Intent extra which specifies whether to also check
+     * for blog updates. Default is true;
+     */
+    public static final String CHECK_BLOGS_EXTRA = "check_blogs";
+
     private Map<String, Integer> oldMilestones = new HashMap<>();
     private Map<String, Integer> newMilestones = new HashMap<>();
     private Context context;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("TAG", "onReceive");
+
         this.context = context;
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
                 Context.MODE_PRIVATE);
@@ -47,67 +56,31 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         // Check if progress has to be checked
         boolean progressNotifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
         boolean appWidgets = AbstractProgressWidget.areAppWidgetsEnabled(context);
+        if (progressNotifications || appWidgets) checkProgress();
 
         // Check if blog has to be checked
+        boolean extra = intent.getBooleanExtra(CHECK_BLOGS_EXTRA, true);
         boolean blogNotifications = pref.getBoolean(MainActivity.BLOG_NOTIFICATION_PREFERENCE, true);
+        if (extra && blogNotifications) checkBlog();
+    }
 
-        if (progressNotifications || appWidgets) {
-            try {
-                // Parse the cache
-                String cache = MainActivity.getFile(context, MainActivity.MILESTONES_CACHE_FILE);
-                if (cache == null) {
-                    // We have nothing to compare the new progress to
-                    throw new NullPointerException("There was no saved progress cache");
-                }
+    // PROGRESS NOTIFICATIONS
 
-                parseOld(cache);
-
-                // Parse web page
-                new LoadWebPageTask(this).execute();
-            } catch (JSONException | NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (blogNotifications) {
-            int cacheSize;
-            try {
-                String cache = MainActivity.getFile(context, MainActivity.BLOG_CACHE_FILE);
-                cacheSize = new JSONArray(cache).length();
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Something was wrong with the cache file so delete it
-                context.deleteFile(MainActivity.BLOG_CACHE_FILE);
-                cacheSize = -1;
+    private void checkProgress() {
+        try {
+            // Parse the cache
+            String cache = MainActivity.getFile(context, MainActivity.MILESTONES_CACHE_FILE);
+            if (cache == null) {
+                // We have nothing to compare the new progress to
+                throw new NullPointerException("There was no saved progress cache");
             }
 
-            final int finalCacheSize = cacheSize;
+            parseOld(cache);
 
-            new LoadWebPageTask(MainActivity.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
-                @Override
-                public void onLoaded(LoadWebPageTask.Response result) {
-                    if (finalCacheSize != -1) {
-                        // If the size of the JSON array has been correctly parsed from the cache,
-                        // compare that to the size of the new array.
-                        // If not, just cache the file again from the result.
-                        try {
-                            final int newSize = new JSONArray(result.content).length();
-
-                            if (newSize > finalCacheSize) {
-                                // A blog post has been added
-                                issueBlogNotification(UpdateCheckReceiver.this.context);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            // Don't save cache, so return
-                            return;
-                        }
-                    }
-
-                    MainActivity.saveFile(UpdateCheckReceiver.this.context, result.content, MainActivity.BLOG_CACHE_FILE);
-                }
-            }).execute();
-
+            // Parse web page
+            new LoadWebPageTask(this).execute();
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -228,6 +201,38 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         notificationManager.notify(PROGRESS_NOTIFICATION_ID, builder.build());
     }
 
+    // BLOG NOTIFICATIONS
+
+    private void checkBlog() {
+        Log.d("TAG", "checkBlog() called");
+        // The amount of blog posts that were found when last checked
+        final SharedPreferences pref = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        final int cachePostAmount = pref.getInt(MainActivity.CACHED_BLOG_AMOUNT, -1);
+
+        // Load the GitHub API page containing information about the amount of blog posts
+        new LoadWebPageTask(MainActivity.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
+            @Override
+            public void onLoaded(LoadWebPageTask.Response result) {
+                if (result.content == null) return;
+
+                try {
+                    final int newPostAmount = new JSONArray(result.content).length();
+
+                    // If there was a cachePostAmount present in storage, compare it to
+                    // new amount
+                    if (cachePostAmount != -1 && newPostAmount > cachePostAmount) {
+                        // A blog post has been added
+                        issueBlogNotification(UpdateCheckReceiver.this.context);
+                    }
+
+                    pref.edit().putInt(MainActivity.CACHED_BLOG_AMOUNT, newPostAmount).apply();
+                } catch (JSONException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).execute();
+    }
+
     private static void issueBlogNotification(Context context) {
         String title = context.getString(R.string.notification_title);
         String message = context.getString(R.string.blog_notification_content);
@@ -245,8 +250,14 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.mipmap.notification_small_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(BLOG_NOTIFICATION_ID, builder.build());
+
+        Log.d("TAG", "notification issued");
     }
 }

@@ -22,7 +22,9 @@ public abstract class AbstractProgressWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         updateFromCache(context);
-        context.sendBroadcast(new Intent(context, UpdateCheckReceiver.class));
+        Intent updateIntent = new Intent(context, UpdateCheckReceiver.class);
+        updateIntent.putExtra(UpdateCheckReceiver.CHECK_BLOGS_EXTRA, false);
+        context.sendBroadcast(updateIntent);
     }
 
     @Override
