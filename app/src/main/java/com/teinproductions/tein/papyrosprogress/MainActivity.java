@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        boolean notifications = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(NOTIFICATION_PREFERENCE, false);
+        boolean notifications = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(NOTIFICATION_PREFERENCE, true);
         menu.findItem(R.id.notification).setChecked(notifications);
 
         boolean oldProgressBar = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(OLD_PROGRESS_BAR_PREFERENCE, false);
