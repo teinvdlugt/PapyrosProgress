@@ -29,8 +29,8 @@
     <string name="milestone_added_notification">L\'étape \"%1$s\" a été créée.</string>
     <string name="milestone_removed_notification">L\'étape \"%1$s\" a été supprimée.</string>
     <string name="notification_title">Mises à jour de papyros</string>
-    <string name="blog_notification_content">A Papyros blog post has been added</string>
-    <string name="state_open">open</string>
-    <string name="state_closed">closed</string>
-    <string name="state_all">all</string>
+    <string name="blog_notification_content">Un article a été ajouté sur le blog Papyros</string>
+    <string name="state_open">ouvert</string>
+    <string name="state_closed">fermé</string>
+    <string name="state_all">tout</string>
 </resources>

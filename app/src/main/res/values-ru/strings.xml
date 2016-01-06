@@ -29,8 +29,8 @@
     <string name="milestone_removed_notification">Удалена ветвь \"%1$s\".</string>
     <string name="use_old_progress_bar">Использовать старую полосу прогресса</string>
     <string name="notific_msg_text_format">%1$s обновлено с %2$d до %3$d%%!</string>
-    <string name="blog_notification_content">A Papyros blog post has been added</string>
-    <string name="state_open">open</string>
-    <string name="state_closed">closed</string>
-    <string name="state_all">all</string>
+    <string name="blog_notification_content">На блоге Papyros появилась новая запись</string>
+    <string name="state_open">актуально</string>
+    <string name="state_closed">неактуально</string>
+    <string name="state_all">все</string>
 </resources>
