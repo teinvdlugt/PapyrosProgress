@@ -30,4 +30,7 @@
     <string name="milestone_removed_notification">The milestone \"%1$s\" has been removed.</string>
     <string name="notification_title">Papyros updates</string>
     <string name="blog_notification_content">Er is een Papyros blog post toegevoegd</string>
+    <string name="state_all">alle</string>
+    <string name="state_closed">gesloten</string>
+    <string name="state_open">open</string>
 </resources>

@@ -179,7 +179,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         progressBar.setProgress(progress);
         oldProgressBar.setProgress(progress);
         progressTV.setText(context.getString(R.string.progress, progress));
-        stateTV.setText(context.getString(R.string.state, milestone.getState()));
+        stateTV.setText(context.getString(R.string.state, getStateText(context, milestone)));
 
         // Set date texts
         DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
@@ -218,6 +218,14 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
                 }
             });
         }
+    }
+
+    private String getStateText(Context context, Milestone milestone) {
+        String state = milestone.getState();
+        if ("open".equals(state)) return context.getString(R.string.state_open);
+        if ("closed".equals(state)) return context.getString(R.string.state_closed);
+        if ("all".equals(state)) return context.getString(R.string.state_all);
+        return state;
     }
 }
 
