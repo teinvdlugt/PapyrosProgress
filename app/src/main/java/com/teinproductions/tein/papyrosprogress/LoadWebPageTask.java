@@ -44,7 +44,7 @@ class LoadWebPageTask extends AsyncTask<Void, Void, LoadWebPageTask.Response> {
             return new Response(responseCode, read(is));
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return new Response(666, null);
         }
     }
 
