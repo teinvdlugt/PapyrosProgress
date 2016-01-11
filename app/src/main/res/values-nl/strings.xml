@@ -33,4 +33,5 @@
     <string name="state_all">alle</string>
     <string name="state_closed">gesloten</string>
     <string name="state_open">open</string>
+    <string name="widget_settings">Widget instellingen</string>
 </resources>

@@ -33,4 +33,5 @@
     <string name="state_open">open</string>
     <string name="state_closed">closed</string>
     <string name="state_all">all</string>
+    <string name="widget_settings">Widget settings</string>
 </resources>

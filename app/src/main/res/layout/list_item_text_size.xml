@@ -16,6 +16,14 @@
         android:paddingTop="@dimen/activity_vertical_margin">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/widget_settings"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="24sp" />
+
+        <TextView
             android:id="@+id/textSize_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
