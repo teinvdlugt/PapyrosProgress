@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
                 android:background="#00ffffff"
+                android:clickable="false"
                 android:contentDescription="@string/xs_collapse_or_expand"
                 android:src="@mipmap/ic_keyboard_arrow_down_black_24dp" />
         </FrameLayout>
