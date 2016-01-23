@@ -140,6 +140,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 class MileStoneViewHolder extends RecyclerView.ViewHolder {
     public static final String JSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    public static final String MILESTONE_COLLAPSED_PREFERENCE = "milestone_collapsed_"; // Append the title of the Milestone
 
     private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
             createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
@@ -178,16 +179,19 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void onClickCollapse() {
+        collapsed = !collapsed;
+        if (context != null)
+            context.getPreferences(Context.MODE_PRIVATE).edit()
+                    .putBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), collapsed).apply();
+
+        expandOrCollapse();
+    }
+
+    private void expandOrCollapse() {
         if (collapsed) {
-            collapsed = false;
-            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.VISIBLE);
-            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
-            if (milestone != null) titleTV.setText(milestone.getTitle());
-        } else {
-            collapsed = true;
+            // Collapse the milestone
             itemView.findViewById(R.id.milestone_content_container).setVisibility(View.GONE);
             collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
-
             if (milestone != null && context != null) {
                 String progressAbbr = context.getString(R.string.collapsed_progress_text, milestone.getProgress());
                 SpannableString ss = new SpannableString(milestone.getTitle() + progressAbbr);
@@ -195,6 +199,11 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
                 ss.setSpan(sizeSpan, milestone.getTitle().length(), ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 titleTV.setText(ss);
             }
+        } else {
+            // Expand the milestone
+            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.VISIBLE);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
+            if (milestone != null) titleTV.setText(milestone.getTitle());
         }
     }
 
@@ -202,10 +211,6 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     public void showData(Activity context, Milestone milestone, boolean useOldProgressBar) {
         this.milestone = milestone;
         this.context = context;
-
-        // Let onClickCollapse() expand this tile
-        collapsed = true;
-        onClickCollapse();
 
         if (useOldProgressBar) {
             progressBar.setVisibility(View.GONE);
@@ -263,6 +268,10 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
                 }
             });
         }
+
+        this.collapsed = context.getPreferences(Context.MODE_PRIVATE)
+                .getBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), false);
+        expandOrCollapse();
     }
 
     private String getStateText(Context context, Milestone milestone) {
