@@ -34,4 +34,6 @@
     <string name="state_closed">closed</string>
     <string name="state_all">all</string>
     <string name="widget_settings">Widget settings</string>
+    <string name="xs_collapse_or_expand">Collapse or expand milestone</string>
+    <string name="collapsed_progress_text" formatted="false">&#160;—&#160;%1$d%%</string>
 </resources>

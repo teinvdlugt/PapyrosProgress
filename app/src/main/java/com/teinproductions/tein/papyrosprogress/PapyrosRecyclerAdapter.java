@@ -3,11 +3,15 @@ package com.teinproductions.tein.papyrosprogress;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -142,6 +146,11 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     private ProgressBar oldProgressBar;
     private PapyrosProgressBar progressBar;
     private Button githubButton;
+    private ImageButton collapseButton;
+
+    private boolean collapsed = false;
+    private Milestone milestone;
+    private Activity context;
 
     public MileStoneViewHolder(View itemView) {
         super(itemView);
@@ -158,10 +167,46 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         dueOnTV = (TextView) itemView.findViewById(R.id.dueOn);
         closedAtTV = (TextView) itemView.findViewById(R.id.closedAt);
         githubButton = (Button) itemView.findViewById(R.id.github_button);
+        collapseButton = (ImageButton) itemView.findViewById(R.id.collapse_imageButton);
+
+        itemView.findViewById(R.id.milestone_title_bar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickCollapse();
+            }
+        });
+    }
+
+    private void onClickCollapse() {
+        if (collapsed) {
+            collapsed = false;
+            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.VISIBLE);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
+            if (milestone != null) titleTV.setText(milestone.getTitle());
+        } else {
+            collapsed = true;
+            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.GONE);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
+
+            if (milestone != null && context != null) {
+                String progressAbbr = context.getString(R.string.collapsed_progress_text, milestone.getProgress());
+                SpannableString ss = new SpannableString(milestone.getTitle() + progressAbbr);
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(.6f);
+                ss.setSpan(sizeSpan, milestone.getTitle().length(), ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                titleTV.setText(ss);
+            }
+        }
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public void showData(final Activity context, final Milestone milestone, boolean useOldProgressBar) {
+    public void showData(Activity context, Milestone milestone, boolean useOldProgressBar) {
+        this.milestone = milestone;
+        this.context = context;
+
+        // Let onClickCollapse() expand this tile
+        collapsed = true;
+        onClickCollapse();
+
         if (useOldProgressBar) {
             progressBar.setVisibility(View.GONE);
             oldProgressBar.setVisibility(View.VISIBLE);
@@ -212,9 +257,9 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             githubButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.sendEventHit(context, MainActivity.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
-                            "View on github", milestone.getTitle());
-                    MainActivity.openWebPage(context, milestone.getGithubUrl());
+                    MainActivity.sendEventHit(MileStoneViewHolder.this.context, MainActivity.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
+                            "View on github", MileStoneViewHolder.this.milestone.getTitle());
+                    MainActivity.openWebPage(MileStoneViewHolder.this.context, MileStoneViewHolder.this.milestone.getGithubUrl());
                 }
             });
         }
