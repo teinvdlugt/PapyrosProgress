@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/notifications">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications"
+            android:title="@string/notifications" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="notifications"
+            android:key="notification_sound"
+            android:title="@string/notification_sound" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="notifications"
+            android:key="notification_vibrate"
+            android:title="@string/notification_vibrate" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="notifications"
+            android:key="notification_light"
+            android:title="@string/pulse_notification_light" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/other">
+        <Preference
+            android:key="rate_in_play_store"
+            android:title="@string/rate_in_play_store" />
+    </PreferenceCategory>
+</PreferenceScreen>

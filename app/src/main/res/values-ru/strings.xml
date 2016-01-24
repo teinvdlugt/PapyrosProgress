@@ -15,7 +15,7 @@
     <string name="unknown">Неизвестно</string>
     <string name="no_network">Нет подключения к сети</string>
     <string name="error403">Ошибка 403. Повторите попытку позже.</string>
-    <string name="error404">Ошибка 404</string>
+    <string name="error404">Ошибка %1$d</string>
     <string name="offline_snackbar">Офлайн-режим: данные могут нуждаться в обновлении</string>
     <string name="visit_homepage">Посетить веб-сайт Papyros</string>
     <string name="visit_github">Посетить страничку в Github</string>
@@ -29,4 +29,8 @@
     <string name="milestone_removed_notification">Удалена ветвь \"%1$s\".</string>
     <string name="use_old_progress_bar">Использовать старую полосу прогресса</string>
     <string name="notific_msg_text_format">%1$s обновлено с %2$d до %3$d%%!</string>
+    <string name="blog_notification_content">На блоге Papyros появилась новая запись</string>
+    <string name="state_open">актуально</string>
+    <string name="state_closed">неактуально</string>
+    <string name="state_all">все</string>
 </resources>

@@ -6,7 +6,7 @@
     <string name="closed_issues">Problèmes résolus: %1$d</string>
     <string name="created_at">Créé le %1$s</string>
     <string name="due_on">Expecté le %1$s</string>
-    <string name="error404">Erreur 404</string>
+    <string name="error404">Erreur %1$d</string>
     <string name="error403">Erreur 403. Réessayez plus tard.</string>
     <string name="no_network">Il n\'y a pas de connection au réseau</string>
     <string name="ok">Valider</string>
@@ -29,4 +29,8 @@
     <string name="milestone_added_notification">L\'étape \"%1$s\" a été créée.</string>
     <string name="milestone_removed_notification">L\'étape \"%1$s\" a été supprimée.</string>
     <string name="notification_title">Mises à jour de papyros</string>
+    <string name="blog_notification_content">Un article a été ajouté sur le blog Papyros</string>
+    <string name="state_open">ouvert</string>
+    <string name="state_closed">fermé</string>
+    <string name="state_all">tout</string>
 </resources>

@@ -11,117 +11,132 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="24dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/name_textView"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:id="@+id/milestone_title_bar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:background="?selectableItemBackground"
             android:paddingBottom="16dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="24sp"
-            tools:text="Version 0.1" />
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
 
-        <TextView
-            android:id="@+id/open_issues_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/open_issues"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/name_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="24sp"
+                tools:text="Version 0.1" />
 
-        <TextView
-            android:id="@+id/closed_issues_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/closed_issues"
-            android:textSize="14sp" />
+            <ImageButton
+                android:id="@+id/collapse_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:background="#00ffffff"
+                android:clickable="false"
+                android:contentDescription="@string/xs_collapse_or_expand"
+                android:src="@mipmap/ic_keyboard_arrow_down_black_24dp" />
+        </FrameLayout>
 
-        <ProgressBar
-            android:id="@+id/oldProgressBar"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        <LinearLayout
+            android:id="@+id/milestone_content_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/progress_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:text="@string/progress"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/open_issues_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/open_issues"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/state_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/state"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/closed_issues_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/closed_issues"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/createdAt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/created_at"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/progress_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/progress"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/updatedAt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/updated_at"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/state_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/state"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/dueOn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/due_on"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/createdAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/created_at"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/closedAt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/closed_at"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/updatedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/updated_at"
+                android:textSize="14sp" />
 
-        <com.teinproductions.tein.papyrosprogress.PapyrosProgressBar
-            android:id="@+id/listItem_progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="16dp" />
+            <TextView
+                android:id="@+id/dueOn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/due_on"
+                android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/github_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@string/view_on_github" />
+            <TextView
+                android:id="@+id/closedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/closed_at"
+                android:textSize="14sp" />
+
+            <com.teinproductions.tein.papyrosprogress.PapyrosProgressBar
+                android:id="@+id/listItem_progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/github_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/view_on_github" />
+        </LinearLayout>
+
     </LinearLayout>
 </android.support.v7.widget.CardView>

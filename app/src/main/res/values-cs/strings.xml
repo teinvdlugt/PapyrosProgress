@@ -14,7 +14,7 @@
     <string name="unknown">Neznámý</string>
     <string name="no_network">Nepřipojen k síti</string>
     <string name="error403">Error 403. Prosím zkontrolujte později.</string>
-    <string name="error404">Error 404</string>
+    <string name="error404">Error %1$d</string>
     <string name="offline_snackbar">Offile mód: data nemusí být aktuální</string>
     <string name="text_size">Velikost textu: %1$d</string>
     <string name="view_on_github">Zobrazit na Githubu</string>
@@ -29,4 +29,8 @@
     <string name="milestone_added_notification">Milník \"%1$s\" byl vytvořen.</string>
     <string name="milestone_removed_notification">Milník \"%1$s\" byl odstraněn.</string>
     <string name="notification_title">Aktualizace Papyrosu</string>
+    <string name="blog_notification_content">A Papyros blog post has been added</string>
+    <string name="state_open">open</string>
+    <string name="state_closed">closed</string>
+    <string name="state_all">all</string>
 </resources>

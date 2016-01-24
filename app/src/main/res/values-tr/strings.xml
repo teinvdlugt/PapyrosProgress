@@ -15,7 +15,7 @@
     <string name="unknown">Bilinmeyen</string>
     <string name="no_network">İnternete bağlanılamıyor</string>
     <string name="error403">Hata 403. Daha sonra tekrar deneyin.</string>
-    <string name="error404">Hata 404</string>
+    <string name="error404">Hata %1$d</string>
     <string name="offline_snackbar">Çevrimdışı Mod: Veriler güncel olmayabilir</string>
     <string name="visit_homepage">Papyros Anasayfası</string>
     <string name="visit_github">Github Sayfası</string>
@@ -29,4 +29,8 @@
     <string name="milestone_added_notification">\"%1$s\" oluşturuldu.</string>
     <string name="milestone_removed_notification">\"%1$s\" kaldırıldı.</string>
     <string name="notification_title">Papyros güncellemesi</string>
+    <string name="blog_notification_content">A Papyros blog post has been added</string>
+    <string name="state_open">open</string>
+    <string name="state_closed">closed</string>
+    <string name="state_all">all</string>
 </resources>

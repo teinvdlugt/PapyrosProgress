@@ -7,7 +7,7 @@
     <string name="created_at">Utworzono: %1$s</string>
     <string name="due_on">Termin: %1$s</string>
     <string name="error403">Błąd 403. Proszę spróbować później</string>
-    <string name="error404">Błąd 404</string>
+    <string name="error404">Błąd %1$d</string>
     <string name="no_network">Brak połączenia z siecią</string>
     <string name="offline_snackbar">Tryb Offline: dane mogą być nieaktualne</string>
     <string name="ok">OK</string>
@@ -29,4 +29,8 @@
     <string name="milestone_added_notification">Stworzono milestone \"%1$s\".</string>
     <string name="milestone_removed_notification">Usunięto milestone \"%1$s\".</string>
     <string name="notification_title">Aktualizacje Papyros</string>
+    <string name="blog_notification_content">Dodano post na blogu Papyrosa</string>
+    <string name="state_open">otwarte</string>
+    <string name="state_closed">zamknięte</string>
+    <string name="state_all">wszystkie</string>
 </resources>

@@ -15,7 +15,7 @@
     <string name="unknown">Desconocido</string>
     <string name="no_network">Sin conexión a Internet</string>
     <string name="error403">Error 403. Inténtalo más tarde</string>
-    <string name="error404">Error 404</string>
+    <string name="error404">Error %1$d</string>
     <string name="offline_snackbar">Modo sin conexión. La información puede estar desactualizada</string>
     <string name="visit_homepage">Abrir la página de Papyros</string>
     <string name="view_on_github">Ver en Github</string>
@@ -29,4 +29,8 @@
     <string name="milestone_added_notification">Se ha creado la etapa \"%1$s\"</string>
     <string name="milestone_removed_notification">Se ha eliminado la etapa \"%1$s\"</string>
     <string name="notification_title">Actualizaciones de Papyros </string>
+    <string name="blog_notification_content">A Papyros blog post has been added</string>
+    <string name="state_open">open</string>
+    <string name="state_closed">closed</string>
+    <string name="state_all">all</string>
 </resources>

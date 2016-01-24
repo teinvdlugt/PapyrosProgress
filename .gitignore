@@ -1,16 +1,7 @@
 /.gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.DS_Store
 /build
-/captures
-/gradle
-/build.gradle
-/gradle.properties
-/gradlew.bat
 /PapyrosProgress.iml
-/settings.gradle
-/gradlew
 /.idea
 /app/src/androidTest
+/captures

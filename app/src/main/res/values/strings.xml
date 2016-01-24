@@ -11,7 +11,7 @@
     <string name="unknown">Unknown</string>
     <string name="no_network">Not connected to a network</string>
     <string name="error403">Error 403. Please check again later.</string>
-    <string name="error404">404 Error</string>
+    <string name="error404">Error %1$d</string>
     <string name="created_at">Created at: %1$s</string>
     <string name="updated_at">Updated at: %1$s</string>
     <string name="due_on">Due on: %1$s</string>
@@ -29,4 +29,17 @@
     <string name="notification_title">Papyros updates</string>
     <string name="milestone_added_notification" formatted="false">The milestone \"%1$s\" has been created.</string>
     <string name="milestone_removed_notification" formatted="false">The milestone \"%1$s\" has been removed.</string>
+    <string name="blog_notification_content">A Papyros blog post has been added</string>
+    <string name="state_open">open</string>
+    <string name="state_closed">closed</string>
+    <string name="state_all">all</string>
+    <string name="widget_settings">Widget settings</string>
+    <string name="xs_collapse_or_expand">Collapse or expand milestone</string>
+    <string name="collapsed_progress_text" formatted="false">&#160;—&#160;%1$d%%</string>
+    <string name="settings">Settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="notification_sound">Sound</string>
+    <string name="notification_vibrate">Vibrate</string>
+    <string name="other">Other</string>
+    <string name="pulse_notification_light">Pulse notification light</string>
 </resources>

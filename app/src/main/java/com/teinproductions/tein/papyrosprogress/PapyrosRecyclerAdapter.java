@@ -2,12 +2,17 @@ package com.teinproductions.tein.papyrosprogress;
 
 import android.app.Activity;
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -28,15 +33,11 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
     private String widgetMilestoneTitle;
     private OnTextSizeButtonClickListener listener;
-    private boolean useOldProgressBar = false;
 
     public PapyrosRecyclerAdapter(Activity activity, Milestone[] milestones, OnTextSizeButtonClickListener listener) {
         this.activity = activity;
         this.milestones = milestones;
         this.listener = listener;
-
-        this.useOldProgressBar = activity.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getBoolean(MainActivity.OLD_PROGRESS_BAR_PREFERENCE, false);
     }
 
     public void setMilestones(Milestone[] milestones) {
@@ -96,7 +97,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (getItemViewType(position)) {
             case ITEM_VIEW_TYPE_MILESTONE:
                 if (textSize != -1) position--;
-                ((MileStoneViewHolder) viewHolder).showData(activity, milestones[position], useOldProgressBar);
+                ((MileStoneViewHolder) viewHolder).showData(activity, milestones[position]);
                 break;
             case ITEM_VIEW_TYPE_TEXT_SIZE:
                 String[] milestoneTitles = new String[milestones.length];
@@ -123,11 +124,6 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public void setUseOldProgressBar(boolean useOldProgressBar) {
-        this.useOldProgressBar = useOldProgressBar;
-        notifyDataSetChanged();
-    }
-
     interface OnTextSizeButtonClickListener {
         void onClickApply(int progress, String milestoneTitle);
     }
@@ -136,12 +132,17 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 class MileStoneViewHolder extends RecyclerView.ViewHolder {
     public static final String JSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    public static final String MILESTONE_COLLAPSED_PREFERENCE = "milestone_collapsed_"; // Append the title of the Milestone
 
     private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
             createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
-    private ProgressBar oldProgressBar;
     private PapyrosProgressBar progressBar;
     private Button githubButton;
+    private ImageButton collapseButton;
+
+    private boolean collapsed = false;
+    private Milestone milestone;
+    private Activity context;
 
     public MileStoneViewHolder(View itemView) {
         super(itemView);
@@ -151,24 +152,55 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         closedIssuesTV = (TextView) itemView.findViewById(R.id.closed_issues_textView);
         progressTV = (TextView) itemView.findViewById(R.id.progress_textView);
         progressBar = (PapyrosProgressBar) itemView.findViewById(R.id.listItem_progressBar);
-        oldProgressBar = (ProgressBar) itemView.findViewById(R.id.oldProgressBar);
         stateTV = (TextView) itemView.findViewById(R.id.state_textView);
         createdAtTV = (TextView) itemView.findViewById(R.id.createdAt);
         updatedAtTV = (TextView) itemView.findViewById(R.id.updatedAt);
         dueOnTV = (TextView) itemView.findViewById(R.id.dueOn);
         closedAtTV = (TextView) itemView.findViewById(R.id.closedAt);
         githubButton = (Button) itemView.findViewById(R.id.github_button);
+        collapseButton = (ImageButton) itemView.findViewById(R.id.collapse_imageButton);
+
+        itemView.findViewById(R.id.milestone_title_bar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickCollapse();
+            }
+        });
+    }
+
+    private void onClickCollapse() {
+        collapsed = !collapsed;
+        if (context != null)
+            context.getPreferences(Context.MODE_PRIVATE).edit()
+                    .putBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), collapsed).apply();
+
+        expandOrCollapse();
+    }
+
+    private void expandOrCollapse() {
+        if (collapsed) {
+            // Collapse the milestone
+            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.GONE);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
+            if (milestone != null && context != null) {
+                String progressAbbr = context.getString(R.string.collapsed_progress_text, milestone.getProgress());
+                SpannableString ss = new SpannableString(milestone.getTitle() + progressAbbr);
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(.6f);
+                ss.setSpan(sizeSpan, milestone.getTitle().length(), ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                titleTV.setText(ss);
+            }
+        } else {
+            // Expand the milestone
+            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.VISIBLE);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
+            if (milestone != null) titleTV.setText(milestone.getTitle());
+        }
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public void showData(final Activity context, final Milestone milestone, boolean useOldProgressBar) {
-        if (useOldProgressBar) {
-            progressBar.setVisibility(View.GONE);
-            oldProgressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-            oldProgressBar.setVisibility(View.GONE);
-        }
+    public void showData(Activity context, Milestone milestone) {
+        this.milestone = milestone;
+        this.context = context;
 
         int progress = milestone.getProgress();
 
@@ -177,9 +209,8 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         openIssuesTV.setText(context.getString(R.string.open_issues, milestone.getOpenIssues()));
         closedIssuesTV.setText(context.getString(R.string.closed_issues, milestone.getClosedIssues()));
         progressBar.setProgress(progress);
-        oldProgressBar.setProgress(progress);
         progressTV.setText(context.getString(R.string.progress, progress));
-        stateTV.setText(context.getString(R.string.state, milestone.getState()));
+        stateTV.setText(context.getString(R.string.state, getStateText(context, milestone)));
 
         // Set date texts
         DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
@@ -212,12 +243,24 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             githubButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.sendEventHit(context, MainActivity.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
-                            "View on github", milestone.getTitle());
-                    MainActivity.openWebPage(context, milestone.getGithubUrl());
+                    MainActivity.sendEventHit(MileStoneViewHolder.this.context, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
+                            "View on github", MileStoneViewHolder.this.milestone.getTitle());
+                    MainActivity.openWebPage(MileStoneViewHolder.this.context, MileStoneViewHolder.this.milestone.getGithubUrl());
                 }
             });
         }
+
+        this.collapsed = context.getPreferences(Context.MODE_PRIVATE)
+                .getBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), false);
+        expandOrCollapse();
+    }
+
+    private String getStateText(Context context, Milestone milestone) {
+        String state = milestone.getState();
+        if ("open".equals(state)) return context.getString(R.string.state_open);
+        if ("closed".equals(state)) return context.getString(R.string.state_closed);
+        if ("all".equals(state)) return context.getString(R.string.state_all);
+        return state;
     }
 }
 
