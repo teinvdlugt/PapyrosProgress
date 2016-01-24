@@ -22,11 +22,8 @@
             android:title="@string/pulse_notification_light" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/other">
-        <Preference android:title="@string/rate_in_play_store"
-            android:key="rate_in_play_store">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="market://details?id=com.teinproductions.tein.papyrosprogress" />
-        </Preference>
+        <Preference
+            android:key="rate_in_play_store"
+            android:title="@string/rate_in_play_store" />
     </PreferenceCategory>
 </PreferenceScreen>

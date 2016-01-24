@@ -181,6 +181,15 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean sound = pref.getBoolean(Constants.NOTIFICATION_SOUND_PREF, true);
+        boolean vibrate = pref.getBoolean(Constants.NOTIFICATION_VIBRATE_PREF, true);
+        boolean light = pref.getBoolean(Constants.NOTIFICATION_LIGHT_PREF, true);
+        int defaults = 0;
+        if (sound) defaults = defaults | Notification.DEFAULT_SOUND;
+        if (vibrate) defaults = defaults | Notification.DEFAULT_VIBRATE;
+        if (light) defaults = defaults | Notification.DEFAULT_LIGHTS;
+
         // Build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentTitle(title)
@@ -189,7 +198,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setSmallIcon(R.mipmap.notification_small_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
-                .setDefaults(Notification.DEFAULT_ALL)
+                .setDefaults(defaults)
                 .setAutoCancel(true);
 
         // Issue the notification
