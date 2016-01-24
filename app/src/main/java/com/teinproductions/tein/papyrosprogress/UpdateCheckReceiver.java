@@ -11,8 +11,8 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +43,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-        SharedPreferences pref = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
-                Context.MODE_PRIVATE);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Check Internet connection
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -52,7 +51,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         if (networkInfo == null || !networkInfo.isConnected()) return;
 
         // Check if progress has to be checked
-        boolean notifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
+        boolean notifications = pref.getBoolean(Constants.NOTIFICATION_PREFERENCE, true);
         boolean appWidgets = AbstractProgressWidget.areAppWidgetsEnabled(context);
         if (notifications || appWidgets) checkProgress();
 
@@ -66,7 +65,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     private void checkProgress() {
         try {
             // Parse the cache
-            String cache = MainActivity.getFile(context, MainActivity.MILESTONES_CACHE_FILE);
+            String cache = MainActivity.getFile(context, Constants.MILESTONES_CACHE_FILE);
             if (cache == null) {
                 // We have nothing to compare the new progress to
                 throw new NullPointerException("There was no saved progress cache");
@@ -118,10 +117,10 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
             // Check if there are any changes
             if (addedMilestones.size() > 0 || removedMilestones.size() > 0 || changedProgresses.size() > 0) {
                 // Save cache
-                MainActivity.saveFile(context, result.content, MainActivity.MILESTONES_CACHE_FILE);
+                MainActivity.saveFile(context, result.content, Constants.MILESTONES_CACHE_FILE);
 
-                boolean sendNotification = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                        .getBoolean(MainActivity.NOTIFICATION_PREFERENCE, false);
+                boolean sendNotification = PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(Constants.NOTIFICATION_PREFERENCE, false);
                 if (sendNotification)
                     issueNotification(context, addedMilestones, removedMilestones, changedProgresses);
             }
@@ -202,11 +201,11 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
 
     private void checkBlog() {
         // The amount of blog posts that were found when last checked
-        final SharedPreferences pref = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        final int cachePostAmount = pref.getInt(MainActivity.CACHED_BLOG_AMOUNT, -1);
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final int cachePostAmount = pref.getInt(Constants.CACHED_BLOG_AMOUNT, -1);
 
         // Load the GitHub API page containing information about the amount of blog posts
-        new LoadWebPageTask(MainActivity.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
+        new LoadWebPageTask(Constants.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
             @Override
             public void onLoaded(LoadWebPageTask.Response result) {
                 if (result.content == null) return;
@@ -221,7 +220,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                         issueBlogNotification(UpdateCheckReceiver.this.context);
                     }
 
-                    pref.edit().putInt(MainActivity.CACHED_BLOG_AMOUNT, newPostAmount).apply();
+                    pref.edit().putInt(Constants.CACHED_BLOG_AMOUNT, newPostAmount).apply();
                 } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -236,7 +235,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         PendingIntent pendingIntent;
         try {
             pendingIntent = PendingIntent.getActivity(context, 0,
-                    new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.PAPYROS_BLOG_URL)),
+                    new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PAPYROS_BLOG_URL)),
                     PendingIntent.FLAG_UPDATE_CURRENT);
         } catch (Exception e) {
             e.printStackTrace();

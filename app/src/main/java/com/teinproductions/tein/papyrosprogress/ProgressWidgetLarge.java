@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
@@ -18,8 +19,8 @@ public class ProgressWidgetLarge extends AbstractProgressWidget {
 
         // Set text size of text view
         if (Build.VERSION.SDK_INT >= 16) {
-            int textSize = context.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                    .getInt(MainActivity.TEXT_SIZE_PREFERENCE + appWidgetId, 24);
+            int textSize = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getInt(Constants.TEXT_SIZE_PREFERENCE + appWidgetId, 24);
             views.setTextViewTextSize(R.id.appwidget_text, TypedValue.COMPLEX_UNIT_SP, textSize);
         }
 

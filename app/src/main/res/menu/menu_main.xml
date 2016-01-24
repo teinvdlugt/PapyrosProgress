@@ -12,22 +12,8 @@
         android:title="@string/visit_github"
         app:showAsAction="never" />
     <item
-        android:id="@+id/notification"
-        android:checkable="true"
-        android:checked="true"
+        android:id="@+id/action_settings"
         android:orderInCategory="102"
-        android:title="@string/show_notification"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/oldProgressBar"
-        android:checkable="true"
-        android:checked="false"
-        android:orderInCategory="104"
-        android:title="@string/use_old_progress_bar"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/rate_app"
-        android:orderInCategory="105"
-        android:title="@string/rate_in_play_store"
+        android:title="@string/settings"
         app:showAsAction="never" />
 </menu>

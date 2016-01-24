@@ -2,6 +2,7 @@ package com.teinproductions.tein.papyrosprogress;
 
 import android.app.Activity;
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -32,15 +33,11 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
     private String widgetMilestoneTitle;
     private OnTextSizeButtonClickListener listener;
-    private boolean useOldProgressBar = false;
 
     public PapyrosRecyclerAdapter(Activity activity, Milestone[] milestones, OnTextSizeButtonClickListener listener) {
         this.activity = activity;
         this.milestones = milestones;
         this.listener = listener;
-
-        this.useOldProgressBar = activity.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getBoolean(MainActivity.OLD_PROGRESS_BAR_PREFERENCE, false);
     }
 
     public void setMilestones(Milestone[] milestones) {
@@ -100,7 +97,7 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (getItemViewType(position)) {
             case ITEM_VIEW_TYPE_MILESTONE:
                 if (textSize != -1) position--;
-                ((MileStoneViewHolder) viewHolder).showData(activity, milestones[position], useOldProgressBar);
+                ((MileStoneViewHolder) viewHolder).showData(activity, milestones[position]);
                 break;
             case ITEM_VIEW_TYPE_TEXT_SIZE:
                 String[] milestoneTitles = new String[milestones.length];
@@ -127,11 +124,6 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public void setUseOldProgressBar(boolean useOldProgressBar) {
-        this.useOldProgressBar = useOldProgressBar;
-        notifyDataSetChanged();
-    }
-
     interface OnTextSizeButtonClickListener {
         void onClickApply(int progress, String milestoneTitle);
     }
@@ -144,7 +136,6 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
 
     private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
             createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
-    private ProgressBar oldProgressBar;
     private PapyrosProgressBar progressBar;
     private Button githubButton;
     private ImageButton collapseButton;
@@ -161,7 +152,6 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         closedIssuesTV = (TextView) itemView.findViewById(R.id.closed_issues_textView);
         progressTV = (TextView) itemView.findViewById(R.id.progress_textView);
         progressBar = (PapyrosProgressBar) itemView.findViewById(R.id.listItem_progressBar);
-        oldProgressBar = (ProgressBar) itemView.findViewById(R.id.oldProgressBar);
         stateTV = (TextView) itemView.findViewById(R.id.state_textView);
         createdAtTV = (TextView) itemView.findViewById(R.id.createdAt);
         updatedAtTV = (TextView) itemView.findViewById(R.id.updatedAt);
@@ -208,17 +198,9 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public void showData(Activity context, Milestone milestone, boolean useOldProgressBar) {
+    public void showData(Activity context, Milestone milestone) {
         this.milestone = milestone;
         this.context = context;
-
-        if (useOldProgressBar) {
-            progressBar.setVisibility(View.GONE);
-            oldProgressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-            oldProgressBar.setVisibility(View.GONE);
-        }
 
         int progress = milestone.getProgress();
 
@@ -227,7 +209,6 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         openIssuesTV.setText(context.getString(R.string.open_issues, milestone.getOpenIssues()));
         closedIssuesTV.setText(context.getString(R.string.closed_issues, milestone.getClosedIssues()));
         progressBar.setProgress(progress);
-        oldProgressBar.setProgress(progress);
         progressTV.setText(context.getString(R.string.progress, progress));
         stateTV.setText(context.getString(R.string.state, getStateText(context, milestone)));
 
@@ -262,7 +243,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             githubButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.sendEventHit(MileStoneViewHolder.this.context, MainActivity.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
+                    MainActivity.sendEventHit(MileStoneViewHolder.this.context, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
                             "View on github", MileStoneViewHolder.this.milestone.getTitle());
                     MainActivity.openWebPage(MileStoneViewHolder.this.context, MileStoneViewHolder.this.milestone.getGithubUrl());
                 }

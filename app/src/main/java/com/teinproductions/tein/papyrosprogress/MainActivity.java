@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -39,24 +40,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements LoadWebPageTask.OnLoadedListener, SwipeRefreshLayout.OnRefreshListener,
         PapyrosRecyclerAdapter.OnTextSizeButtonClickListener {
-    // TODO: 4-1-2016 Move static constants to Constants class
-    public static final String URL = "https://api.github.com/repos/papyros/papyros-shell/milestones";
-    public static final String PAPYROS_BLOG_API_URL = "https://api.github.com/repos/papyros/papyros.github.io/contents/_posts";
-    public static final String PAPYROS_BLOG_URL = "http://papyros.io/blog/";
-
+    public static final int SETTINGS_ACTIVITY_REQUEST_CODE = 1;
     public static final String EXTRA_SMALL_WIDGET = "small_widget";
-    public static final String MILESTONES_CACHE_FILE = "papyros_cache";
-
-    public static final String SHARED_PREFERENCES = "shared_preferences";
-    public static final String NOTIFICATION_PREFERENCE = "notifications";
-    private static final String NOTIFICATION_ASKED_PREFERENCE = "notification_asked";
-    public static final String OLD_PROGRESS_BAR_PREFERENCE = "old_progress_bar";
-    public static final String TEXT_SIZE_PREFERENCE = "text_size";
-    public static final String MILESTONE_WIDGET_PREFERENCE = "milestone_";
-
-    public static final String GA_EXTERNAL_LINKS_EVENT_CATEGORY = "External links";
-    public static final String GA_PREFERENCES_EVENT_CATEGORY = "Preferences";
-    public static final String CACHED_BLOG_AMOUNT = "cached_blog_amount";
 
     private RecyclerView recyclerView;
     private PapyrosRecyclerAdapter adapter;
@@ -73,6 +58,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ((GAApplication) getApplication()).startTracking();
 
+        checkNotificationsAsked();
+
         sendBroadcast(new Intent(this, UpdateCheckReceiver.class));
 
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
@@ -85,8 +72,6 @@ public class MainActivity extends AppCompatActivity
 
         restoreAppWidgetStuff();
         onRefresh();
-
-        checkNotificationsAsked();
     }
 
     @Override
@@ -96,15 +81,41 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void checkNotificationsAsked() {
-        final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
-        if (!preferences.getBoolean(NOTIFICATION_ASKED_PREFERENCE, false)) {
+        final SharedPreferences oldSharedPref = getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
+        final SharedPreferences defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (oldSharedPref.contains(Constants.NOTIFICATION_ASKED_PREFERENCE)) {
+            // The old preferences have to be copied over to the new default shared preferences
+            SharedPreferences.Editor editor = defaultSharedPref.edit();
+            editor.putBoolean(Constants.NOTIFICATION_PREFERENCE,
+                    oldSharedPref.getBoolean(Constants.NOTIFICATION_PREFERENCE, true));
+            editor.putInt(Constants.CACHED_BLOG_AMOUNT,
+                    oldSharedPref.getInt(Constants.CACHED_BLOG_AMOUNT, 0));
+
+            for (int id : AbstractProgressWidget.getAppWidgetLargeIds(this, AppWidgetManager.getInstance(this))) {
+                editor.putInt(Constants.TEXT_SIZE_PREFERENCE + id,
+                        oldSharedPref.getInt(Constants.TEXT_SIZE_PREFERENCE + id, 24));
+                editor.putString(Constants.MILESTONE_WIDGET_PREFERENCE + id,
+                        oldSharedPref.getString(Constants.MILESTONE_WIDGET_PREFERENCE + id, "Version 0.1"));
+            }
+            for (int id : AbstractProgressWidget.getAppWidgetSmallIds(this, AppWidgetManager.getInstance(this))) {
+                editor.putInt(Constants.TEXT_SIZE_PREFERENCE + id,
+                        oldSharedPref.getInt(Constants.TEXT_SIZE_PREFERENCE + id, 24));
+                editor.putString(Constants.MILESTONE_WIDGET_PREFERENCE + id,
+                        oldSharedPref.getString(Constants.MILESTONE_WIDGET_PREFERENCE + id, "Version 0.1"));
+            }
+            editor.apply();
+
+            // Clear the old shared preferences
+            oldSharedPref.edit().clear().apply();
+        } else if (!defaultSharedPref.contains(Constants.NOTIFICATION_PREFERENCE)) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.notification_dialog_title))
                     .setMessage(getString(R.string.notification_dialog_message))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            preferences.edit().putBoolean(NOTIFICATION_PREFERENCE, true).apply();
+                            defaultSharedPref.edit().putBoolean(Constants.NOTIFICATION_PREFERENCE, true).apply();
                             AlarmUtils.setAlarm(MainActivity.this);
                             invalidateOptionsMenu();
                         }
@@ -112,12 +123,11 @@ public class MainActivity extends AppCompatActivity
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            preferences.edit().putBoolean(NOTIFICATION_PREFERENCE, false).apply();
+                            defaultSharedPref.edit().putBoolean(Constants.NOTIFICATION_PREFERENCE, false).apply();
                             AlarmUtils.reconsiderSettingAlarm(MainActivity.this);
                             invalidateOptionsMenu();
                         }
                     }).create().show();
-            preferences.edit().putBoolean(NOTIFICATION_ASKED_PREFERENCE, true).apply();
         }
     }
 
@@ -131,9 +141,9 @@ public class MainActivity extends AppCompatActivity
                     AppWidgetManager.INVALID_APPWIDGET_ID);
         }
         if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
-            adapter.setTextSize(pref.getInt(TEXT_SIZE_PREFERENCE + appWidgetId, 24));
-            adapter.setWidgetMilestoneTitle(pref.getString(MILESTONE_WIDGET_PREFERENCE + appWidgetId, null));
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            adapter.setTextSize(pref.getInt(Constants.TEXT_SIZE_PREFERENCE + appWidgetId, 24));
+            adapter.setWidgetMilestoneTitle(pref.getString(Constants.MILESTONE_WIDGET_PREFERENCE + appWidgetId, null));
         } else {
             adapter.setTextSize(PapyrosRecyclerAdapter.DONT_SHOW_TEXT_SIZE_TILE);
         }
@@ -142,7 +152,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRefresh() {
         // First try with cache:
-        String cache = getFile(this, MainActivity.MILESTONES_CACHE_FILE);
+        String cache = getFile(this, Constants.MILESTONES_CACHE_FILE);
         if (cache != null) {
             try {
                 adapter.setMilestones(JSONUtils.getMilestones(cache));
@@ -183,7 +193,7 @@ public class MainActivity extends AppCompatActivity
             adapter.setMilestones(JSONUtils.getMilestones(response.content));
 
             // Nothing went wrong, so the web page contents are correct and can be cached
-            saveFile(this, response.content, MainActivity.MILESTONES_CACHE_FILE);
+            saveFile(this, response.content, Constants.MILESTONES_CACHE_FILE);
         } catch (JSONException | NullPointerException | ParseException e) {
             e.printStackTrace();
             // This means the retrieved web page was not the right one
@@ -193,10 +203,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClickApply(int progress, String milestoneTitle) {
-        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
-        editor.putInt(TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
-        editor.putString(MILESTONE_WIDGET_PREFERENCE + appWidgetId, milestoneTitle).apply();
+        editor.putInt(Constants.TEXT_SIZE_PREFERENCE + appWidgetId, progress).apply();
+        editor.putString(Constants.MILESTONE_WIDGET_PREFERENCE + appWidgetId, milestoneTitle).apply();
 
         AbstractProgressWidget.updateFromCache(this);
     }
@@ -210,13 +220,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        boolean notifications = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(NOTIFICATION_PREFERENCE, true);
-        menu.findItem(R.id.notification).setChecked(notifications);
-
-        boolean oldProgressBar = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(OLD_PROGRESS_BAR_PREFERENCE, false);
-        menu.findItem(R.id.oldProgressBar).setChecked(oldProgressBar);
-
         return true;
     }
 
@@ -227,7 +230,7 @@ public class MainActivity extends AppCompatActivity
                 openWebPage(this, "http://papyros.io");
 
                 try {
-                    sendEventHit(this, GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit papyros.io", null);
+                    sendEventHit(this, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit papyros.io", null);
                 } catch (Exception e) {
                     // I don't want to cause this any errors,
                     // because that would seem weird to the user
@@ -237,45 +240,12 @@ public class MainActivity extends AppCompatActivity
                 openWebPage(this, "https://github.com/papyros");
 
                 try {
-                    sendEventHit(this, GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit Github page", null);
+                    sendEventHit(this, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit Github page", null);
                 } catch (Exception ignored) { /*ignored*/ }
 
                 return true;
-            case R.id.notification:
-                if (item.isChecked()) {
-                    // Cancel alarm
-                    item.setChecked(false);
-                    AlarmUtils.reconsiderSettingAlarm(this);
-                } else {
-                    // Schedule alarm
-                    item.setChecked(true);
-                    AlarmUtils.setAlarm(this);
-                }
-
-                // Save preference
-                getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
-                        .putBoolean(NOTIFICATION_PREFERENCE, item.isChecked()).apply();
-                return true;
-            case R.id.oldProgressBar:
-                item.setChecked(!item.isChecked());
-                adapter.setUseOldProgressBar(item.isChecked());
-                getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE).edit()
-                        .putBoolean(OLD_PROGRESS_BAR_PREFERENCE, item.isChecked()).apply();
-
-                try {
-                    sendEventHit(this, GA_PREFERENCES_EVENT_CATEGORY, "Change old progress bar preference", "" + item.isChecked());
-                } catch (Exception ignored) { /*ignored*/ }
-
-                return true;
-            case R.id.rate_app:
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("market://details?id=com.teinproductions.tein.papyrosprogress"));
-                startActivity(intent);
-
-                try {
-                    sendEventHit(this, GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
-                } catch (Exception ignored) { /*ignored*/ }
-                return true;
+            case R.id.action_settings:
+                startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_ACTIVITY_REQUEST_CODE);
             default:
                 return false;
         }

@@ -6,14 +6,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class AlarmUtils {
 
     public static void reconsiderSettingAlarm(Context context) {
         // Check if notifications are enabled:
-        SharedPreferences pref = context.getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES,
-                Context.MODE_PRIVATE);
-        boolean notifications = pref.getBoolean(MainActivity.NOTIFICATION_PREFERENCE, true);
+        SharedPreferences defPref = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean notifications = defPref.getBoolean(Constants.NOTIFICATION_PREFERENCE, true);
 
         // Check if app widgets are present:
         boolean appWidgets = AbstractProgressWidget.areAppWidgetsEnabled(context);

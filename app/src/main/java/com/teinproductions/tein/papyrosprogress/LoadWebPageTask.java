@@ -16,7 +16,7 @@ class LoadWebPageTask extends AsyncTask<Void, Void, LoadWebPageTask.Response> {
     private final String url;
 
     public LoadWebPageTask(OnLoadedListener onLoadedListener) {
-        this(MainActivity.URL, onLoadedListener);
+        this(Constants.MILESTONES_URL, onLoadedListener);
     }
 
     public LoadWebPageTask(String url, OnLoadedListener onLoadedListener) {
