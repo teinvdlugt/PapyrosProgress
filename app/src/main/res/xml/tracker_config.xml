@@ -8,4 +8,7 @@
     <screenName name="com.teinproductions.tein.papyrosprogress.MainActivity">
         Main Activity
     </screenName>
+    <screenName name="com.teinproductions.tein.papyrosprogress.SettingsActivity">
+        Settings Activity
+    </screenName>
 </resources>
