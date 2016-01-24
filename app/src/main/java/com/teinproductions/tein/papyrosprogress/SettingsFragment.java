@@ -1,7 +1,9 @@
 package com.teinproductions.tein.papyrosprogress;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -34,6 +36,10 @@ public class SettingsFragment extends PreferenceFragment
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if ("rate_in_play_store".equals(preference.getKey())) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("market://details?id=com.teinproductions.tein.papyrosprogress"));
+            startActivity(intent);
+
             try {
                 MainActivity.sendEventHit(getActivity(), Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
             } catch (Exception ignored) {/*ignored*/ }
