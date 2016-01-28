@@ -131,8 +131,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     public static final String JSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     public static final String MILESTONE_COLLAPSED_PREFERENCE = "milestone_collapsed_"; // Append the title of the Milestone
 
-    private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
-            createdAtTV, updatedAtTV, dueOnTV, closedAtTV, progressAbbrTV;
+    private TextView titleTV, progressAbbrTV, milestoneInfoTV;
     private PapyrosProgressBar progressBar;
     private Button githubButton;
     private ImageButton collapseButton;
@@ -145,19 +144,12 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
 
         titleTV = (TextView) itemView.findViewById(R.id.name_textView);
-        openIssuesTV = (TextView) itemView.findViewById(R.id.open_issues_textView);
-        closedIssuesTV = (TextView) itemView.findViewById(R.id.closed_issues_textView);
-        progressTV = (TextView) itemView.findViewById(R.id.progress_textView);
-        progressBar = (PapyrosProgressBar) itemView.findViewById(R.id.listItem_progressBar);
-        stateTV = (TextView) itemView.findViewById(R.id.state_textView);
-        createdAtTV = (TextView) itemView.findViewById(R.id.createdAt);
-        updatedAtTV = (TextView) itemView.findViewById(R.id.updatedAt);
-        dueOnTV = (TextView) itemView.findViewById(R.id.dueOn);
-        closedAtTV = (TextView) itemView.findViewById(R.id.closedAt);
-        githubButton = (Button) itemView.findViewById(R.id.github_button);
+        progressAbbrTV = (TextView) itemView.findViewById(R.id.progressAbbr_textView);
         collapseButton = (ImageButton) itemView.findViewById(R.id.collapse_imageButton);
         milestoneInfoContainer = (ViewGroup) itemView.findViewById(R.id.milestone_content_container);
-        progressAbbrTV = (TextView) itemView.findViewById(R.id.progressAbbr_textView);
+        milestoneInfoTV = (TextView) itemView.findViewById(R.id.milestoneInfo_textView);
+        progressBar = (PapyrosProgressBar) itemView.findViewById(R.id.listItem_progressBar);
+        githubButton = (Button) itemView.findViewById(R.id.github_button);
 
         itemView.findViewById(R.id.milestone_title_bar).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -263,34 +255,29 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
 
         // Set texts
         titleTV.setText(milestone.getTitle());
-        openIssuesTV.setText(context.getString(R.string.open_issues, milestone.getOpenIssues()));
-        closedIssuesTV.setText(context.getString(R.string.closed_issues, milestone.getClosedIssues()));
         progressBar.setProgress(progress);
-        progressTV.setText(context.getString(R.string.progress, progress));
         progressAbbrTV.setText(context.getString(R.string.collapsed_progress_text, progress));
-        stateTV.setText(context.getString(R.string.state, getStateText(context, milestone)));
+
+        StringBuilder milestoneInfo = new StringBuilder();
+        milestoneInfo.append(context.getString(R.string.open_issues, milestone.getOpenIssues()));
+        milestoneInfo.append("\n").append(context.getString(R.string.closed_issues, milestone.getClosedIssues()));
+        milestoneInfo.append("\n").append(context.getString(R.string.progress, progress));
+        milestoneInfo.append("\n").append(context.getString(R.string.state, getStateText(context, milestone)));
 
         // Set date texts
         DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
         if (milestone.getCreatedAt() == -1)
-            createdAtTV.setText(context.getString(R.string.unknown));
+            milestoneInfo.append("\n").append(context.getString(R.string.unknown));
         else
-            createdAtTV.setText(context.getString(R.string.created_at, format.format(new Date(milestone.getCreatedAt()))));
-        if (milestone.getUpdatedAt() == -1) updatedAtTV.setVisibility(View.GONE);
-        else {
-            updatedAtTV.setVisibility(View.VISIBLE);
-            updatedAtTV.setText(context.getString(R.string.updated_at, format.format(new Date(milestone.getUpdatedAt()))));
-        }
-        if (milestone.getDueOn() == -1) dueOnTV.setVisibility(View.GONE);
-        else {
-            dueOnTV.setVisibility(View.VISIBLE);
-            dueOnTV.setText(context.getString(R.string.due_on, format.format(new Date(milestone.getDueOn()))));
-        }
-        if (milestone.getClosedAt() == -1) closedAtTV.setVisibility(View.GONE);
-        else {
-            closedAtTV.setVisibility(View.VISIBLE);
-            closedAtTV.setText(context.getString(R.string.closed_at, format.format(new Date(milestone.getClosedAt()))));
-        }
+            milestoneInfo.append("\n").append(context.getString(R.string.created_at, format.format(new Date(milestone.getCreatedAt()))));
+        if (milestone.getUpdatedAt() != -1)
+            milestoneInfo.append("\n").append(context.getString(R.string.updated_at, format.format(new Date(milestone.getUpdatedAt()))));
+        if (milestone.getDueOn() != -1)
+            milestoneInfo.append("\n").append(context.getString(R.string.due_on, format.format(new Date(milestone.getDueOn()))));
+        if (milestone.getClosedAt() != -1)
+            milestoneInfo.append("\n").append(context.getString(R.string.closed_at, format.format(new Date(milestone.getClosedAt()))));
+
+        milestoneInfoTV.setText(milestoneInfo);
 
         // Set github url text
         if (milestone.getGithubUrl() == null) {

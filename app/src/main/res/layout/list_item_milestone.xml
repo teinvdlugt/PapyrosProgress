@@ -64,75 +64,11 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/open_issues_textView"
-                android:layout_width="wrap_content"
+                android:id="@+id/milestoneInfo_textView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:text="@string/open_issues"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/closed_issues_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/closed_issues"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/progress_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:text="@string/progress"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/state_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/state"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/createdAt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/created_at"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/updatedAt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/updated_at"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/dueOn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/due_on"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/closedAt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/closed_at"
                 android:textSize="14sp" />
 
             <com.teinproductions.tein.papyrosprogress.PapyrosProgressBar
