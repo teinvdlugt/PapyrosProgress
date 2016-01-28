@@ -58,7 +58,6 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
 
-        milestones.get(0).setClosedAt(123); // For debugging
         // Move closed milestones to bottom of list
         int amountMoved = 0;
         for (int i = 0; i < milestones.size(); i++) {

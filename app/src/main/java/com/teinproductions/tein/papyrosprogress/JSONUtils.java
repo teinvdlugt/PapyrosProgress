@@ -59,7 +59,7 @@ public class JSONUtils {
         JSONArray jArray = new JSONArray(json);
         List<Milestone> result = new ArrayList<>();
 
-        for (int i = 0; i < result.size(); i++) {
+        for (int i = 0; i < jArray.length(); i++) {
             result.add(getMilestone(jArray.getJSONObject(i)));
         }
 
