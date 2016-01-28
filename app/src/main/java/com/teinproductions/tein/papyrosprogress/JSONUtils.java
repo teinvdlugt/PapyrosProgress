@@ -2,7 +2,6 @@ package com.teinproductions.tein.papyrosprogress;
 
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,8 +10,9 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JSONUtils {
@@ -55,12 +55,12 @@ public class JSONUtils {
         return closedIssues * 100 / (openIssues + closedIssues);
     }
 
-    public static Milestone[] getMilestones(String json) throws JSONException, ParseException {
+    public static List<Milestone> getMilestones(String json) throws JSONException, ParseException {
         JSONArray jArray = new JSONArray(json);
-        Milestone[] result = new Milestone[jArray.length()];
+        List<Milestone> result = new ArrayList<>();
 
-        for (int i = 0; i < result.length; i++) {
-            result[i] = getMilestone(jArray.getJSONObject(i));
+        for (int i = 0; i < result.size(); i++) {
+            result.add(getMilestone(jArray.getJSONObject(i)));
         }
 
         return result;

@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PapyrosRecyclerAdapter(this, new Milestone[0], this);
+        adapter = new PapyrosRecyclerAdapter(this, new ArrayList<Milestone>(), this);
         recyclerView.setAdapter(adapter);
 
         restoreAppWidgetStuff();

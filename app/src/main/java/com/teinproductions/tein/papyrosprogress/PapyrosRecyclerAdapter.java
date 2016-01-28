@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -26,34 +27,44 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int ITEM_VIEW_TYPE_MILESTONE = 1;
 
     private Activity activity; // Needed for Google Analytics event reporting
-    private Milestone[] milestones;
+    private List<Milestone> milestones;
     private int textSize = DONT_SHOW_TEXT_SIZE_TILE;
     private String widgetMilestoneTitle;
     private OnTextSizeButtonClickListener listener;
 
-    public PapyrosRecyclerAdapter(Activity activity, Milestone[] milestones, OnTextSizeButtonClickListener listener) {
+    public PapyrosRecyclerAdapter(Activity activity, List<Milestone> milestones, OnTextSizeButtonClickListener listener) {
         this.activity = activity;
         this.milestones = milestones;
         this.listener = listener;
     }
 
-    public void setMilestones(Milestone[] milestones) {
-        sortByCreatedDate(milestones);
+    public void setMilestones(List<Milestone> milestones) {
+        if (milestones.size() > 1) sortByCreatedDate(milestones);
         this.milestones = milestones;
         notifyDataSetChanged();
     }
 
-    private static void sortByCreatedDate(Milestone[] milestones) {
+    private static void sortByCreatedDate(List<Milestone> milestones) {
         // Sort by created date in ascending order TODO Move closed milestones to bottom of list
         // Uses bubble sort algorithm
 
-        for (int i = milestones.length - 1; i > 1; i--) {
+        for (int i = milestones.size() - 1; i > 1; i--) {
             for (int j = 0; j < i; j++) {
-                if (milestones[j].getCreatedAt() > milestones[j + 1].getCreatedAt()) {
-                    Milestone temp = milestones[j];
-                    milestones[j] = milestones[j + 1];
-                    milestones[j + 1] = temp;
+                if (milestones.get(j).getCreatedAt() > milestones.get(j + 1).getCreatedAt()) {
+                    Milestone temp = milestones.get(j);
+                    milestones.set(j, milestones.get(j + 1));
+                    milestones.set(j + 1, temp);
                 }
+            }
+        }
+
+        milestones.get(0).setClosedAt(123); // For debugging
+        // Move closed milestones to bottom of list
+        int amountMoved = 0;
+        for (int i = 0; i < milestones.size(); i++) {
+            if (milestones.get(i - amountMoved).getClosedAt() != -1) {
+                milestones.add(milestones.remove(i - amountMoved));
+                amountMoved++;
             }
         }
     }
@@ -94,12 +105,12 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (getItemViewType(position)) {
             case ITEM_VIEW_TYPE_MILESTONE:
                 if (textSize != -1) position--;
-                ((MileStoneViewHolder) viewHolder).showData(activity, milestones[position]);
+                ((MileStoneViewHolder) viewHolder).showData(activity, milestones.get(position));
                 break;
             case ITEM_VIEW_TYPE_TEXT_SIZE:
-                String[] milestoneTitles = new String[milestones.length];
+                String[] milestoneTitles = new String[milestones.size()];
                 for (int i = 0; i < milestoneTitles.length; i++) {
-                    milestoneTitles[i] = milestones[i].getTitle();
+                    milestoneTitles[i] = milestones.get(i).getTitle();
                 }
                 int selectedItemPosition = 0;
                 if (widgetMilestoneTitle != null)
@@ -115,9 +126,9 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemCount() {
         if (textSize == -1) {
-            return milestones.length;
+            return milestones.size();
         } else {
-            return milestones.length + 1;
+            return milestones.size() + 1;
         }
     }
 
