@@ -2,18 +2,15 @@ package com.teinproductions.tein.papyrosprogress;
 
 import android.app.Activity;
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -135,12 +132,12 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     public static final String MILESTONE_COLLAPSED_PREFERENCE = "milestone_collapsed_"; // Append the title of the Milestone
 
     private TextView titleTV, openIssuesTV, closedIssuesTV, progressTV, stateTV,
-            createdAtTV, updatedAtTV, dueOnTV, closedAtTV;
+            createdAtTV, updatedAtTV, dueOnTV, closedAtTV, progressAbbrTV;
     private PapyrosProgressBar progressBar;
     private Button githubButton;
     private ImageButton collapseButton;
+    private ViewGroup milestoneInfoContainer;
 
-    private boolean collapsed = false;
     private Milestone milestone;
     private Activity context;
 
@@ -159,6 +156,8 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         closedAtTV = (TextView) itemView.findViewById(R.id.closedAt);
         githubButton = (Button) itemView.findViewById(R.id.github_button);
         collapseButton = (ImageButton) itemView.findViewById(R.id.collapse_imageButton);
+        milestoneInfoContainer = (ViewGroup) itemView.findViewById(R.id.milestone_content_container);
+        progressAbbrTV = (TextView) itemView.findViewById(R.id.progressAbbr_textView);
 
         itemView.findViewById(R.id.milestone_title_bar).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,31 +168,89 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void onClickCollapse() {
-        collapsed = !collapsed;
+        boolean collapse; // Value to save to preferences
+        if (milestoneInfoContainer.getVisibility() == View.VISIBLE) {
+            collapse();
+            collapse = true;
+        } else {
+            expand();
+            collapse = false;
+        }
         if (context != null)
             context.getPreferences(Context.MODE_PRIVATE).edit()
-                    .putBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), collapsed).apply();
-
-        expandOrCollapse();
+                    .putBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), collapse).apply();
     }
 
-    private void expandOrCollapse() {
-        if (collapsed) {
-            // Collapse the milestone
-            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.GONE);
-            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
-            if (milestone != null && context != null) {
-                String progressAbbr = context.getString(R.string.collapsed_progress_text, milestone.getProgress());
-                SpannableString ss = new SpannableString(milestone.getTitle() + progressAbbr);
-                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(.6f);
-                ss.setSpan(sizeSpan, milestone.getTitle().length(), ss.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                titleTV.setText(ss);
+    private void collapse() {
+        collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
+        final int initialHeight = milestoneInfoContainer.getMeasuredHeight();
+
+        progressAbbrTV.setAlpha(0f);
+        progressAbbrTV.setVisibility(View.VISIBLE);
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    milestoneInfoContainer.setVisibility(View.GONE);
+                } else {
+                    milestoneInfoContainer.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                    milestoneInfoContainer.requestLayout();
+                }
+                progressAbbrTV.setAlpha(interpolatedTime);
             }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        a.setDuration(context.getResources().getInteger(android.R.integer.config_shortAnimTime));
+        milestoneInfoContainer.startAnimation(a);
+    }
+
+    private void expand() {
+        collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
+        milestoneInfoContainer.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = milestoneInfoContainer.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        milestoneInfoContainer.getLayoutParams().height = 1;
+        milestoneInfoContainer.setVisibility(View.VISIBLE);
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                milestoneInfoContainer.getLayoutParams().height = interpolatedTime == 1
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int) (targetHeight * interpolatedTime);
+                milestoneInfoContainer.requestLayout();
+
+                if (interpolatedTime == 1) progressAbbrTV.setVisibility(View.GONE);
+                else progressAbbrTV.setAlpha(1 - interpolatedTime);
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        a.setDuration(context.getResources().getInteger(android.R.integer.config_shortAnimTime));
+        milestoneInfoContainer.startAnimation(a);
+    }
+
+    private void collapseOrExpandInstant(boolean collapse) {
+        // (Instant means without animation)
+        if (collapse) {
+            // Collapse the milestone
+            milestoneInfoContainer.setVisibility(View.GONE);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
+            progressAbbrTV.setVisibility(View.VISIBLE);
         } else {
             // Expand the milestone
-            itemView.findViewById(R.id.milestone_content_container).setVisibility(View.VISIBLE);
+            milestoneInfoContainer.setVisibility(View.VISIBLE);
             collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
-            if (milestone != null) titleTV.setText(milestone.getTitle());
+            progressAbbrTV.setVisibility(View.GONE);
         }
     }
 
@@ -210,6 +267,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         closedIssuesTV.setText(context.getString(R.string.closed_issues, milestone.getClosedIssues()));
         progressBar.setProgress(progress);
         progressTV.setText(context.getString(R.string.progress, progress));
+        progressAbbrTV.setText(context.getString(R.string.collapsed_progress_text, progress));
         stateTV.setText(context.getString(R.string.state, getStateText(context, milestone)));
 
         // Set date texts
@@ -250,9 +308,9 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             });
         }
 
-        this.collapsed = context.getPreferences(Context.MODE_PRIVATE)
+        boolean collapse = context.getPreferences(Context.MODE_PRIVATE)
                 .getBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), false);
-        expandOrCollapse();
+        collapseOrExpandInstant(collapse);
     }
 
     private String getStateText(Context context, Milestone milestone) {
