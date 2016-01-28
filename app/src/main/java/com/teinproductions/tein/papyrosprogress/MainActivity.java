@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
             oldSharedPref.edit().clear().apply();
         } else if (!defaultSharedPref.contains(Constants.NOTIFICATION_PREFERENCE)) {
             new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.notification_dialog_title))
+                    .setTitle(getString(R.string.notifications))
                     .setMessage(getString(R.string.notification_dialog_message))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override

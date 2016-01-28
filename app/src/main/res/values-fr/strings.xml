@@ -33,4 +33,11 @@
     <string name="state_open">ouvert</string>
     <string name="state_closed">fermé</string>
     <string name="state_all">tout</string>
+    <string name="widget_settings">Configuration du widget</string>
+    <string name="notification_sound">Son</string>
+    <string name="notification_vibrate">Vibrer</string>
+    <string name="pulse_notification_light">DEL de notification</string>
+    <string name="other">Autres</string>
+    <string name="settings">Paramètres</string>
+    <string name="xs_collapse_or_expand">Fermer ou étendre l\'étape</string>
 </resources>
