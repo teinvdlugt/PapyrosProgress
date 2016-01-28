@@ -9,7 +9,6 @@ public class Constants {
 
     // Settings
     public static final String NOTIFICATION_PREFERENCE = "notifications";
-    // TODO: 24-1-2016 Use these preferences
     public static final String NOTIFICATION_SOUND_PREF = "notification_sound";
     public static final String NOTIFICATION_VIBRATE_PREF = "notification_vibrate";
     public static final String NOTIFICATION_LIGHT_PREF = "notification_light";
