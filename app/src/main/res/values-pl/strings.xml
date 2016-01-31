@@ -39,6 +39,6 @@
     <string name="other">Inne</string>
     <string name="settings">Ustawienia</string>
     <string name="xs_collapse_or_expand">Zwiń lub rozwiń milestone</string>
-    <string name="pulse_notification_light">Pulse notification light</string>
+    <string name="pulse_notification_light">LED</string>
     <string name="widget_settings">Ustawienia widgeta</string>
 </resources>
