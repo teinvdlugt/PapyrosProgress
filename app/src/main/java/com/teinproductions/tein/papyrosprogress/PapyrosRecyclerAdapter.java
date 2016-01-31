@@ -161,7 +161,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         progressBar = (PapyrosProgressBar) itemView.findViewById(R.id.listItem_progressBar);
         githubButton = (Button) itemView.findViewById(R.id.github_button);
 
-        itemView.findViewById(R.id.milestone_title_bar).setOnClickListener(new View.OnClickListener() {
+        itemView.findViewById(R.id.collapse_imageButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickCollapse();
@@ -184,7 +184,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void collapse() {
-        collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
+        collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
         final int initialHeight = milestoneInfoContainer.getMeasuredHeight();
 
         progressAbbrTV.setAlpha(0f);
@@ -212,7 +212,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void expand() {
-        collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
+        collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
         milestoneInfoContainer.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final int targetHeight = milestoneInfoContainer.getMeasuredHeight();
 
@@ -246,12 +246,12 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
         if (collapse) {
             // Collapse the milestone
             milestoneInfoContainer.setVisibility(View.GONE);
-            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
             progressAbbrTV.setVisibility(View.VISIBLE);
         } else {
             // Expand the milestone
             milestoneInfoContainer.setVisibility(View.VISIBLE);
-            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_24dp);
+            collapseButton.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
             progressAbbrTV.setVisibility(View.GONE);
         }
     }

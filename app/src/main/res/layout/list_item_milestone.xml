@@ -17,7 +17,6 @@
             android:id="@+id/milestone_title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:paddingBottom="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -45,16 +44,14 @@
                     tools:visibility="visible" />
             </LinearLayout>
 
-
             <ImageButton
                 android:id="@+id/collapse_imageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
-                android:background="#00ffffff"
-                android:clickable="false"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/xs_collapse_or_expand"
-                android:src="@mipmap/ic_keyboard_arrow_down_black_24dp" />
+                android:src="@mipmap/ic_keyboard_arrow_up_black_24dp" />
         </FrameLayout>
 
         <LinearLayout
