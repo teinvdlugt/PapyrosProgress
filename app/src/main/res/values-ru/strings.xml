@@ -21,7 +21,6 @@
     <string name="visit_github">Посетить страничку в Github</string>
     <string name="view_on_github">Просмотреть в Github</string>
     <string name="show_notification">Показывать уведомления</string>
-    <string name="notification_dialog_title">Уведомления</string>
     <string name="notification_dialog_message">Хотите ли Вы получать уведомление каждый раз, когда прогресс обновляется?</string>
     <string name="rate_in_play_store">Оценить в Play Маркете</string>
     <string name="notification_title">Обновления Papyros</string>
@@ -33,4 +32,13 @@
     <string name="state_open">актуально</string>
     <string name="state_closed">неактуально</string>
     <string name="state_all">все</string>
+    <string name="collapsed_progress_text"><![CDATA[ — %1$d%%]]></string>
+    <string name="notifications">Уведомления</string>
+    <string name="xs_collapse_or_expand">Collapse or expand milestone</string>
+    <string name="widget_settings">Widget settings</string>
+    <string name="settings">Settings</string>
+    <string name="pulse_notification_light">Pulse notification light</string>
+    <string name="other">Other</string>
+    <string name="notification_sound">Sound</string>
+    <string name="notification_vibrate">Vibrate</string>
 </resources>

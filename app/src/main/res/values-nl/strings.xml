@@ -23,7 +23,6 @@
     <string name="show_notification">Meldingen weergeven</string>
     <string name="notific_msg_text_format">%1$s is veranderd van %2$d in %3$d%%!</string>
     <string name="notification_dialog_message">Wil je meldingen ontvangen wanneer de voortgang is veranderd?</string>
-    <string name="notification_dialog_title">Meldingen</string>
     <string name="use_old_progress_bar">Gebruik oude voortgangsbalk</string>
     <string name="rate_in_play_store">Beoordelen in de Play Store</string>
     <string name="milestone_added_notification">The milestone \"%1$s\" has been created.</string>
@@ -33,5 +32,13 @@
     <string name="state_all">alle</string>
     <string name="state_closed">gesloten</string>
     <string name="state_open">open</string>
-    <string name="widget_settings">Widget instellingen</string>
+    <string name="widget_settings">Widgetinstellingen</string>
+    <string name="collapsed_progress_text"><![CDATA[ — %1$d%%]]></string>
+    <string name="notifications">Meldingen</string>
+    <string name="notification_sound">Geluid</string>
+    <string name="notification_vibrate">Trillen</string>
+    <string name="other">Overige</string>
+    <string name="pulse_notification_light">Licht</string>
+    <string name="settings">Instellingen</string>
+    <string name="xs_collapse_or_expand">Mijlpaal in of uitklappen</string>
 </resources>

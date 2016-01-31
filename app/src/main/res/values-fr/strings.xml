@@ -21,7 +21,6 @@
     <string name="view_on_github">Voir sur Github</string>
     <string name="visit_github">Visiter la page Github</string>
     <string name="show_notification">Montrer les notifications</string>
-    <string name="notification_dialog_title">Notifications</string>
     <string name="notification_dialog_message">Voulez-vous recevoir des notifications quand la le progrès à changé?</string>
     <string name="notific_msg_text_format">%1$s a changé de %2$d à %3$d%%.</string>
     <string name="use_old_progress_bar">Utiliser la vieille barre de progression</string>
@@ -40,4 +39,6 @@
     <string name="other">Autres</string>
     <string name="settings">Paramètres</string>
     <string name="xs_collapse_or_expand">Fermer ou étendre l\'étape</string>
+    <string name="collapsed_progress_text"><![CDATA[ — %1$d%%]]></string>
+    <string name="notifications">Notifications</string>
 </resources>

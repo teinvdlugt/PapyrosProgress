@@ -21,7 +21,6 @@
     <string name="view_on_github">شاهد على جيت هوب </string>
     <string name="visit_github">زر صفحة المشروع على جيت هوب </string>
     <string name="show_notification">فعّل الإشعارات</string>
-    <string name="notification_dialog_title">الإشعارات</string>
     <string name="notification_dialog_message">هل تريد تلقي إشعار عندما يتم تحديث التقدّم ؟</string>
     <string name="notific_msg_text_format" formatted="false">النسخة %1$s تغيرت من %2$d الى %3$d !</string>
     <string name="use_old_progress_bar">إستعمل شريط التقدم القديم</string>
@@ -33,5 +32,13 @@
     <string name="state_open">open</string>
     <string name="state_closed">closed</string>
     <string name="state_all">all</string>
-    <string name="settings"></string>
+    <string name="settings">Settings</string>
+    <string name="notification_sound">Sound</string>
+    <string name="collapsed_progress_text">&#160;—&#160;%1$d٪</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="notification_vibrate">Vibrate</string>
+    <string name="other">Other</string>
+    <string name="pulse_notification_light">Pulse notification light</string>
+    <string name="widget_settings">Widget settings</string>
+    <string name="xs_collapse_or_expand">Collapse or expand milestone</string>
 </resources>

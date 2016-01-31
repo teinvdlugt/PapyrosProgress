@@ -21,7 +21,6 @@
     <string name="visit_homepage">Odwiedź stronę Papyros</string>
     <string name="visit_github">Odwiedź GitHuba</string>
     <string name="show_notification">Pokaż powiadomienia</string>
-    <string name="notification_dialog_title">Powiadomienia</string>
     <string name="notification_dialog_message">Czy wyświetlać powiadomienia, kiedy stan zostanie zaktualizowany?</string>
     <string name="notific_msg_text_format">%1$s zmieniony z %2$d na %3$d%%!</string>
     <string name="use_old_progress_bar">Użyj starego paska postępu</string>
@@ -33,4 +32,13 @@
     <string name="state_open">otwarte</string>
     <string name="state_closed">zamknięte</string>
     <string name="state_all">wszystkie</string>
+    <string name="collapsed_progress_text"><![CDATA[ — %1$d%%]]></string>
+    <string name="notification_vibrate">Wibracje</string>
+    <string name="notifications">Powiadomienia</string>
+    <string name="notification_sound">Dźwięk</string>
+    <string name="other">Inne</string>
+    <string name="settings">Ustawienia</string>
+    <string name="xs_collapse_or_expand">Zwiń lub rozwiń milestone</string>
+    <string name="pulse_notification_light">Pulse notification light</string>
+    <string name="widget_settings">Ustawienia widgeta</string>
 </resources>
