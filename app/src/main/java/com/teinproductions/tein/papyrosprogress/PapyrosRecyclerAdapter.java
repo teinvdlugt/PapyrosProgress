@@ -45,9 +45,8 @@ class PapyrosRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private static void sortByCreatedDate(List<Milestone> milestones) {
-        // Sort by created date in ascending order TODO Move closed milestones to bottom of list
+        // Sort by created date in ascending order
         // Uses bubble sort algorithm
-
         for (int i = milestones.size() - 1; i > 1; i--) {
             for (int j = 0; j < i; j++) {
                 if (milestones.get(j).getCreatedAt() > milestones.get(j + 1).getCreatedAt()) {
