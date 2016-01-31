@@ -196,6 +196,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
                 } else {
                     milestoneInfoContainer.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
                     milestoneInfoContainer.requestLayout();
+                    milestoneInfoContainer.setAlpha(1 - interpolatedTime);
                 }
                 progressAbbrTV.setAlpha(interpolatedTime);
             }
@@ -217,6 +218,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
 
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         milestoneInfoContainer.getLayoutParams().height = 1;
+        milestoneInfoContainer.setAlpha(0f);
         milestoneInfoContainer.setVisibility(View.VISIBLE);
         Animation a = new Animation() {
             @Override
@@ -225,6 +227,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
                         ? ViewGroup.LayoutParams.WRAP_CONTENT
                         : (int) (targetHeight * interpolatedTime);
                 milestoneInfoContainer.requestLayout();
+                milestoneInfoContainer.setAlpha(interpolatedTime);
 
                 if (interpolatedTime == 1) progressAbbrTV.setVisibility(View.GONE);
                 else progressAbbrTV.setAlpha(1 - interpolatedTime);
