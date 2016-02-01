@@ -38,7 +38,7 @@
     <string name="settings">Impostazioni</string>
     <string name="notifications">Notifiche</string>
     <string name="notification_sound">Suono</string>
-    <string name="notification_vibrate">Vibra</string>
+    <string name="notification_vibrate">Vibrazione</string>
     <string name="other">Altro</string>
     <string name="pulse_notification_light">Luce di notifica</string>
 </resources>
