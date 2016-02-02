@@ -14,7 +14,7 @@
     <string name="error404">Errore %1$d</string>
     <string name="created_at">Creato il: %1$s</string>
     <string name="updated_at">Aggiornato al: %1$s</string>
-    <string name="due_on">Dovuto per: %1$s</string>
+    <string name="due_on">Previsto per il: %1$s</string>
     <string name="closed_at">Chiuso il: %1$s</string>
     <string name="offline_snackbar">Modalità offline: i dati possono essere obsoleti</string>
     <string name="visit_homepage">Visita homepage di Papyros</string>
