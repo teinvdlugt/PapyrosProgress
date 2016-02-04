@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Papyros Progress</string>
+
+    <string name="appwidget_contentDescription">Avanzamento per la prossima versione milestone di Papyros</string>
+    <string name="text_size">Dimensione testo: %1$d</string>
+    <string name="ok">Applica</string>
+    <string name="open_issues">Problemi aperti: %1$d</string>
+    <string name="closed_issues">Problemi chiusi: %1$d</string>
+    <string name="progress">Avanzamento: %1$d%%</string>
+    <string name="state">Stato: %1$s</string>
+    <string name="unknown">Sconosciuto</string>
+    <string name="no_network">Non connesso ad una rete</string>
+    <string name="error403">Errore 403. Riprova più tardi.</string>
+    <string name="error404">Errore %1$d</string>
+    <string name="created_at">Creato il: %1$s</string>
+    <string name="updated_at">Aggiornato al: %1$s</string>
+    <string name="due_on">Previsto per il: %1$s</string>
+    <string name="closed_at">Chiuso il: %1$s</string>
+    <string name="offline_snackbar">Modalità offline: i dati possono essere obsoleti</string>
+    <string name="visit_homepage">Visita homepage di Papyros</string>
+    <string name="visit_github">Visita la pagina GitHub</string>
+    <string name="view_on_github">Vedi su GitHub</string>
+    <string name="show_notification">Visualizza notifiche</string>
+    <string name="notific_msg_text_format" formatted="false">%1$s cambiato dal %2$d al %3$d%%.</string>
+    <string name="notification_dialog_message">Vorresti ricevere una notifica quando l\'avanzamento viene aggiornato?</string>
+    <string name="use_old_progress_bar">Utilizza la vecchia barra di avanzamento</string>
+    <string name="rate_in_play_store">Valuta sul Play Store</string>
+    <string name="notification_title">Aggiornamenti di Papyros</string>
+    <string name="milestone_added_notification" formatted="false">La milestone \"%1$s\" è stata creata.</string>
+    <string name="milestone_removed_notification" formatted="false">La milestone \"%1$s\" è stata rimossa.</string>
+    <string name="blog_notification_content">Un post del Papyros Blog è stato aggiunto</string>
+    <string name="state_open">aperto</string>
+    <string name="state_closed">chiuso</string>
+    <string name="state_all">tutti</string>
+    <string name="widget_settings">Impostazioni widget</string>
+    <string name="xs_collapse_or_expand">Comprimi o espandi milestone</string>
+    <string name="collapsed_progress_text" formatted="false">&#160;—&#160;%1$d%%</string>
+    <string name="settings">Impostazioni</string>
+    <string name="notifications">Notifiche</string>
+    <string name="notification_sound">Suono</string>
+    <string name="notification_vibrate">Vibrazione</string>
+    <string name="other">Altro</string>
+    <string name="pulse_notification_light">Luce di notifica</string>
+</resources>
