@@ -28,10 +28,10 @@
     <string name="milestone_added_notification">O milestone \"%1$s\" foi criado.</string>
     <string name="milestone_removed_notification">O milestone \"%1$s\" foi removido.</string>
     <string name="notification_title">Atualizações do Papyros</string>
-    <string name="blog_notification_content">A Papyros blog post has been added</string>
-    <string name="state_open">open</string>
-    <string name="state_closed">closed</string>
-    <string name="state_all">all</string>
+    <string name="blog_notification_content">Foi adicionado um post no blog do Papyros</string>
+    <string name="state_open">aberto</string>
+    <string name="state_closed">fechado</string>
+    <string name="state_all">todos</string>
     <string name="collapsed_progress_text"><![CDATA[ — %1$d%%]]></string>
     <string name="notifications">Notificações</string>
     <string name="widget_settings">Configurações do widget</string>
