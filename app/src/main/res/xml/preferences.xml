@@ -39,6 +39,12 @@
             android:title="@string/pulse_notification_light" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/other">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="use_custom_tabs"
+            android:summaryOff="@string/custom_tabs_preference_summary_off"
+            android:summaryOn="@string/custom_tabs_preference_summary_on"
+            android:title="@string/custom_tabs_preference_title" />
         <Preference
             android:key="rate_in_play_store"
             android:title="@string/rate_in_play_store" />

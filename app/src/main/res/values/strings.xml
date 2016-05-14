@@ -59,4 +59,7 @@
     <string name="notification_vibrate">Vibrate</string>
     <string name="other">Other</string>
     <string name="pulse_notification_light">Pulse notification light</string>
+    <string name="custom_tabs_preference_title">Open web pages in app</string>
+    <string name="custom_tabs_preference_summary_on">Now opening web pages in app (if available)</string>
+    <string name="custom_tabs_preference_summary_off">Now opening web pages in standard browser</string>
 </resources>

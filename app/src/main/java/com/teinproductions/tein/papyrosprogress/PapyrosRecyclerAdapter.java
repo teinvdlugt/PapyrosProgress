@@ -163,7 +163,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     private ViewGroup milestoneInfoContainer;
 
     private Milestone milestone;
-    private Activity context;
+    private Activity activity;
 
     public MileStoneViewHolder(View itemView) {
         super(itemView);
@@ -193,8 +193,8 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             expand();
             collapse = false;
         }
-        if (context != null)
-            context.getPreferences(Context.MODE_PRIVATE).edit()
+        if (activity != null)
+            activity.getPreferences(Context.MODE_PRIVATE).edit()
                     .putBoolean(MILESTONE_COLLAPSED_PREFERENCE + milestone.getTitle(), collapse).apply();
     }
 
@@ -223,7 +223,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             }
         };
 
-        a.setDuration(context.getResources().getInteger(android.R.integer.config_shortAnimTime));
+        a.setDuration(activity.getResources().getInteger(android.R.integer.config_shortAnimTime));
         milestoneInfoContainer.startAnimation(a);
     }
 
@@ -255,7 +255,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             }
         };
 
-        a.setDuration(context.getResources().getInteger(android.R.integer.config_shortAnimTime));
+        a.setDuration(activity.getResources().getInteger(android.R.integer.config_shortAnimTime));
         milestoneInfoContainer.startAnimation(a);
     }
 
@@ -277,7 +277,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
     @SuppressWarnings("SpellCheckingInspection")
     public void showData(Activity context, Milestone milestone) {
         this.milestone = milestone;
-        this.context = context;
+        this.activity = context;
 
         int progress = milestone.getProgress();
 
@@ -316,9 +316,9 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             githubButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.sendEventHit(MileStoneViewHolder.this.context, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
+                    MainActivity.sendEventHit(MileStoneViewHolder.this.activity, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
                             "View on github", MileStoneViewHolder.this.milestone.getTitle());
-                    MainActivity.openWebPage(MileStoneViewHolder.this.context, MileStoneViewHolder.this.milestone.getGithubUrl());
+                    MainActivity.openWebPage((MainActivity) MileStoneViewHolder.this.activity, MileStoneViewHolder.this.milestone.getGithubUrl());
                 }
             });
         }

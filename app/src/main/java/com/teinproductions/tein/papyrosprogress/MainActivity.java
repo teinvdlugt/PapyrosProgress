@@ -72,15 +72,17 @@ public class MainActivity extends AppCompatActivity
     private int appWidgetId;
     private String errorMessage;
 
+    private CustomTabsHelper tabsHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ((GAApplication) getApplication()).startTracking();
+        tabsHelper = new CustomTabsHelper();
 
         checkNotificationsAsked();
-
         sendBroadcast(new Intent(this, UpdateCheckReceiver.class));
 
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
@@ -102,9 +104,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        tabsHelper.bindService(this);
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         restoreAppWidgetStuff();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tabsHelper.unbindService(this);
     }
 
     private void addListPadding() {
@@ -296,17 +310,20 @@ public class MainActivity extends AppCompatActivity
         ((GAApplication) activity.getApplication()).getTracker().send(builder.build());
     }
 
-    public static void openWebPage(Context context, String URL) {
+    public static void openWebPage(MainActivity activity, String URL) {
         if (URLUtil.isValidUrl(URL)) {
-            Uri webPage = Uri.parse(URL);
-            Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
+            if (PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("use_custom_tabs", true)) {
+                activity.tabsHelper.openURL(activity, URL);
+            } else {
+                Uri webPage = Uri.parse(URL);
+                Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
 
-            // Check if the web intent is safe (if a browser is installed)
-            PackageManager packageManager = context.getPackageManager();
-            List activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                PackageManager packageManager = activity.getPackageManager();
+                List activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
 
-            if (activities.size() > 0) {
-                context.startActivity(intent);
+                if (activities.size() > 0) {
+                    activity.startActivity(intent);
+                }
             }
         }
     }
