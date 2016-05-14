@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -37,9 +38,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.ViewTreeObserver;
 import android.webkit.URLUtil;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -85,6 +90,12 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new PapyrosRecyclerAdapter(this, new ArrayList<Milestone>(), this);
         recyclerView.setAdapter(adapter);
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                addListPadding();
+            }
+        });
 
         restoreAppWidgetStuff();
         onRefresh();
@@ -94,6 +105,16 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         restoreAppWidgetStuff();
+    }
+
+    private void addListPadding() {
+        float maxListWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 620, getResources().getDisplayMetrics());
+        if (recyclerView.getWidth() > maxListWidth) {
+            int leftRightPadding = (int) ((recyclerView.getWidth() - maxListWidth) / 2);
+            int topPadding = recyclerView.getPaddingTop();
+            int bottomPadding = recyclerView.getPaddingBottom();
+            recyclerView.setPadding(leftRightPadding, topPadding, leftRightPadding, bottomPadding);
+        }
     }
 
     private void checkNotificationsAsked() {
