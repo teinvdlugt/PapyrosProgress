@@ -61,5 +61,5 @@
     <string name="pulse_notification_light">Pulse notification light</string>
     <string name="custom_tabs_preference_title">Open web pages in app</string>
     <string name="custom_tabs_preference_summary_on">Now opening web pages in app (if available)</string>
-    <string name="custom_tabs_preference_summary_off">Now opening web pages in standard browser</string>
+    <string name="custom_tabs_preference_summary_off">Now opening web pages in default browser</string>
 </resources>

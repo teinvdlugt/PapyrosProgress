@@ -17,20 +17,17 @@
  */
 package com.teinproductions.tein.papyrosprogress;
 
-import android.app.Activity;
+import android.app.LoaderManager;
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -41,36 +38,27 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.ViewTreeObserver;
 import android.webkit.URLUtil;
-import android.widget.Toast;
-
-import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements LoadWebPageTask.OnLoadedListener, SwipeRefreshLayout.OnRefreshListener,
-        PapyrosRecyclerAdapter.OnTextSizeButtonClickListener {
+        implements SwipeRefreshLayout.OnRefreshListener,
+        PapyrosRecyclerAdapter.OnTextSizeButtonClickListener,
+        LoaderManager.LoaderCallbacks<MilestoneLoader.Result> {
     public static final int SETTINGS_ACTIVITY_REQUEST_CODE = 1;
     public static final String EXTRA_SMALL_WIDGET = "small_widget";
+    private static final int LOADER_ID = 0;
 
     private RecyclerView recyclerView;
     private PapyrosRecyclerAdapter adapter;
     private SwipeRefreshLayout srLayout;
 
     private int appWidgetId;
-    private String errorMessage;
 
     private CustomTabsHelper tabsHelper;
 
@@ -86,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         sendBroadcast(new Intent(this, UpdateCheckReceiver.class));
 
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        srLayout.setOnRefreshListener(this);
+        if (srLayout != null) srLayout.setOnRefreshListener(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -100,7 +88,9 @@ public class MainActivity extends AppCompatActivity
         });
 
         restoreAppWidgetStuff();
-        onRefresh();
+        //onRefresh();
+        loadCache();
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -132,6 +122,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void checkNotificationsAsked() {
+        @SuppressWarnings("deprecation")
         final SharedPreferences oldSharedPref = getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
         final SharedPreferences defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -200,10 +191,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onRefresh() {
-        // First try with cache:
-        String cache = getFile(this, Constants.MILESTONES_CACHE_FILE);
+    private void loadCache() {
+        // TODO Move this functionality into MilestoneLoader?
+        String cache = IOUtils.getFile(this, Constants.MILESTONES_CACHE_FILE);
         if (cache != null) {
             try {
                 adapter.setMilestones(JSONUtils.getMilestones(cache));
@@ -211,45 +201,51 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+    }
 
-        // Now try from the web:
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+    @Override
+    public void onRefresh() {
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-            srLayout.setRefreshing(true);
-            new LoadWebPageTask(this).execute();
-        } else {
-            errorMessage = getString(R.string.offline_snackbar);
-            showErrorMessage();
+    @Override
+    public Loader<MilestoneLoader.Result> onCreateLoader(int id, Bundle args) {
+        return new MilestoneLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<MilestoneLoader.Result> loader, MilestoneLoader.Result data) {
+        if (loader.getId() == LOADER_ID) {
             srLayout.setRefreshing(false);
+            switch (data.getError()) {
+                case MilestoneLoader.Result.NO_ERROR:
+                    if (data.getData() != null)
+                        adapter.setMilestones(data.getData());
+                    if (data.getStrData() != null)
+                        IOUtils.saveFile(this, data.getStrData(), Constants.MILESTONES_CACHE_FILE);
+                    break;
+                case MilestoneLoader.Result.NO_INTERNET_CONNECTION:
+                    showSnackbar(getString(R.string.offline_snackbar));
+                    break;
+                case MilestoneLoader.Result.SOCKET_TIMEOUT:
+                case MilestoneLoader.Result.UNKNOWN_ERROR:
+                case MilestoneLoader.Result.JSON_PARSE_ERROR:
+                    // TODO show special snackbar?
+                    break;
+                case MilestoneLoader.Result.ERROR_CODE:
+                    if (data.getErrorCode() == 403) {
+                        showSnackbar(getString(R.string.error403));
+                    } else {
+                        showSnackbar(getString(R.string.error404, data.getErrorCode()));
+                    }
+                    break;
+            }
         }
     }
 
     @Override
-    public void onLoaded(LoadWebPageTask.Response response) {
-        srLayout.setRefreshing(false);
-        if (response.content == null) {
-            if (response.responseCode == 403) {
-                errorMessage = getString(R.string.error403);
-            } else {
-                errorMessage = getString(R.string.error404, response.responseCode);
-            }
-
-            showErrorMessage();
-            return;
-        }
-
-        try {
-            adapter.setMilestones(JSONUtils.getMilestones(response.content));
-
-            // Nothing went wrong, so the web page contents are correct and can be cached
-            saveFile(this, response.content, Constants.MILESTONES_CACHE_FILE);
-        } catch (JSONException | NullPointerException | ParseException e) {
-            e.printStackTrace();
-            // This means the retrieved web page was not the right one
-            errorMessage = getString(R.string.error404);
-        }
+    public void onLoaderReset(Loader<MilestoneLoader.Result> loader) {
+        adapter.setMilestones(null); // TODO ?
     }
 
     @Override
@@ -262,9 +258,9 @@ public class MainActivity extends AppCompatActivity
         AbstractProgressWidget.updateFromCache(this);
     }
 
-    private void showErrorMessage() {
-        if (errorMessage != null) {
-            Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
+    private void showSnackbar(String message) {
+        if (message != null && recyclerView != null) {
+            Snackbar.make(recyclerView, message, Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -281,7 +277,7 @@ public class MainActivity extends AppCompatActivity
                 openWebPage(this, "http://papyros.io");
 
                 try {
-                    sendEventHit(this, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit papyros.io", null);
+                    IOUtils.sendGAEventHit(this, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit papyros.io", null);
                 } catch (Exception e) {
                     // I don't want to cause this any errors,
                     // because that would seem weird to the user
@@ -291,7 +287,7 @@ public class MainActivity extends AppCompatActivity
                 openWebPage(this, "https://github.com/papyros");
 
                 try {
-                    sendEventHit(this, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit Github page", null);
+                    IOUtils.sendGAEventHit(this, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Visit Github page", null);
                 } catch (Exception ignored) { /*ignored*/ }
 
                 return true;
@@ -300,14 +296,6 @@ public class MainActivity extends AppCompatActivity
             default:
                 return false;
         }
-    }
-
-    public static void sendEventHit(Activity activity, String category, String action, String label) {
-        HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
-        if (category != null) builder.setCategory(category);
-        if (action != null) builder.setAction(action);
-        if (label != null) builder.setLabel(label);
-        ((GAApplication) activity.getApplication()).getTracker().send(builder.build());
     }
 
     public static void openWebPage(MainActivity activity, String URL) {
@@ -325,37 +313,6 @@ public class MainActivity extends AppCompatActivity
                     activity.startActivity(intent);
                 }
             }
-        }
-    }
-
-    public static String getFile(Context context, String fileName) {
-        StringBuilder sb;
-
-        try {
-            FileInputStream fis = context.openFileInput(fileName);
-            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            BufferedReader buffReader = new BufferedReader(isr);
-
-            sb = new StringBuilder();
-            String line;
-            while ((line = buffReader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-
-            return sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void saveFile(Context context, String fileContent, String fileName) {
-        try {
-            FileOutputStream fos = context.openFileOutput(fileName, MODE_PRIVATE);
-            fos.write(fileContent.getBytes());
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

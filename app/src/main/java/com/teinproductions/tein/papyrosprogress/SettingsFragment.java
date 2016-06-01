@@ -57,7 +57,7 @@ public class SettingsFragment extends PreferenceFragment
             startActivity(intent);
 
             try {
-                MainActivity.sendEventHit(getActivity(), Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
+                IOUtils.sendGAEventHit(getActivity(), Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY, "Rate in Play Store", null);
             } catch (Exception ignored) {/*ignored*/ }
         }
         return true;

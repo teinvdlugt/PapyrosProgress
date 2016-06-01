@@ -58,4 +58,7 @@
     <string name="pulse_notification_light">Notificatielicht</string>
     <string name="settings">Instellingen</string>
     <string name="xs_collapse_or_expand">Mijlpaal in of uitklappen</string>
+    <string name="custom_tabs_preference_summary_off">Webpagina\'s worden nu geopend in de standaard browser</string>
+    <string name="custom_tabs_preference_summary_on">Webpagina\'s worden nu geopend in de app (indien mogelijk)</string>
+    <string name="custom_tabs_preference_title">Webpagina\'s openen in app</string>
 </resources>

@@ -316,7 +316,7 @@ class MileStoneViewHolder extends RecyclerView.ViewHolder {
             githubButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.sendEventHit(MileStoneViewHolder.this.activity, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
+                    IOUtils.sendGAEventHit(MileStoneViewHolder.this.activity, Constants.GA_EXTERNAL_LINKS_EVENT_CATEGORY,
                             "View on github", MileStoneViewHolder.this.milestone.getTitle());
                     MainActivity.openWebPage((MainActivity) MileStoneViewHolder.this.activity, MileStoneViewHolder.this.milestone.getGithubUrl());
                 }

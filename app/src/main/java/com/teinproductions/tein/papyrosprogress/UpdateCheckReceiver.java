@@ -81,7 +81,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     private void checkProgress() {
         try {
             // Parse the cache
-            String cache = MainActivity.getFile(context, Constants.MILESTONES_CACHE_FILE);
+            String cache = IOUtils.getFile(context, Constants.MILESTONES_CACHE_FILE);
             if (cache == null) {
                 // We have nothing to compare the new progress to
                 throw new NullPointerException("There was no saved progress cache");
@@ -133,7 +133,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
             // Check if there are any changes
             if (addedMilestones.size() > 0 || removedMilestones.size() > 0 || changedProgresses.size() > 0) {
                 // Save cache
-                MainActivity.saveFile(context, result.content, Constants.MILESTONES_CACHE_FILE);
+                IOUtils.saveFile(context, result.content, Constants.MILESTONES_CACHE_FILE);
 
                 boolean sendNotification = PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Constants.NOTIFICATION_PREFERENCE, false);

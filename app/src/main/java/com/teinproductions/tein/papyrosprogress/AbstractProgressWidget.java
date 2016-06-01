@@ -106,7 +106,7 @@ public abstract class AbstractProgressWidget extends AppWidgetProvider {
      * is first instantiated.
      */
     public static void updateFromCache(Context context) {
-        String cache = MainActivity.getFile(context, Constants.MILESTONES_CACHE_FILE);
+        String cache = IOUtils.getFile(context, Constants.MILESTONES_CACHE_FILE);
         if (cache == null) return;
         Map<String, Integer> progress = JSONUtils.getProgressMap(cache);
         updateAppWidgets(context, progress);
