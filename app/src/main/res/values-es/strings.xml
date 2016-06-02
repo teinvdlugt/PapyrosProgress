@@ -58,4 +58,7 @@
     <string name="settings">Ajustes</string>
     <string name="widget_settings">Ajustes del widget</string>
     <string name="xs_collapse_or_expand">Ocultar o mostrar etapa</string>
+    <string name="custom_tabs_preference_summary_off">Now opening web pages in default browser</string>
+    <string name="custom_tabs_preference_summary_on">Now opening web pages in app (if available)</string>
+    <string name="custom_tabs_preference_title">Open web pages in app</string>
 </resources>

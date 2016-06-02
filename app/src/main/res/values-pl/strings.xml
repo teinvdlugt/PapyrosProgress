@@ -58,4 +58,7 @@
     <string name="xs_collapse_or_expand">Zwiń lub rozwiń milestone</string>
     <string name="pulse_notification_light">LED</string>
     <string name="widget_settings">Ustawienia widgeta</string>
+    <string name="custom_tabs_preference_title">Otwieraj strony internetowe w aplikacji</string>
+    <string name="custom_tabs_preference_summary_on">Jeżeli to możliwe, strony internetowe otwierają się w aplikacji</string>
+    <string name="custom_tabs_preference_summary_off">Strony internetowe otwierają się w standardowej przeglądarce</string>
 </resources>

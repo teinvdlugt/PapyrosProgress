@@ -58,4 +58,7 @@
     <string name="other">Прочее</string>
     <string name="notification_sound">Звук</string>
     <string name="notification_vibrate">Вибрация</string>
+    <string name="custom_tabs_preference_summary_off">Now opening web pages in default browser</string>
+    <string name="custom_tabs_preference_summary_on">Now opening web pages in app (if available)</string>
+    <string name="custom_tabs_preference_title">Open web pages in app</string>
 </resources>
