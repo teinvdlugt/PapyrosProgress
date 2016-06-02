@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
@@ -35,14 +36,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPageTask.OnLoadedListener {
+public class UpdateCheckReceiver extends BroadcastReceiver {
     private static final int PROGRESS_NOTIFICATION_ID = 1;
     private static final int BLOG_NOTIFICATION_ID = 2;
 
@@ -53,7 +53,6 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
     public static final String CHECK_BLOGS_EXTRA = "check_blogs";
 
     private Map<String, Integer> oldMilestones = new HashMap<>();
-    private Map<String, Integer> newMilestones = new HashMap<>();
     private Context context;
 
     @Override
@@ -87,19 +86,33 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
                 throw new NullPointerException("There was no saved progress cache");
             }
 
-            parseOld(cache);
+            oldMilestones = parseMilestones(cache);
 
             // Parse web page
-            new LoadWebPageTask(this).execute();
-        } catch (JSONException | NullPointerException e) {
-            e.printStackTrace();
-        }
+            new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... params) {
+                    try {
+                        MilestoneLoader.Result file = IOUtils.loadPage(Constants.MILESTONES_URL);
+                        if (file.getError() != MilestoneLoader.Result.NO_ERROR)
+                            return null;
+                        else return file.getStrData();
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(String result) {
+                    newMilestonesPageLoaded(result);
+                }
+            }.execute();
+        } catch (Exception ignored) {}
     }
 
-    @Override
-    public void onLoaded(LoadWebPageTask.Response result) {
+    private void newMilestonesPageLoaded(String result) {
         try {
-            parseNew(result.content);
+            Map<String, Integer> newMilestones = parseMilestones(result);
 
             // Check if milestones have been added
             Set<String> addedMilestones = new HashSet<>();
@@ -133,7 +146,7 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
             // Check if there are any changes
             if (addedMilestones.size() > 0 || removedMilestones.size() > 0 || changedProgresses.size() > 0) {
                 // Save cache
-                IOUtils.saveFile(context, result.content, Constants.MILESTONES_CACHE_FILE);
+                IOUtils.saveFile(context, result, Constants.MILESTONES_CACHE_FILE);
 
                 boolean sendNotification = PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Constants.NOTIFICATION_PREFERENCE, false);
@@ -144,27 +157,17 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
             // I have experienced some problems with the app widgets, so update them
             // frequently, even when there is no change in progress
             AbstractProgressWidget.updateAppWidgets(context, newMilestones);
-        } catch (JSONException | NullPointerException | ParseException e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
-    private void parseOld(String json) throws JSONException {
-        oldMilestones.clear();
+    private Map<String, Integer> parseMilestones(String json) throws JSONException {
+        Map<String, Integer> result = new HashMap<>();
         JSONArray jArray = new JSONArray(json);
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject milestone = jArray.getJSONObject(i);
-            oldMilestones.put(JSONUtils.getTitle(milestone), JSONUtils.getProgress(milestone));
+            result.put(JSONUtils.getTitle(milestone), JSONUtils.getProgress(milestone));
         }
-    }
-
-    private void parseNew(String json) throws JSONException, ParseException {
-        newMilestones.clear();
-        JSONArray jArray = new JSONArray(json);
-        for (int i = 0; i < jArray.length(); i++) {
-            JSONObject milestone = jArray.getJSONObject(i);
-            newMilestones.put(JSONUtils.getTitle(milestone), JSONUtils.getProgress(milestone));
-        }
+        return result;
     }
 
     private static void issueNotification(Context context, Set<String> addedMilestones,
@@ -230,27 +233,29 @@ public class UpdateCheckReceiver extends BroadcastReceiver implements LoadWebPag
         final int cachePostAmount = pref.getInt(Constants.CACHED_BLOG_AMOUNT, -1);
 
         // Load the GitHub API page containing information about the amount of blog posts
-        new LoadWebPageTask(Constants.PAPYROS_BLOG_API_URL, new LoadWebPageTask.OnLoadedListener() {
+        new AsyncTask<Void, Void, Integer>() {
             @Override
-            public void onLoaded(LoadWebPageTask.Response result) {
-                if (result.content == null) return;
-
+            protected Integer doInBackground(Void... params) {
                 try {
-                    final int newPostAmount = new JSONArray(result.content).length();
+                    MilestoneLoader.Result file = IOUtils.loadPage(Constants.PAPYROS_BLOG_API_URL);
+                    if (file.getError() != MilestoneLoader.Result.NO_ERROR) return null;
+                    return new JSONArray(file.getStrData()).length();
+                } catch (Exception e) { return null; }
+            }
 
-                    // If there was a cachePostAmount present in storage, compare it to
-                    // new amount
+            @Override
+            protected void onPostExecute(Integer newPostAmount) {
+                try {
+                    // If there was a cachePostAmount present in storage, compare it to the new amount
                     if (cachePostAmount != -1 && newPostAmount > cachePostAmount) {
                         // A blog post has been added
                         issueBlogNotification(UpdateCheckReceiver.this.context);
                     }
 
                     pref.edit().putInt(Constants.CACHED_BLOG_AMOUNT, newPostAmount).apply();
-                } catch (JSONException | NullPointerException e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception ignored) {}
             }
-        }).execute();
+        }.execute();
     }
 
     private static void issueBlogNotification(Context context) {

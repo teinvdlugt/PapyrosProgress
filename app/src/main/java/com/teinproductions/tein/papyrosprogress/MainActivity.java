@@ -224,13 +224,12 @@ public class MainActivity extends AppCompatActivity
                     if (data.getStrData() != null)
                         IOUtils.saveFile(this, data.getStrData(), Constants.MILESTONES_CACHE_FILE);
                     break;
-                case MilestoneLoader.Result.NO_INTERNET_CONNECTION:
-                    showSnackbar(getString(R.string.offline_snackbar));
-                    break;
                 case MilestoneLoader.Result.SOCKET_TIMEOUT:
                 case MilestoneLoader.Result.UNKNOWN_ERROR:
                 case MilestoneLoader.Result.JSON_PARSE_ERROR:
                     // TODO show special snackbar?
+                case MilestoneLoader.Result.NO_INTERNET_CONNECTION:
+                    showSnackbar(getString(R.string.offline_snackbar));
                     break;
                 case MilestoneLoader.Result.ERROR_CODE:
                     if (data.getErrorCode() == 403) {
